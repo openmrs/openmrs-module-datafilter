@@ -21,8 +21,13 @@ import org.hibernate.annotations.ParamDef;
 public class FilterDefAnnotation implements FilterDef {
 	
 	private String name;
-
-    protected FilterDefAnnotation(String name) {
+	
+	/**
+	 * Constructor
+	 *
+	 * @param name the name of the filter def
+	 */
+	public FilterDefAnnotation(String name) {
 		this.name = name;
 	}
 	

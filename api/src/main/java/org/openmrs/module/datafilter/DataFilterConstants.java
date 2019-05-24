@@ -11,6 +11,8 @@ package org.openmrs.module.datafilter;
 
 public class DataFilterConstants {
 	
+	public static final String MODULE_ID = "datafilter";
+	
 	public static final String FILTER_PARAM_PATIENT_IDS = "patientIds";
 	
 	public static final String FILTER_NAME_ENCOUNTER = "encounterFilter";

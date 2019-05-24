@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+
+    This Source Code Form is subject to the terms of the Mozilla Public License,
+    v. 2.0. If a copy of the MPL was not distributed with this file, You can
+    obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+    the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+
+    Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+    graphic logo is a trademark of OpenMRS Inc.
+
+-->
+
+<dataset>
+    <person person_id="10000" gender="M" birthdate="1948-01-01 00:00:00.0" birthdate_estimated="0" dead="false" creator="1" date_created="2019-05-24 00:00:00.0" voided="false" uuid="ab1b19c2-3ed6-4f63-b8c0-f762dc8d7563" />
+
+    <person_name person_name_id="20000" preferred="true" person_id="10000" given_name="Dwight" family_name="Yorke" creator="1" date_created="2005-09-22 00:00:00.0" voided="false" void_reason="" uuid="489e3a7b-6482-487d-94ce-c07bb3ca3cc8" />
+
+    <users user_id="30000" person_id="10000" system_id="1-2" username="dyorke" password="some password" salt="some salt" creator="1" date_created="2008-08-15 15:46:47.0" retired="false" uuid="b2d8f5c2-e131-11de-babe-001e378eb67f" />
+
+    <role role="Trinidad Access" description="Grants access to records at Trinidad clinic" uuid="1280cb6d-c291-46c8-8d3a-96dc33d199fc" />
+    <role role="England Access" description="Grants access to records at England clinic" uuid="2280cb6d-c291-46c8-8d3a-96dc33d199fc" />
+
+    <user_role user_id="30000" role="Trinidad Access"/>
+
+    <location location_id="40000" name="Trinidad" description="Trinidad Clinic" creator="1" date_created="2005-09-22 00:00:00.0" retired="false" uuid="1d6c993e-c2cc-11de-8d13-0010c6dffd0e" />
+
+    <datafilter_role_object_map role_object_map_id="1" role="Trinidad Access" object_id="40000" java_type="org.openmrs.Location" />
+</dataset>

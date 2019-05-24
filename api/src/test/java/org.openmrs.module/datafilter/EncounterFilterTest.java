@@ -12,24 +12,32 @@ package org.openmrs.module.datafilter;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openmrs.api.EncounterService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.TestUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class EncounterFilterTest extends BaseModuleContextSensitiveTest {
 	
+	private static DataFilterActivator activator = new DataFilterActivator();
+	
+	@Autowired
+	private EncounterService encounterService;
+	
 	@BeforeClass
-	public void beforeClass() throws Exception {
-		//TODO Call activator.willStart() to add the annotations
+	public static void beforeClass() throws Exception {
+		activator.willStart();
 	}
 	
 	@Before
 	public void before() throws Exception {
-		//TODO add test data
+		executeDataSet(TestConstants.ROOT_DIR + "moduleTestData.xml");
 	}
 	
 	@Test
 	public void getEncounters_shouldReturnEncountersBelongingToPatientsAccessibleToTheUser() throws Exception {
-		TestUtil.printOutTableContents(getConnection(), DataFilterConstants.MODULE_ID + "_user_object_map");
+		TestUtil.printOutTableContents(getConnection(), DataFilterConstants.MODULE_ID + "_role_object_map");
+		//assertEquals(0, encounterService.getCountOfEncounters("Alex", false).intValue());
 	}
 	
 }

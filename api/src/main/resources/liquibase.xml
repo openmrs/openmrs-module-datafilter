@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+
+    This Source Code Form is subject to the terms of the Mozilla Public License,
+    v. 2.0. If a copy of the MPL was not distributed with this file, You can
+    obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+    the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+
+    Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+    graphic logo is a trademark of OpenMRS Inc.
+
+-->
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <!--
+        See http://www.liquibase.org/manual/home#available_database_refactorings
+        for a list of supported elements and attributes
+    -->
+
+    <changeSet id="${project.parent.artifactId}-20190522-2300" author="wluyima">
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="${project.parent.artifactId}_role_object_map"/>
+            </not>
+        </preConditions>
+
+        <comment>Adding ${project.parent.artifactId}_role_object_map table</comment>
+
+        <createTable tableName="${project.parent.artifactId}_role_object_map">
+            <column name="role_object_map_id" type="int" autoIncrement="true" >
+                <constraints primaryKey="true" nullable="false" unique="true" />
+            </column>
+            <column name="role" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="object_id" type="int">
+                <constraints nullable="false" />
+            </column>
+            <column name="java_type" type="varchar(512)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="${project.parent.artifactId}_role_object_map"
+                                 baseColumnNames="role"
+                                 constraintName="${project.parent.artifactId}_role_object_role_fk"
+                                 referencedTableName="role"
+                                 referencedColumnNames="role" />
+
+    </changeSet>
+
+</databaseChangeLog>

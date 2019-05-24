@@ -9,9 +9,18 @@
  */
 package org.openmrs.module.datafilter;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Encounter;
 import org.openmrs.module.BaseModuleActivator;
+import org.openmrs.module.ModuleException;
+import org.openmrs.module.datafilter.filter.FilterAnnotation;
+import org.openmrs.module.datafilter.filter.FilterDefAnnotation;
 
 public class DataFilterActivator extends BaseModuleActivator {
 	
@@ -45,7 +54,13 @@ public class DataFilterActivator extends BaseModuleActivator {
 		if (log.isInfoEnabled()) {
 			log.info("Adding filter annotations");
 		}
-		//TODO Apply annotations
+		
+		addAnnotationToClass(Encounter.class, new FilterDefAnnotation(DataFilterConstants.FILTER_NAME_ENCOUNTER));
+		addAnnotationToClass(Encounter.class, new FilterAnnotation(DataFilterConstants.FILTER_NAME_ENCOUNTER));
+		
+		if (log.isInfoEnabled()) {
+			log.info("Successfully added filter annotations");
+		}
 	}
 	
 	/**
@@ -57,6 +72,41 @@ public class DataFilterActivator extends BaseModuleActivator {
 			log.info("Removing filter annotations");
 		}
 		//Remove Annotations
+	}
+	
+	private void addAnnotationToClass(Class<?> clazz, Annotation annotation) {
+		
+		final String annotationName = annotation.annotationType().getName();
+		if (log.isDebugEnabled()) {
+			log.debug("Adding " + annotationName + " annotation to " + clazz);
+		}
+		
+		try {
+			Method method = Class.class.getDeclaredMethod("getDeclaredAnnotationMap");
+			boolean accessible = method.isAccessible();
+			try {
+				method.setAccessible(true);
+				Map<Class<? extends Annotation>, Annotation> map = (Map<Class<? extends Annotation>, Annotation>) method
+				        .invoke(clazz);
+				//TODO handle the case where the annotation is already present in case of module restart
+				//TODO We also need to take of FilterDefs and Filters annotations if present
+				map.put(annotation.annotationType(), annotation);
+				
+				if (log.isDebugEnabled()) {
+					log.debug("Successfully added " + annotationName + " annotation to " + clazz);
+				}
+			}
+			catch (InvocationTargetException | IllegalAccessException e) {
+				throw e;
+			}
+			finally {
+				//Always reset
+				method.setAccessible(accessible);
+			}
+		}
+		catch (ReflectiveOperationException e) {
+			throw new ModuleException("Failed to add annotation " + annotation + " to " + clazz, e);
+		}
 	}
 	
 }

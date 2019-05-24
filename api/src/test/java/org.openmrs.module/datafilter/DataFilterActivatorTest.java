@@ -9,9 +9,10 @@
  */
 package org.openmrs.module.datafilter;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Set;
+import java.lang.annotation.Annotation;
 
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
@@ -29,20 +30,16 @@ public class DataFilterActivatorTest {
 	
 	@Test
 	public void willStart_shouldAddFilterAnnotationsToTheFilteredEntityClasses() {
-		Class<?> annotationClass = FilterDef.class;
-		Set<Class<?>> foundClasses = classScanner.getClassesWithAnnotation(annotationClass);
-		assertTrue(foundClasses.isEmpty());
-		
-		activator.willStart();
-		foundClasses = classScanner.getClassesWithAnnotation(annotationClass);
+		Class<? extends Annotation> annotationClass = FilterDef.class;
 		for (Class<?> clazz : filteredEntityClasses) {
-			assertTrue(foundClasses.contains(clazz));
+			assertFalse(clazz.isAnnotationPresent(annotationClass));
 		}
 		
+		activator.willStart();
+		
 		annotationClass = Filter.class;
-		foundClasses = classScanner.getClassesWithAnnotation(annotationClass);
 		for (Class<?> clazz : filteredEntityClasses) {
-			assertTrue(foundClasses.contains(clazz));
+			assertTrue(clazz.isAnnotationPresent(annotationClass));
 		}
 	}
 	

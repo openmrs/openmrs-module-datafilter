@@ -26,14 +26,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class EncounterFilterTest extends BaseModuleContextSensitiveTest {
 	
-	private static DataFilterActivator activator = new DataFilterActivator();
-	
 	@Autowired
 	private EncounterService encounterService;
 	
 	@BeforeClass
-	public static void beforeClass() {
-		activator.willStart();
+	public static void beforeClass() throws Exception {
+		Util.loadJavaAgent();
+		Util.addFilterAnnotations();
 	}
 	
 	@Before

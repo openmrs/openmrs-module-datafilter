@@ -18,6 +18,10 @@ import org.springframework.context.annotation.Configuration;
 
 import liquibase.integration.spring.SpringLiquibase;
 
+/**
+ * This configuration registers a {@link SpringLiquibase} bean that will ensure this module's
+ * liquibase file is executed for tests
+ */
 @Configuration
 public class TestConfig {
 	
@@ -29,7 +33,7 @@ public class TestConfig {
 		SpringLiquibase liquibase = new SpringLiquibase();
 		DataSource dataSource = ((SessionFactoryImpl) sf).getConnectionProvider().unwrap(DataSource.class);
 		liquibase.setDataSource(dataSource);
-		liquibase.setChangeLog("liquibase.xml");
+		liquibase.setChangeLog(TestConstants.ROOT_PACKAGE_DIR + "liquibase.xml");
 		return liquibase;
 	}
 	

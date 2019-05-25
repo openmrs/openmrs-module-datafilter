@@ -11,6 +11,6 @@ package org.openmrs.module.datafilter;
 
 public class TestConstants {
 	
-	public static final String ROOT_DIR = "org/openmrs/module/datafilter/";
+	public static final String ROOT_PACKAGE_DIR = "org/openmrs/module/" + DataFilterConstants.MODULE_ID + "/";
 	
 }

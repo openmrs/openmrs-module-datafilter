@@ -31,7 +31,7 @@ public class EncounterFilterTest extends BaseModuleContextSensitiveTest {
 	
 	@Before
 	public void before() throws Exception {
-		executeDataSet(TestConstants.ROOT_DIR + "moduleTestData.xml");
+		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "moduleTestData.xml");
 	}
 	
 	@Test

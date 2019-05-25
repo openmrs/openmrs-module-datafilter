@@ -24,7 +24,7 @@ import org.openmrs.module.datafilter.filter.FilterDefAnnotation;
 
 public class DataFilterActivator extends BaseModuleActivator {
 	
-	protected Log log = LogFactory.getLog(getClass());
+	private static final Log log = LogFactory.getLog(DataFilterActivator.class);
 	
 	/**
 	 * @see BaseModuleActivator#started()
@@ -51,16 +51,35 @@ public class DataFilterActivator extends BaseModuleActivator {
 	 */
 	@Override
 	public void willStart() {
+		
+		if (log.isInfoEnabled()) {
+			log.info("Registering java agent");
+		}
+		
+		try {
+			
+			Util.registerJavaAgent();
+			
+			if (log.isInfoEnabled()) {
+				log.info("Successfully registered java agent");
+			}
+		}
+		catch (Exception e) {
+			throw new ModuleException("Failed to register java agent", e);
+		}
+		
 		if (log.isInfoEnabled()) {
 			log.info("Adding filter annotations");
 		}
 		
 		addAnnotationToClass(Encounter.class, new FilterDefAnnotation(DataFilterConstants.FILTER_NAME_ENCOUNTER));
-		addAnnotationToClass(Encounter.class, new FilterAnnotation(DataFilterConstants.FILTER_NAME_ENCOUNTER));
+		addAnnotationToClass(Encounter.class, new FilterAnnotation(DataFilterConstants.FILTER_NAME_ENCOUNTER,
+		        DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
 		
 		if (log.isInfoEnabled()) {
 			log.info("Successfully added filter annotations");
 		}
+		
 	}
 	
 	/**

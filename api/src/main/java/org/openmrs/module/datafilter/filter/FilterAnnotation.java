@@ -13,7 +13,6 @@ import java.lang.annotation.Annotation;
 
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.SqlFragmentAlias;
-import org.openmrs.module.datafilter.DataFilterConstants;
 
 /**
  * An instance of this class represents a {@link Filter} to be added to an annotated persistent
@@ -23,13 +22,17 @@ public class FilterAnnotation implements Filter {
 	
 	private String name;
 	
+	private String condition;
+	
 	/**
 	 * Constructor
 	 * 
 	 * @param name the name of the filter
+	 * @param condition the condition to set on the filter
 	 */
-	public FilterAnnotation(String name) {
+	public FilterAnnotation(String name, String condition) {
 		this.name = name;
+		this.condition = condition;
 	}
 	
 	/**
@@ -45,7 +48,7 @@ public class FilterAnnotation implements Filter {
 	 */
 	@Override
 	public String condition() {
-		return "patient_id in (:" + DataFilterConstants.FILTER_PARAM_PATIENT_IDS + ")";
+		return condition;
 	}
 	
 	/**

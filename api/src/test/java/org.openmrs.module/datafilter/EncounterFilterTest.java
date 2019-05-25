@@ -9,10 +9,17 @@
  */
 package org.openmrs.module.datafilter;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Collection;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openmrs.Encounter;
 import org.openmrs.api.EncounterService;
+import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.TestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,19 +32,24 @@ public class EncounterFilterTest extends BaseModuleContextSensitiveTest {
 	private EncounterService encounterService;
 	
 	@BeforeClass
-	public static void beforeClass() throws Exception {
+	public static void beforeClass() {
 		activator.willStart();
 	}
 	
 	@Before
-	public void before() throws Exception {
+	public void before() {
 		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "moduleTestData.xml");
+		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "encounters.xml");
 	}
 	
 	@Test
 	public void getEncounters_shouldReturnEncountersBelongingToPatientsAccessibleToTheUser() throws Exception {
-		TestUtil.printOutTableContents(getConnection(), DataFilterConstants.MODULE_ID + "_role_object_map");
-		//assertEquals(0, encounterService.getCountOfEncounters("Alex", false).intValue());
+		Context.getLocationService().getAllLocations();
+		final String name = "Navuga";
+		assertEquals(2, encounterService.getCountOfEncounters(name, false).intValue());
+		Collection<Encounter> encounters = encounterService.getEncounters(name, 0, Integer.MAX_VALUE, false);
+		assertTrue(TestUtil.containsId(encounters, 1000));
+		assertTrue(TestUtil.containsId(encounters, 1001));
 	}
 	
 }

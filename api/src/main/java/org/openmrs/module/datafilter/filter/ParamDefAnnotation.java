@@ -22,6 +22,8 @@ import org.openmrs.module.datafilter.DataFilterConstants;
 public class ParamDefAnnotation implements ParamDef {
 	
 	/**
+	 * The value of the patientIds param should be a comma separated list of patient ids to match
+	 * 
 	 * @see ParamDef#name()
 	 */
 	@Override

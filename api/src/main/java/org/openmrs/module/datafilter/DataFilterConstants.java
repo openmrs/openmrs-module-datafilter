@@ -17,4 +17,6 @@ public class DataFilterConstants {
 	
 	public static final String FILTER_NAME_ENCOUNTER = "encounterFilter";
 	
+	public static final String FILTER_CONDITION_PATIENT_ID = "patient_id in (:" + FILTER_PARAM_PATIENT_IDS + ")";
+	
 }

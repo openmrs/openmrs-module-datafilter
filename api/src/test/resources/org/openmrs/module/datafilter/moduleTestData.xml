@@ -35,12 +35,15 @@
     <patient_identifier patient_identifier_id="5000" patient_id="1001" identifier="M100" identifier_type="2" preferred="1" location_id="4000" creator="1" date_created="2019-05-24 00:00:00.0" voided="false" uuid="af41928c-3bca-48d9-a4dc-9198f6b2873c" />
     <patient_identifier patient_identifier_id="5001" patient_id="1002" identifier="F100" identifier_type="2" preferred="1" location_id="4000" creator="1" date_created="2019-05-24 00:00:00.0" voided="false" uuid="bf41928c-3bca-48d9-a4dc-9198f6b2873c" />
 
-    <users user_id="3000" person_id="1000" system_id="1-2" username="dyorke" password="some password" salt="some salt" creator="1" date_created="2019-05-02 00:00:00.0" retired="false" uuid="b2d8f5c2-e131-11de-babe-001e378eb67f" />
+    <users user_id="3000" person_id="1000" system_id="1-2" username="dyorke" password="4a1750c8607d0fa237de36c6305715c223415189" salt="c788c6ad82a157b712392ca695dfcf2eed193d7f" creator="1" date_created="2019-05-02 00:00:00.0" retired="false" uuid="b2d8f5c2-e131-11de-babe-001e378eb67f" />
 
-    <role role="Trinidad Access" description="Grants access to records at Trinidad clinic" uuid="1280cb6d-c291-46c8-8d3a-96dc33d199fc" />
-    <role role="England Access" description="Grants access to records at England clinic" uuid="2280cb6d-c291-46c8-8d3a-96dc33d199fc" />
+    <privilege privilege="Get Encounters" description="Can View Encounters" uuid="ae80cb6d-c291-46c8-8d3a-96dc33d188fc" />
 
-    <user_role user_id="3000" role="Trinidad Access" />
+    <role role="Physician" description="Physician" uuid="1280cb6d-c291-46c8-8d3a-96dc33d199fc" />
 
-    <datafilter_role_object_map role_object_map_id="1" role="Trinidad Access" object_id="4000" java_type="org.openmrs.Location" />
+    <role_privilege role="Physician" privilege="Get Encounters" />
+
+    <user_role user_id="3000" role="Physician" />
+
+    <datafilter_user_object_map user_object_map_id="1" user_id="3000" object_id="4000" java_type="org.openmrs.Location" />
 </dataset>

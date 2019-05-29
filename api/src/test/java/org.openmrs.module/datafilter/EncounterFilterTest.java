@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.openmrs.Encounter;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.context.UsernamePasswordCredentials;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.TestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,8 @@ public class EncounterFilterTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void getEncounters_shouldReturnEncountersBelongingToPatientsAccessibleToTheUser() throws Exception {
-		Context.getLocationService().getAllLocations();
+		Context.logout();
+		Context.authenticate(new UsernamePasswordCredentials("dyorke", "test"));
 		final String name = "Navuga";
 		assertEquals(2, encounterService.getCountOfEncounters(name, false).intValue());
 		Collection<Encounter> encounters = encounterService.getEncounters(name, 0, Integer.MAX_VALUE, false);

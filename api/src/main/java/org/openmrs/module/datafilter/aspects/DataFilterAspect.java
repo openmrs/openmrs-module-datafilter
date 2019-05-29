@@ -14,10 +14,12 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.search.Query;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
+import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.search.FullTextQuery;
 import org.hibernate.search.FullTextSession;
+import org.openmrs.module.datafilter.DataFilterConstants;
 
 /**
  * Contains advice to be applied to the {@link SessionFactory#getCurrentSession()} and
@@ -37,9 +39,13 @@ public class DataFilterAspect {
 	@AfterReturning(value = "execution(* org.hibernate.SessionFactory.getCurrentSession())", returning = "session")
 	public void afterGetCurrentSession(Session session) {
 		if (log.isDebugEnabled()) {
-			log.debug("Enabling filters on the current session");
+			log.debug("Enabling filter on the current session");
 		}
-		//TODO apply filters to the Session
+		
+		Filter filter = session.getEnabledFilter(DataFilterConstants.FILTER_NAME_ENCOUNTER);
+		if (filter == null) {
+			session.enableFilter(DataFilterConstants.FILTER_NAME_ENCOUNTER);
+		}
 	}
 	
 	/**
@@ -50,7 +56,7 @@ public class DataFilterAspect {
 	@AfterReturning(value = "execution(* org.hibernate.search.FullTextSession.createFullTextQuery(..))", returning = "fullTextQuery")
 	public void afterCreateFullTextQuery(FullTextQuery fullTextQuery) {
 		if (log.isDebugEnabled()) {
-			log.debug("Enabling filters on the full text session");
+			log.debug("Enabling filter on the full text session");
 		}
 		//TODO apply filters to the  FulltextQuery
 	}

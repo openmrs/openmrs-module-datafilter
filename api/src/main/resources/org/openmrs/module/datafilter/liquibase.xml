@@ -26,17 +26,17 @@
 
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="${project.parent.artifactId}_role_object_map"/>
+                <tableExists tableName="${project.parent.artifactId}_user_object_map"/>
             </not>
         </preConditions>
 
-        <comment>Adding ${project.parent.artifactId}_role_object_map table</comment>
+        <comment>Adding ${project.parent.artifactId}_user_object_map table</comment>
 
-        <createTable tableName="${project.parent.artifactId}_role_object_map">
-            <column name="role_object_map_id" type="int" autoIncrement="true" >
+        <createTable tableName="${project.parent.artifactId}_user_object_map">
+            <column name="user_object_map_id" type="int" autoIncrement="true" >
                 <constraints primaryKey="true" nullable="false" unique="true" />
             </column>
-            <column name="role" type="varchar(50)">
+            <column name="user_id" type="int">
                 <constraints nullable="false" />
             </column>
             <column name="object_id" type="int">
@@ -47,11 +47,11 @@
             </column>
         </createTable>
 
-        <addForeignKeyConstraint baseTableName="${project.parent.artifactId}_role_object_map"
-                                 baseColumnNames="role"
-                                 constraintName="${project.parent.artifactId}_role_object_role_fk"
-                                 referencedTableName="role"
-                                 referencedColumnNames="role" />
+        <addForeignKeyConstraint baseTableName="${project.parent.artifactId}_user_object_map"
+                                 baseColumnNames="user_id"
+                                 constraintName="${project.parent.artifactId}_user_object_user_fk"
+                                 referencedTableName="users"
+                                 referencedColumnNames="user_id" />
 
     </changeSet>
 

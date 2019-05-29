@@ -30,7 +30,7 @@ public class EncounterFilterTest extends BaseModuleContextSensitiveTest {
 	private EncounterService encounterService;
 	
 	@BeforeClass
-	public static void beforeClass() throws Exception {
+	public static void beforeClass() {
 		Util.loadJavaAgent();
 		Util.addFilterAnnotations();
 	}

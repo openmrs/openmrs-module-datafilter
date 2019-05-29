@@ -18,15 +18,12 @@ import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.junit.Test;
 import org.openmrs.Encounter;
-import org.openmrs.util.OpenmrsClassScanner;
 
 public class DataFilterActivatorTest {
 	
 	private DataFilterActivator activator = new DataFilterActivator();
 	
 	private Class<?>[] filteredEntityClasses = new Class[] { Encounter.class };
-	
-	private OpenmrsClassScanner classScanner = OpenmrsClassScanner.getInstance();
 	
 	@Test
 	public void willStart_shouldAddFilterAnnotationsToTheFilteredEntityClasses() {

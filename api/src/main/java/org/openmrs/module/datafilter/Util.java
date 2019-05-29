@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.weaver.loadtime.Agent;
 import org.openmrs.Encounter;
+import org.openmrs.module.ModuleException;
 import org.openmrs.module.datafilter.filter.FilterAnnotation;
 import org.openmrs.module.datafilter.filter.FilterDefAnnotation;
 
@@ -31,23 +32,26 @@ public class Util {
 	
 	/**
 	 * Loads aspectj weaver's java agent into the current jvm instance
-	 * 
-	 * @throws Exception
 	 */
-	protected static void loadJavaAgent() throws Exception {
+	protected static void loadJavaAgent() {
 		if (log.isInfoEnabled()) {
 			log.info("Loading java agent");
 		}
 		
-		String jvmName = ManagementFactory.getRuntimeMXBean().getName();
-		String pid = jvmName.substring(0, jvmName.indexOf('@'));
-		VirtualMachine vm = VirtualMachine.attach(pid);
-		URL aspectjWeaverJar = Agent.class.getProtectionDomain().getCodeSource().getLocation();
-		vm.loadAgent(aspectjWeaverJar.getFile());
-		vm.detach();
-		
-		if (log.isInfoEnabled()) {
-			log.info("Successfully loaded java agent");
+		try {
+			String jvmName = ManagementFactory.getRuntimeMXBean().getName();
+			String pid = jvmName.substring(0, jvmName.indexOf('@'));
+			VirtualMachine vm = VirtualMachine.attach(pid);
+			URL aspectjWeaverJar = Agent.class.getProtectionDomain().getCodeSource().getLocation();
+			vm.loadAgent(aspectjWeaverJar.getFile());
+			vm.detach();
+			
+			if (log.isInfoEnabled()) {
+				log.info("Successfully loaded java agent");
+			}
+		}
+		catch (Exception e) {
+			throw new ModuleException("Failed to load java agent", e);
 		}
 	}
 	
@@ -55,18 +59,23 @@ public class Util {
 	 * Adds the filter annotations to persistent classes mapped with JPA annotations that need to be
 	 * filtered
 	 */
-	protected static void addFilterAnnotations() throws ReflectiveOperationException {
+	protected static void addFilterAnnotations() {
 		if (log.isInfoEnabled()) {
 			log.info("Adding filter annotations");
 		}
 		
-		//TODO First check if the class has the @Entity annotation before we even bother to add others
-		addAnnotationToClass(Encounter.class, new FilterDefAnnotation(DataFilterConstants.FILTER_NAME_ENCOUNTER));
-		addAnnotationToClass(Encounter.class, new FilterAnnotation(DataFilterConstants.FILTER_NAME_ENCOUNTER,
-		        DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
-		
-		if (log.isInfoEnabled()) {
-			log.info("Successfully added filter annotations");
+		try {
+			//TODO First check if the class has the @Entity annotation before we even bother to add others
+			addAnnotationToClass(Encounter.class, new FilterDefAnnotation(DataFilterConstants.FILTER_NAME_ENCOUNTER));
+			addAnnotationToClass(Encounter.class, new FilterAnnotation(DataFilterConstants.FILTER_NAME_ENCOUNTER,
+			        DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
+			
+			if (log.isInfoEnabled()) {
+				log.info("Successfully added filter annotations");
+			}
+		}
+		catch (ReflectiveOperationException e) {
+			throw new ModuleException("Failed to add filter annotations", e);
 		}
 	}
 	

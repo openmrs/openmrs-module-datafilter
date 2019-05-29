@@ -37,7 +37,7 @@ public class DataFilterAspect {
 	@AfterReturning(value = "execution(* org.hibernate.SessionFactory.getCurrentSession())", returning = "session")
 	public void afterGetCurrentSession(Session session) {
 		if (log.isDebugEnabled()) {
-			log.debug("Applying filter to current session");
+			log.debug("Enabling filters on the current session");
 		}
 		//TODO apply filters to the Session
 	}
@@ -50,7 +50,7 @@ public class DataFilterAspect {
 	@AfterReturning(value = "execution(* org.hibernate.search.FullTextSession.createFullTextQuery(..))", returning = "fullTextQuery")
 	public void afterCreateFullTextQuery(FullTextQuery fullTextQuery) {
 		if (log.isDebugEnabled()) {
-			log.debug("Applying filter to full text session");
+			log.debug("Enabling filters on the full text session");
 		}
 		//TODO apply filters to the  FulltextQuery
 	}

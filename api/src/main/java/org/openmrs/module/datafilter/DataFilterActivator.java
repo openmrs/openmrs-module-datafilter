@@ -12,7 +12,6 @@ package org.openmrs.module.datafilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.BaseModuleActivator;
-import org.openmrs.module.ModuleException;
 
 public class DataFilterActivator extends BaseModuleActivator {
 	
@@ -43,21 +42,8 @@ public class DataFilterActivator extends BaseModuleActivator {
 	 */
 	@Override
 	public void willStart() {
-		
-		try {
-			Util.loadJavaAgent();
-		}
-		catch (Exception e) {
-			throw new ModuleException("Failed to load java agent", e);
-		}
-		
-		try {
-			Util.addFilterAnnotations();
-		}
-		catch (ReflectiveOperationException e) {
-			throw new ModuleException("Failed to add filter annotations");
-		}
-		
+		Util.loadJavaAgent();
+		Util.addFilterAnnotations();
 	}
 	
 	/**

@@ -13,10 +13,12 @@
 -->
 
 <dataset>
+    <global_property property="datafilter.locationAttributeTypeUuid" property_value="a3b6d540-a32e-44c7-91b3-292d97667519" uuid="af55827e-26fe-102b-80cb-0017a47871a3"/>
+
     <location location_id="4000" name="Trinidad" description="Trinidad Clinic" creator="1" date_created="2019-05-01 00:00:00.0" retired="false" uuid="1d6c993e-c2cc-11de-8d13-0010c6dffd0e" />
     <location location_id="4001" name="England" description="England Clinic" creator="1" date_created="2019-05-01 00:00:00.0" retired="false" uuid="2d6c993e-c2cc-11de-8d13-0010c6dffd0e" />
 
-    <person_attribute_type person_attribute_type_id="6000" name="Home Health Center" description="The health center a patient is assigned to" format="org.openmrs.Location" searchable="false" creator="1" date_created="2019-05-01 00:00:00.0" retired="false" uuid="a3b6d540-a32e-44c7-91b3-292d97667519" sort_weight="1" />
+    <person_attribute_type person_attribute_type_id="6000" name="Home Health Center" description="The health center a patient is assigned to" format="org.openmrs.Location" searchable="false" creator="1" date_created="2019-05-01 00:00:00.0" retired="false" sort_weight="1" uuid="a3b6d540-a32e-44c7-91b3-292d97667519" />
     
     <person person_id="1000" gender="M" birthdate="1948-01-01 00:00:00.0" birthdate_estimated="0" dead="false" creator="1" date_created="2019-05-02 00:00:00.0" voided="false" uuid="ab1b19c2-3ed6-4f63-b8c0-f762dc8d7563" />
     <person person_id="1001" gender="M" birthdate="1985-01-01 00:00:00.0" birthdate_estimated="0" dead="false" creator="1" date_created="2019-05-24 00:00:00.0" voided="false" uuid="bb1b19c2-3ed6-4f63-b8c0-f762dc8d7563" />
@@ -45,5 +47,8 @@
 
     <user_role user_id="3000" role="Physician" />
 
-    <datafilter_user_object_map user_object_map_id="1" user_id="3000" object_id="4000" java_type="org.openmrs.Location" />
+    <datafilter_user_basis_map user_object_map_id="1" user_id="3000" basis_id="4000" basis_type="org.openmrs.Location" />
+    <datafilter_user_basis_map user_object_map_id="2" user_id="3000" basis_id="1" basis_java_type="org.openmrs.Location" />
+    <datafilter_user_basis_map user_object_map_id="3" user_id="3000" basis_id="1" basis_type="org.openmrs.Program" />
+    <datafilter_user_basis_map user_object_map_id="4" user_id="501" basis_id="4000" basis_type="org.openmrs.Location" />
 </dataset>

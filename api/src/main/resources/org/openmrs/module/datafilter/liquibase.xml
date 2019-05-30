@@ -26,30 +26,30 @@
 
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="${project.parent.artifactId}_user_object_map"/>
+                <tableExists tableName="${project.parent.artifactId}_user_basis_map"/>
             </not>
         </preConditions>
 
-        <comment>Adding ${project.parent.artifactId}_user_object_map table</comment>
+        <comment>Adding ${project.parent.artifactId}_user_basis_map table</comment>
 
-        <createTable tableName="${project.parent.artifactId}_user_object_map">
-            <column name="user_object_map_id" type="int" autoIncrement="true" >
+        <createTable tableName="${project.parent.artifactId}_user_basis_map">
+            <column name="user_basis_map_id" type="int" autoIncrement="true" >
                 <constraints primaryKey="true" nullable="false" unique="true" />
             </column>
             <column name="user_id" type="int">
                 <constraints nullable="false" />
             </column>
-            <column name="object_id" type="int">
+            <column name="basis_id" type="int">
                 <constraints nullable="false" />
             </column>
-            <column name="java_type" type="varchar(512)">
+            <column name="basis_type" type="varchar(512)">
                 <constraints nullable="false" />
             </column>
         </createTable>
 
-        <addForeignKeyConstraint baseTableName="${project.parent.artifactId}_user_object_map"
+        <addForeignKeyConstraint baseTableName="${project.parent.artifactId}_user_basis_map"
                                  baseColumnNames="user_id"
-                                 constraintName="${project.parent.artifactId}_user_object_user_fk"
+                                 constraintName="${project.parent.artifactId}_user_basis_user_fk"
                                  referencedTableName="users"
                                  referencedColumnNames="user_id" />
 

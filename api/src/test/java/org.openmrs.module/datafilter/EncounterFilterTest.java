@@ -42,13 +42,18 @@ public class EncounterFilterTest extends BaseModuleContextSensitiveTest {
 		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "encounters.xml");
 	}
 	
+	private void reloginAs(String username, String password) {
+		Context.logout();
+		Context.authenticate(new UsernamePasswordCredentials(username, password));
+	}
+	
 	@Test
 	public void getEncounters_shouldReturnEncountersBelongingToPatientsAccessibleToTheUser() throws Exception {
-		Context.logout();
-		Context.authenticate(new UsernamePasswordCredentials("dyorke", "test"));
+		reloginAs("dyorke", "test");
 		final String name = "Navuga";
 		assertEquals(2, encounterService.getCountOfEncounters(name, false).intValue());
 		Collection<Encounter> encounters = encounterService.getEncounters(name, 0, Integer.MAX_VALUE, false);
+		assertEquals(2, encounters.size());
 		assertTrue(TestUtil.containsId(encounters, 1000));
 		assertTrue(TestUtil.containsId(encounters, 1001));
 	}

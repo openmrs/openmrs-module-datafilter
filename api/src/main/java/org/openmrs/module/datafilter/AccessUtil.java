@@ -50,6 +50,9 @@ public class AccessUtil {
 	private final static String PERSON_QUERY = "select person_id from person_attribute where person_attribute_type_id = "
 	        + ID_PLACEHOLDER + " and value in (" + BASIS_IDS_PLACEHOLDER + ")";
 	
+	private final static String GP_QUERY = "select property_value from global_property where property = '"
+	        + DataFilterConstants.GP_PERSON_ATTRIBUTE_TYPE_UUIDS + "'";
+	
 	private final static String ATTRIBUTE_TYPE_QUERY = "select person_attribute_type_id, format from person_attribute_type where uuid in ("
 	        + UUIDS_PLACEHOLDER + ")";
 	
@@ -65,11 +68,13 @@ public class AccessUtil {
 			log.debug("Looking up accessible persons for the authenticated user");
 		}
 		
-		String attribTypeUuids = Context.getAdministrationService()
-		        .getGlobalProperty(DataFilterConstants.GP_PERSON_ATTRIBUTE_TYPE_UUIDS);
+		List<List<Object>> rows = runQueryWithElevatedPrivileges(GP_QUERY);
+		String attribTypeUuids = null;
+		if (!rows.isEmpty()) {
+			attribTypeUuids = rows.get(0).get(0).toString();
+		}
 		if (StringUtils.isBlank(attribTypeUuids)) {
-			throw new APIException("The value for the global property named "
-			        + DataFilterConstants.GP_PERSON_ATTRIBUTE_TYPE_UUIDS + " must be set");
+			return Collections.EMPTY_LIST;
 		}
 		
 		List<String> quotedUuids = new ArrayList();
@@ -113,7 +118,7 @@ public class AccessUtil {
 			return personIds;
 		}
 		
-		return Collections.emptyList();
+		return Collections.EMPTY_LIST;
 	}
 	
 	/**

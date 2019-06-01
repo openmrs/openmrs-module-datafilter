@@ -13,7 +13,7 @@
 -->
 
 <dataset>
-    <global_property property="datafilter.locationAttributeTypeUuid" property_value="a3b6d540-a32e-44c7-91b3-292d97667519" uuid="af55827e-26fe-102b-80cb-0017a47871a3"/>
+    <global_property property="datafilter.personAttributeTypeUuids" property_value="a3b6d540-a32e-44c7-91b3-292d97667519" uuid="af55827e-26fe-102b-80cb-0017a47871a3" />
 
     <location location_id="4000" name="Trinidad" description="Trinidad Clinic" creator="1" date_created="2019-05-01 00:00:00.0" retired="false" uuid="1d6c993e-c2cc-11de-8d13-0010c6dffd0e" />
     <location location_id="4001" name="England" description="England Clinic" creator="1" date_created="2019-05-01 00:00:00.0" retired="false" uuid="2d6c993e-c2cc-11de-8d13-0010c6dffd0e" />
@@ -47,8 +47,8 @@
 
     <user_role user_id="3000" role="Physician" />
 
-    <datafilter_user_basis_map user_object_map_id="1" user_id="3000" basis_id="4000" basis_type="org.openmrs.Location" />
-    <datafilter_user_basis_map user_object_map_id="2" user_id="3000" basis_id="1" basis_java_type="org.openmrs.Location" />
-    <datafilter_user_basis_map user_object_map_id="3" user_id="3000" basis_id="1" basis_type="org.openmrs.Program" />
-    <datafilter_user_basis_map user_object_map_id="4" user_id="501" basis_id="4000" basis_type="org.openmrs.Location" />
+    <datafilter_user_basis_map user_basis_map_id="1" user_id="3000" basis_id="4000" basis_type="org.openmrs.Location" />
+    <datafilter_user_basis_map user_basis_map_id="2" user_id="3000" basis_id="1" basis_type="org.openmrs.Location" />
+    <datafilter_user_basis_map user_basis_map_id="3" user_id="3000" basis_id="1" basis_type="org.openmrs.Program" />
+    <datafilter_user_basis_map user_basis_map_id="4" user_id="501" basis_id="4000" basis_type="org.openmrs.Location" />
 </dataset>

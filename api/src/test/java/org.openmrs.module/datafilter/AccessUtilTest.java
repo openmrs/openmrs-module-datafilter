@@ -10,13 +10,16 @@
 package org.openmrs.module.datafilter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Location;
+import org.openmrs.Program;
+import org.openmrs.api.context.Context;
+import org.openmrs.api.context.UsernamePasswordCredentials;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 public class AccessUtilTest extends BaseModuleContextSensitiveTest {
@@ -26,12 +29,40 @@ public class AccessUtilTest extends BaseModuleContextSensitiveTest {
 		executeDataSet(TestConstants.MODULE_TEST_DATASET_XML);
 	}
 	
+	private void reloginAs(String username, String password) {
+		Context.logout();
+		Context.authenticate(new UsernamePasswordCredentials(username, password));
+	}
+	
 	@Test
-	public void getAccessiblePatientIds_shouldReturnAListOfAccessiblePatientIdsForTheAuthenticatedUser() {
-		List<Integer> patientIds = AccessUtil.getAccessiblePatientIds(Location.class);
-		assertEquals(2, patientIds.size());
-		Assert.assertTrue(patientIds.contains(4000));
-		Assert.assertTrue(patientIds.contains(1));
+	public void getAssignedBasisIds_shouldReturnAnEmptyListIfNoneConfiguredForTheAuthenticatedUser() {
+		assertEquals(0, AccessUtil.getAssignedBasisIds(Location.class).size());
+	}
+	
+	@Test
+	public void getAssignedBasisIds_shouldReturnAListOfAccessibleBasisIdsForTheAuthenticatedUser() {
+		reloginAs("dyorke", "test");
+		List<String> basisIds = AccessUtil.getAssignedBasisIds(Location.class);
+		assertEquals(2, basisIds.size());
+		assertTrue(basisIds.contains("'4000'"));
+		assertTrue(basisIds.contains("'1'"));
+		
+		basisIds = AccessUtil.getAssignedBasisIds(Program.class);
+		assertEquals(1, basisIds.size());
+		assertTrue(basisIds.contains("'1'"));
+	}
+	
+	@Test
+	public void getAssignedBasisIds_shouldReturnAnEmptyListIfNoBasisAssignedToTheAuthenticatedUser() {
+		assertEquals(0, AccessUtil.getAccessiblePersonIds(Location.class).size());
+	}
+	
+	@Test
+	public void getAccessiblePersonIds_shouldReturnAListOfAccessiblePersonIdsForTheAuthenticatedUser() {
+		reloginAs("dyorke", "test");
+		List<String> patientIds = AccessUtil.getAccessiblePersonIds(Location.class);
+		assertEquals(1, patientIds.size());
+		assertTrue(patientIds.contains("1001"));
 	}
 	
 }

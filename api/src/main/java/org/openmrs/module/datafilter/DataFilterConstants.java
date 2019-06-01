@@ -19,6 +19,6 @@ public class DataFilterConstants {
 	
 	public static final String FILTER_CONDITION_PATIENT_ID = "patient_id in (:" + FILTER_PARAM_PATIENT_IDS + ")";
 	
-	public static final String GP_LOCATION_ATTRIBUTE_TYPE_UUID = MODULE_ID + ".locationAttributeTypeUuid";
+	public static final String GP_PERSON_ATTRIBUTE_TYPE_UUIDS = MODULE_ID + ".personAttributeTypeUuids";
 	
 }

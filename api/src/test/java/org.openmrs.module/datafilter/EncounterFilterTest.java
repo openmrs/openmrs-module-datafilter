@@ -14,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
+import org.hibernate.cfg.Environment;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -32,7 +33,7 @@ public class EncounterFilterTest extends BaseModuleContextSensitiveTest {
 	
 	@BeforeClass
 	public static void beforeClass() {
-		Util.loadJavaAgent();
+		Context.addConfigProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, DataFilterSessionContext.class.getName());
 		Util.addFilterAnnotations();
 	}
 	

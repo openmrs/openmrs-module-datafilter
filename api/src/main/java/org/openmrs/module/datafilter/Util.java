@@ -10,50 +10,20 @@
 package org.openmrs.module.datafilter;
 
 import java.lang.annotation.Annotation;
-import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.aspectj.weaver.loadtime.Agent;
 import org.openmrs.Encounter;
 import org.openmrs.module.ModuleException;
 import org.openmrs.module.datafilter.filter.FilterAnnotation;
 import org.openmrs.module.datafilter.filter.FilterDefAnnotation;
 
-import com.sun.tools.attach.VirtualMachine;
-
 public class Util {
 	
 	private static final Log log = LogFactory.getLog(Util.class);
-	
-	/**
-	 * Loads aspectj weaver's java agent into the current jvm instance
-	 */
-	protected static void loadJavaAgent() {
-		if (log.isInfoEnabled()) {
-			log.info("Loading java agent");
-		}
-		
-		try {
-			String jvmName = ManagementFactory.getRuntimeMXBean().getName();
-			String pid = jvmName.substring(0, jvmName.indexOf('@'));
-			VirtualMachine vm = VirtualMachine.attach(pid);
-			URL aspectjWeaverJar = Agent.class.getProtectionDomain().getCodeSource().getLocation();
-			vm.loadAgent(aspectjWeaverJar.getFile());
-			vm.detach();
-			
-			if (log.isInfoEnabled()) {
-				log.info("Successfully loaded java agent");
-			}
-		}
-		catch (Exception e) {
-			throw new ModuleException("Failed to load java agent", e);
-		}
-	}
 	
 	/**
 	 * Adds the filter annotations to persistent classes mapped with JPA annotations that need to be

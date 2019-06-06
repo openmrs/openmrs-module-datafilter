@@ -11,6 +11,8 @@ package org.openmrs.module.datafilter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.cfg.Environment;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
 
 public class DataFilterActivator extends BaseModuleActivator {
@@ -42,7 +44,7 @@ public class DataFilterActivator extends BaseModuleActivator {
 	 */
 	@Override
 	public void willStart() {
-		Util.loadJavaAgent();
+		Context.addConfigProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, DataFilterSessionContext.class.getName());
 		Util.addFilterAnnotations();
 	}
 	

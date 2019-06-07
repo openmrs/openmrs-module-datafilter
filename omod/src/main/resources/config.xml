@@ -28,5 +28,17 @@
 	<!-- Module Activator -->
 	<activator>${project.parent.groupId}.${project.parent.artifactId}.DataFilterActivator</activator>
 
+    <!-- Global properties -->
+    <globalProperty>
+        <property>${project.parent.artifactId}.personAttributeTypeUuids</property>
+        <description>
+            A comma separated list of uuids for the person attribute types to use as the basis for filtering,
+            The format property of the matching person attribute type(s) MUST match valid java class names and
+            should match a value in the basis_type column in the ${project.parent.artifactId}_user_basis_map table.
+            E.g. if you want to add location based filtering, you would filter by Location meaning the format
+            of the person attribute type with the uuid to set here would be org.openmrs.Location, and should
+        </description>
+    </globalProperty>
+
 </module>
 

@@ -33,7 +33,7 @@ public class TestConfig {
 		SpringLiquibase liquibase = new SpringLiquibase();
 		DataSource dataSource = ((SessionFactoryImpl) sf).getConnectionProvider().unwrap(DataSource.class);
 		liquibase.setDataSource(dataSource);
-		liquibase.setChangeLog(TestConstants.ROOT_PACKAGE_DIR + "liquibase.xml");
+		liquibase.setChangeLog("liquibase.xml");
 		return liquibase;
 	}
 	

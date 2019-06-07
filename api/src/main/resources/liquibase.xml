@@ -22,11 +22,11 @@
         for a list of supported elements and attributes
     -->
 
-    <changeSet id="${project.parent.artifactId}-20190522-2300" author="wluyima">
+    <changeSet id="${project.parent.artifactId}-20190522-2305" author="wluyima">
 
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="${project.parent.artifactId}_user_basis_map"/>
+                <tableExists tableName="${project.parent.artifactId}_user_basis_map" />
             </not>
         </preConditions>
 

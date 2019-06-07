@@ -37,6 +37,11 @@ import org.springframework.orm.hibernate4.SpringSessionContext;
  *  events and then enable filters for the newly authenticated user on the current session that
  *  was previously opened, it would only be done once unlike here where we do it every time the
  *  the current session is looked up.
+ *
+ *  Also note that in unit tests multiple uses can get logged in and out within the same thread (session)
+ *  which actually should never arise in a deployed environment which is why we went with this initial
+ *  implementation for simplicity. This also explains why for the above suggested alternative approach, you
+ *  would need to listen for authentication events to refresh the enabled filters config.
  * </pre>
  */
 
@@ -56,16 +61,18 @@ public class DataFilterSessionContext extends SpringSessionContext {
 	@Override
 	public Session currentSession() throws HibernateException {
 		if (tempSessionHolder.get() != null) {
-			if (log.isDebugEnabled()) {
-				log.debug("Temporarily skipping filter enabling for current invocation");
+			//This method being called recursively from below, so return the cached session object
+			if (log.isTraceEnabled()) {
+				log.trace("Recursive call to getting the current session");
 			}
 			return tempSessionHolder.get();
 		}
 		
 		Session session = super.currentSession();
+		//TODO Do not apply filters for a super user
 		if (Daemon.isDaemonThread()) {
-			if (log.isDebugEnabled()) {
-				log.debug("Skipping filters on daemon thread");
+			if (log.isTraceEnabled()) {
+				log.trace("Skipping filters on daemon thread");
 			}
 			return session;
 		}

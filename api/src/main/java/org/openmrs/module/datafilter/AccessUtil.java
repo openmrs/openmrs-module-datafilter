@@ -9,6 +9,8 @@
  */
 package org.openmrs.module.datafilter;
 
+import static org.openmrs.module.datafilter.DataFilterConstants.GP_PERSON_ATTRIBUTE_TYPE_UUIDS;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -48,10 +50,10 @@ public class AccessUtil {
 	        + "_user_basis_map where user_id = " + ID_PLACEHOLDER + " and basis_type = '" + BASIS_TYPE_PLACEHOLDER + "'";
 	
 	private final static String PERSON_QUERY = "select person_id from person_attribute where person_attribute_type_id = "
-	        + ID_PLACEHOLDER + " and value in (" + BASIS_IDS_PLACEHOLDER + ")";
+	        + ID_PLACEHOLDER + " and value in (" + BASIS_IDS_PLACEHOLDER + ") and voided = 0";
 	
 	private final static String GP_QUERY = "select property_value from global_property where property = '"
-	        + DataFilterConstants.GP_PERSON_ATTRIBUTE_TYPE_UUIDS + "'";
+	        + GP_PERSON_ATTRIBUTE_TYPE_UUIDS + "'";
 	
 	private final static String ATTRIBUTE_TYPE_QUERY = "select person_attribute_type_id, format from person_attribute_type where uuid in ("
 	        + UUIDS_PLACEHOLDER + ")";
@@ -65,12 +67,16 @@ public class AccessUtil {
 	 */
 	public static List<String> getAccessiblePersonIds(Class<? extends BaseOpenmrsObject> basisType) {
 		if (log.isDebugEnabled()) {
-			log.debug("Looking up accessible persons for the authenticated user");
+			log.debug("Looking up accessible persons for user with Id: " + Context.getAuthenticatedUser().getId());
 		}
 		
 		List<List<Object>> rows = runQueryWithElevatedPrivileges(GP_QUERY);
 		String attribTypeUuids = null;
 		if (!rows.isEmpty()) {
+			if (rows.get(0).get(0) == null) {
+				log.warn("The value for the " + GP_PERSON_ATTRIBUTE_TYPE_UUIDS + " global property is not yet set");
+				throw new APIException("Failed to load accessible persons");
+			}
 			attribTypeUuids = rows.get(0).get(0).toString();
 		}
 		if (StringUtils.isBlank(attribTypeUuids)) {
@@ -106,7 +112,7 @@ public class AccessUtil {
 		if (!accessibleBasisIds.isEmpty()) {
 			if (log.isDebugEnabled()) {
 				log.debug(
-				    "Filtering on " + basisType.getSimpleName() + "(s) with ids: " + String.join(",", accessibleBasisIds));
+				    "Filtering on " + basisType.getSimpleName() + "(s) with id(s): " + String.join(",", accessibleBasisIds));
 			}
 			
 			String personQuery = PERSON_QUERY.replace(ID_PLACEHOLDER, attributeTypeId).replace(BASIS_IDS_PLACEHOLDER,

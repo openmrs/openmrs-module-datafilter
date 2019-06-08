@@ -65,35 +65,7 @@ public class AccessUtil {
 			log.debug("Looking up accessible persons for user with Id: " + Context.getAuthenticatedUser().getId());
 		}
 		
-		List<List<Object>> rows = runQueryWithElevatedPrivileges(GP_QUERY);
-		String attribTypeUuids = null;
-		if (!rows.isEmpty()) {
-			if (rows.get(0).get(0) == null) {
-				log.warn("The value for the " + GP_PERSON_ATTRIBUTE_TYPE_UUIDS + " global property is not yet set");
-				throw new APIException("Failed to load accessible persons");
-			}
-			attribTypeUuids = rows.get(0).get(0).toString();
-		}
-		if (StringUtils.isBlank(attribTypeUuids)) {
-			return Collections.EMPTY_LIST;
-		}
-		
-		List<String> quotedUuids = new ArrayList();
-		for (String uuid : StringUtils.split(attribTypeUuids, ",")) {
-			if (StringUtils.isNotBlank(uuid)) {
-				quotedUuids.add("'" + uuid.trim() + "'");
-			}
-		}
-		
-		String attributeQuery = ATTRIBUTE_TYPE_QUERY.replace(UUIDS_PLACEHOLDER, String.join(",", quotedUuids));
-		List<List<Object>> attributeRows = runQueryWithElevatedPrivileges(attributeQuery);
-		String attributeTypeId = null;
-		for (List<Object> row : attributeRows) {
-			if (basisType.getName().equals(row.get(1))) {
-				attributeTypeId = row.get(0).toString();
-				break;
-			}
-		}
+		Integer attributeTypeId = getPersonAttributeTypeId(basisType);
 		
 		if (attributeTypeId == null) {
 			throw new APIException("No person attribute type is configured to support filtering by " + basisType.getName());
@@ -111,7 +83,7 @@ public class AccessUtil {
 			}
 			
 			String personQuery = DataFilterConstants.PERSON_ID_QUERY
-			        .replace(DataFilterConstants.ATTRIB_TYPE_ID_PLACEHOLDER, attributeTypeId)
+			        .replace(DataFilterConstants.ATTRIB_TYPE_ID_PLACEHOLDER, attributeTypeId.toString())
 			        .replace(DataFilterConstants.BASIS_IDS_PLACEHOLDER, String.join(",", accessibleBasisIds));
 			List<List<Object>> personRows = runQueryWithElevatedPrivileges(personQuery);
 			List<String> personIds = new ArrayList<>();
@@ -164,6 +136,44 @@ public class AccessUtil {
 		finally {
 			Context.removeProxyPrivilege(PrivilegeConstants.SQL_LEVEL_ACCESS);
 		}
+	}
+	
+	/**
+	 * Gets the id of the person attribute type that matches one of the uuid configured via the
+	 * {@link DataFilterConstants#GP_PERSON_ATTRIBUTE_TYPE_UUIDS} for the specified basis type.
+	 * 
+	 * @param basisType the basis type to match
+	 * @return the if of the person attribute type
+	 */
+	public static Integer getPersonAttributeTypeId(Class<?> basisType) {
+		//TODO This method should be moved to a GlobalPropertyListener so that we can cache the ids
+		List<List<Object>> rows = runQueryWithElevatedPrivileges(GP_QUERY);
+		String attribTypeUuids = null;
+		if (!rows.isEmpty()) {
+			if (rows.get(0).get(0) == null) {
+				log.warn("The value for the " + GP_PERSON_ATTRIBUTE_TYPE_UUIDS + " global property is not yet set");
+				throw new APIException("Failed to load accessible persons");
+			}
+			attribTypeUuids = rows.get(0).get(0).toString();
+		}
+		
+		if (StringUtils.isNotBlank(attribTypeUuids)) {
+			List<String> quotedUuids = new ArrayList();
+			for (String uuid : StringUtils.split(attribTypeUuids, ",")) {
+				if (StringUtils.isNotBlank(uuid)) {
+					quotedUuids.add("'" + uuid.trim() + "'");
+				}
+			}
+			String attributeQuery = ATTRIBUTE_TYPE_QUERY.replace(UUIDS_PLACEHOLDER, String.join(",", quotedUuids));
+			List<List<Object>> attributeRows = runQueryWithElevatedPrivileges(attributeQuery);
+			for (List<Object> row : attributeRows) {
+				if (basisType.getName().equals(row.get(1))) {
+					return Integer.valueOf(row.get(0).toString());
+				}
+			}
+		}
+		
+		return null;
 	}
 	
 }

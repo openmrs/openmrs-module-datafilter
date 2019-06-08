@@ -10,6 +10,7 @@
 package org.openmrs.module.datafilter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
@@ -40,6 +41,16 @@ public class AccessUtilTest extends BaseModuleContextSensitiveTest {
 		String query = "INSERT INTO " + DataFilterConstants.MODULE_ID + "_user_basis_map VALUES (100," + userId + ", "
 		        + locationId + ", '" + Location.class.getName() + "')";
 		DatabaseUtil.executeSQL(conn, query, false);
+	}
+	
+	@Test
+	public void getPersonAttributeTypeId_shouldReturnNullIfNoUuidIsConfiguredForTheBasisType() {
+		assertNull(AccessUtil.getPersonAttributeTypeId(Program.class));
+	}
+	
+	@Test
+	public void getPersonAttributeTypeId_shouldReturnTheIdForPersonAttributeTypeForTheBasisType() {
+		assertEquals(6000, AccessUtil.getPersonAttributeTypeId(Location.class).intValue());
 	}
 	
 	@Test

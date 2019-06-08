@@ -19,16 +19,17 @@
     <location location_id="4001" name="England" description="England Clinic" creator="1" date_created="2019-05-01 00:00:00.0" retired="false" uuid="2d6c993e-c2cc-11de-8d13-0010c6dffd0e" />
 
     <person_attribute_type person_attribute_type_id="6000" name="Home Health Center" description="The health center a patient is assigned to" format="org.openmrs.Location" searchable="false" creator="1" date_created="2019-05-01 00:00:00.0" retired="false" sort_weight="1" uuid="a3b6d540-a32e-44c7-91b3-292d97667519" />
-    
-    <person person_id="1000" gender="M" birthdate="1948-01-01 00:00:00.0" birthdate_estimated="0" dead="false" creator="1" date_created="2019-05-02 00:00:00.0" voided="false" uuid="ab1b19c2-3ed6-4f63-b8c0-f762dc8d7563" />
+
+    <!-- Persons with Ids starting with 11 are users otherwise patients -->
+    <person person_id="1100" gender="M" birthdate="1948-01-01 00:00:00.0" birthdate_estimated="0" dead="false" creator="1" date_created="2019-05-02 00:00:00.0" voided="false" uuid="ab1b19c2-3ed6-4f63-b8c0-f762dc8d7563" />
     <person person_id="1001" gender="M" birthdate="1985-01-01 00:00:00.0" birthdate_estimated="0" dead="false" creator="1" date_created="2019-05-24 00:00:00.0" voided="false" uuid="bb1b19c2-3ed6-4f63-b8c0-f762dc8d7563" />
     <person person_id="1002" gender="F" birthdate="1985-01-01 00:00:00.0" birthdate_estimated="0" dead="false" creator="1" date_created="2019-05-24 00:00:00.0" voided="false" uuid="cb1b19c2-3ed6-4f63-b8c0-f762dc8d7563" />
-    <person person_id="1003" gender="M" birthdate="1979-01-01 00:00:00.0" birthdate_estimated="0" dead="false" creator="1" date_created="2019-05-24 00:00:00.0" voided="false" uuid="db1b19c2-3ed6-4f63-b8c0-f762dc8d7563" />
+    <person person_id="1101" gender="M" birthdate="1979-01-01 00:00:00.0" birthdate_estimated="0" dead="false" creator="1" date_created="2019-05-24 00:00:00.0" voided="false" uuid="db1b19c2-3ed6-4f63-b8c0-f762dc8d7563" />
 
-    <person_name person_name_id="2000" preferred="true" person_id="1000" given_name="Dwight" family_name="Yorke" creator="1" date_created="2019-05-02 00:00:00.0" voided="false" uuid="189e3a7b-6482-487d-94ce-c07bb3ca3cc8" />
+    <person_name person_name_id="2000" preferred="true" person_id="1100" given_name="Dwight" family_name="Yorke" creator="1" date_created="2019-05-02 00:00:00.0" voided="false" uuid="189e3a7b-6482-487d-94ce-c07bb3ca3cc8" />
     <person_name person_name_id="2001" preferred="true" person_id="1001" given_name="Emmanuel" middle_name="Wasswa" family_name="Navuga" creator="1" date_created="2019-05-02 00:00:00.0" voided="false" uuid="289e3a7b-6482-487d-94ce-c07bb3ca3cc8" />
     <person_name person_name_id="2002" preferred="true" person_id="1002" given_name="Emmanuella" middle_name="Nakato" family_name="Navuga" creator="1" date_created="2019-05-02 00:00:00.0" voided="false" uuid="389e3a7b-6482-487d-94ce-c07bb3ca3cc8" />
-    <person_name person_name_id="2003" preferred="true" person_id="1003" given_name="David" middle_name="Beckham" creator="1" date_created="2019-05-02 00:00:00.0" voided="false" uuid="489e3a7b-6482-487d-94ce-c07bb3ca3cc8" />
+    <person_name person_name_id="2003" preferred="true" person_id="1101" given_name="David" middle_name="Beckham" creator="1" date_created="2019-05-02 00:00:00.0" voided="false" uuid="489e3a7b-6482-487d-94ce-c07bb3ca3cc8" />
 
     <person_attribute person_attribute_id="7000" person_id="1001" value="4000" person_attribute_type_id="6000" creator="1" date_created="2019-05-24 00:00:00.0" voided="false" uuid="a768f3da-b692-44b7-a33f-abf2c450474f" />
     <person_attribute person_attribute_id="7001" person_id="1002" value="4001" person_attribute_type_id="6000" creator="1" date_created="2019-05-24 00:00:00.0" voided="false" uuid="b768f3da-b692-44b7-a33f-abf2c450474f" />
@@ -39,8 +40,8 @@
     <patient_identifier patient_identifier_id="5000" patient_id="1001" identifier="M100" identifier_type="2" preferred="1" location_id="4000" creator="1" date_created="2019-05-24 00:00:00.0" voided="false" uuid="af41928c-3bca-48d9-a4dc-9198f6b2873c" />
     <patient_identifier patient_identifier_id="5001" patient_id="1002" identifier="F100" identifier_type="2" preferred="1" location_id="4000" creator="1" date_created="2019-05-24 00:00:00.0" voided="false" uuid="bf41928c-3bca-48d9-a4dc-9198f6b2873c" />
 
-    <users user_id="3000" person_id="1000" system_id="1-2" username="dyorke" password="4a1750c8607d0fa237de36c6305715c223415189" salt="c788c6ad82a157b712392ca695dfcf2eed193d7f" creator="1" date_created="2019-05-02 00:00:00.0" retired="false" uuid="b2d8f5c2-e131-11de-babe-001e378eb67f" />
-    <users user_id="3001" person_id="1000" system_id="1-3" username="dBeckham" password="4a1750c8607d0fa237de36c6305715c223415189" salt="c788c6ad82a157b712392ca695dfcf2eed193d7f" creator="1" date_created="2019-05-02 00:00:00.0" retired="false" uuid="c2d8f5c2-e131-11de-babe-001e378eb67f" />
+    <users user_id="3000" person_id="1100" system_id="1-2" username="dyorke" password="4a1750c8607d0fa237de36c6305715c223415189" salt="c788c6ad82a157b712392ca695dfcf2eed193d7f" creator="1" date_created="2019-05-02 00:00:00.0" retired="false" uuid="b2d8f5c2-e131-11de-babe-001e378eb67f" />
+    <users user_id="3001" person_id="1101" system_id="1-3" username="dBeckham" password="4a1750c8607d0fa237de36c6305715c223415189" salt="c788c6ad82a157b712392ca695dfcf2eed193d7f" creator="1" date_created="2019-05-02 00:00:00.0" retired="false" uuid="c2d8f5c2-e131-11de-babe-001e378eb67f" />
 
     <privilege privilege="Get Encounters" description="Can View Encounters" uuid="ae80cb6d-c291-46c8-8d3a-96dc33d188fc" />
 

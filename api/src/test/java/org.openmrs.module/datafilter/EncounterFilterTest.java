@@ -73,7 +73,7 @@ public class EncounterFilterTest extends BaseModuleContextSensitiveTest {
 	public void getEncounters_shouldNoEncountersIfTheUserIsNotGrantedAccessToAnyBasis() throws Exception {
 		reloginAs("dBeckham", "test");
 		final String name = "Navuga";
-		int expCount = 0;
+		final int expCount = 0;
 		assertEquals(expCount, encounterService.getCountOfEncounters(name, false).intValue());
 		Collection<Encounter> encounters = encounterService.getEncounters(name, 0, Integer.MAX_VALUE, false);
 		assertEquals(expCount, encounters.size());

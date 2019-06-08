@@ -22,7 +22,7 @@
     </appender>
 
     <logger name="org.openmrs.module.datafilter">
-        <level value="DEBUG" />
+        <level value="WARN" />
     </logger>
 
     <root>

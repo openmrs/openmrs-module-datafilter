@@ -42,15 +42,10 @@ public class AccessUtil {
 	
 	private final static String BASIS_TYPE_PLACEHOLDER = "@basis";
 	
-	private final static String BASIS_IDS_PLACEHOLDER = "@basisIds";
-	
 	private final static String UUIDS_PLACEHOLDER = "@uuids";
 	
 	private final static String BASIS_QUERY = "select basis_id from " + DataFilterConstants.MODULE_ID
 	        + "_user_basis_map where user_id = " + ID_PLACEHOLDER + " and basis_type = '" + BASIS_TYPE_PLACEHOLDER + "'";
-	
-	private final static String PERSON_QUERY = "select person_id from person_attribute where person_attribute_type_id = "
-	        + ID_PLACEHOLDER + " and value in (" + BASIS_IDS_PLACEHOLDER + ") and voided = 0";
 	
 	private final static String GP_QUERY = "select property_value from global_property where property = '"
 	        + GP_PERSON_ATTRIBUTE_TYPE_UUIDS + "'";
@@ -115,8 +110,9 @@ public class AccessUtil {
 				    "Filtering on " + basisType.getSimpleName() + "(s) with id(s): " + String.join(",", accessibleBasisIds));
 			}
 			
-			String personQuery = PERSON_QUERY.replace(ID_PLACEHOLDER, attributeTypeId).replace(BASIS_IDS_PLACEHOLDER,
-			    String.join(",", accessibleBasisIds));
+			String personQuery = DataFilterConstants.PERSON_ID_QUERY
+			        .replace(DataFilterConstants.ATTRIB_TYPE_ID_PLACEHOLDER, attributeTypeId)
+			        .replace(DataFilterConstants.BASIS_IDS_PLACEHOLDER, String.join(",", accessibleBasisIds));
 			List<List<Object>> personRows = runQueryWithElevatedPrivileges(personQuery);
 			List<String> personIds = new ArrayList<>();
 			personRows.forEach((List<Object> personRow) -> personIds.add(personRow.get(0).toString()));
@@ -144,7 +140,7 @@ public class AccessUtil {
 		
 		List<List<Object>> rows = runQueryWithElevatedPrivileges(query);
 		List<String> basisIds = new ArrayList<>();
-		rows.forEach((List<Object> row) -> basisIds.add("'" + row.get(0).toString() + "'"));
+		rows.forEach((List<Object> row) -> basisIds.add(row.get(0).toString()));
 		
 		return basisIds;
 	}

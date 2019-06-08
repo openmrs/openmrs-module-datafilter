@@ -11,6 +11,7 @@ package org.openmrs.module.datafilter;
 
 import static org.openmrs.module.datafilter.DataFilterConstants.FILTER_NAME_ENCOUNTER;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -81,22 +82,18 @@ public class DataFilterSessionContext extends SpringSessionContext {
 			log.debug("Enabling filter on the current session");
 		}
 		
-		//User isn't granted access to patients at any location, so we set ids to -1,
-		//because patient Ids are all > 0, so this in theory will match no records
-		String patientIds = "-1";
+		//If the user isn't granted access to patients at any basis, we add -1 because ids are all >0,
+		//in theory the query will match no records if the user isn't granted access to any basis
+		List<String> basisIds = new ArrayList();
+		basisIds.add("-1");
 		if (Context.getAuthenticatedUser() != null) {
-			List<String> accessiblePersonIds;
 			try {
 				//Don't run this method on the next line since we're already inside it
 				tempSessionHolder.set(session);
-				accessiblePersonIds = AccessUtil.getAccessiblePersonIds(Location.class);
+				basisIds = AccessUtil.getAssignedBasisIds(Location.class);
 			}
 			finally {
 				tempSessionHolder.remove();
-			}
-			
-			if (!accessiblePersonIds.isEmpty()) {
-				patientIds = String.join(",", accessiblePersonIds);
 			}
 		}
 		
@@ -104,7 +101,9 @@ public class DataFilterSessionContext extends SpringSessionContext {
 		if (filter == null) {
 			filter = session.enableFilter(FILTER_NAME_ENCOUNTER);
 		}
-		filter.setParameter(DataFilterConstants.FILTER_PARAM_PATIENT_IDS, patientIds);
+		
+		filter.setParameter(DataFilterConstants.PARAM_NAME_ATTRIB_TYPE_ID, 6000);
+		filter.setParameterList(DataFilterConstants.PARAM_NAME_BASIS_IDS, basisIds);
 		
 		return session;
 	}

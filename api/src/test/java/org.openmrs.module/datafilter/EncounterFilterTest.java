@@ -52,11 +52,31 @@ public class EncounterFilterTest extends BaseModuleContextSensitiveTest {
 	public void getEncounters_shouldReturnEncountersBelongingToPatientsAccessibleToTheUser() throws Exception {
 		reloginAs("dyorke", "test");
 		final String name = "Navuga";
-		assertEquals(2, encounterService.getCountOfEncounters(name, false).intValue());
+		int expCount = 2;
+		assertEquals(expCount, encounterService.getCountOfEncounters(name, false).intValue());
 		Collection<Encounter> encounters = encounterService.getEncounters(name, 0, Integer.MAX_VALUE, false);
-		assertEquals(2, encounters.size());
+		assertEquals(expCount, encounters.size());
 		assertTrue(TestUtil.containsId(encounters, 1000));
 		assertTrue(TestUtil.containsId(encounters, 1001));
+		
+		AccessUtilTest.grantLocationAccessToUser(Context.getAuthenticatedUser().getUserId(), 4001, getConnection());
+		expCount = 3;
+		assertEquals(expCount, encounterService.getCountOfEncounters(name, false).intValue());
+		encounters = encounterService.getEncounters(name, 0, Integer.MAX_VALUE, false);
+		assertEquals(expCount, encounters.size());
+		assertTrue(TestUtil.containsId(encounters, 1000));
+		assertTrue(TestUtil.containsId(encounters, 1001));
+		assertTrue(TestUtil.containsId(encounters, 1002));
+	}
+	
+	@Test
+	public void getEncounters_shouldNoEncountersIfTheUserIsNotGrantedAccessToAnyBasis() throws Exception {
+		reloginAs("dBeckham", "test");
+		final String name = "Navuga";
+		int expCount = 0;
+		assertEquals(expCount, encounterService.getCountOfEncounters(name, false).intValue());
+		Collection<Encounter> encounters = encounterService.getEncounters(name, 0, Integer.MAX_VALUE, false);
+		assertEquals(expCount, encounters.size());
 	}
 	
 }

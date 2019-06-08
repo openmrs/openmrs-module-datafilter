@@ -12,14 +12,21 @@ package org.openmrs.module.datafilter.filter;
 import java.lang.annotation.Annotation;
 
 import org.hibernate.annotations.ParamDef;
-import org.hibernate.type.StringType;
-import org.openmrs.module.datafilter.DataFilterConstants;
 
 /**
  * An instance of this class represents a {@link ParamDef} to be added to
  * {@link FilterDefAnnotation} instance
  */
 public class ParamDefAnnotation implements ParamDef {
+	
+	private String name;
+	
+	private String type;
+	
+	public ParamDefAnnotation(String name, String type) {
+		this.name = name;
+		this.type = type;
+	}
 	
 	/**
 	 * The value of the patientIds param should be a comma separated list of patient ids to match
@@ -28,7 +35,7 @@ public class ParamDefAnnotation implements ParamDef {
 	 */
 	@Override
 	public String name() {
-		return DataFilterConstants.FILTER_PARAM_PATIENT_IDS;
+		return name;
 	}
 	
 	/**
@@ -36,7 +43,7 @@ public class ParamDefAnnotation implements ParamDef {
 	 */
 	@Override
 	public String type() {
-		return StringType.INSTANCE.getName();
+		return type;
 	}
 	
 	/**

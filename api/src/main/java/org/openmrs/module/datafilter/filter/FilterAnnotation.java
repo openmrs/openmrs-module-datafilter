@@ -56,7 +56,7 @@ public class FilterAnnotation implements Filter {
 	 */
 	@Override
 	public boolean deduceAliasInjectionPoints() {
-		return false;
+		return true;
 	}
 	
 	/**

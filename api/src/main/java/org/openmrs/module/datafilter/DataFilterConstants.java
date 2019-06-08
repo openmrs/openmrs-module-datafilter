@@ -13,11 +13,21 @@ public class DataFilterConstants {
 	
 	public static final String MODULE_ID = "datafilter";
 	
-	public static final String FILTER_PARAM_PATIENT_IDS = "patientIds";
-	
 	public static final String FILTER_NAME_ENCOUNTER = "encounterFilter";
 	
-	public static final String FILTER_CONDITION_PATIENT_ID = "this_.patient_id in (:" + FILTER_PARAM_PATIENT_IDS + ")";
+	public static final String PARAM_NAME_ATTRIB_TYPE_ID = "attributeTypeId";
+	
+	public static final String PARAM_NAME_BASIS_IDS = "basisIds";
+	
+	public final static String ATTRIB_TYPE_ID_PLACEHOLDER = ":" + PARAM_NAME_ATTRIB_TYPE_ID;
+	
+	public final static String BASIS_IDS_PLACEHOLDER = ":" + PARAM_NAME_BASIS_IDS;
+	
+	public static final String PERSON_ID_QUERY = "SELECT pa.person_id FROM person_attribute pa WHERE "
+	        + "pa.person_attribute_type_id = :" + PARAM_NAME_ATTRIB_TYPE_ID + " AND pa.value in (:" + PARAM_NAME_BASIS_IDS
+	        + ") AND pa.voided = 0";
+	
+	public static final String FILTER_CONDITION_PATIENT_ID = "patient_id in (" + PERSON_ID_QUERY + ")";
 	
 	public static final String GP_PERSON_ATTRIBUTE_TYPE_UUIDS = MODULE_ID + ".personAttributeTypeUuids";
 	

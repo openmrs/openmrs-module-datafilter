@@ -13,12 +13,21 @@ import java.lang.annotation.Annotation;
 
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.StringType;
+import org.openmrs.module.datafilter.DataFilterConstants;
 
 /**
  * An instance of this class represents a {@link FilterDef} to be added to an annotated persistent
  * class
  */
 public class FilterDefAnnotation implements FilterDef {
+	
+	ParamDefAnnotation attribTypeParamDef = new ParamDefAnnotation(DataFilterConstants.PARAM_NAME_ATTRIB_TYPE_ID,
+	        IntegerType.INSTANCE.getName());
+	
+	ParamDefAnnotation basisIdsParamDef = new ParamDefAnnotation(DataFilterConstants.PARAM_NAME_BASIS_IDS,
+	        StringType.INSTANCE.getName());
 	
 	private String name;
 	
@@ -60,7 +69,7 @@ public class FilterDefAnnotation implements FilterDef {
 	 */
 	@Override
 	public ParamDef[] parameters() {
-		return new ParamDef[] { new ParamDefAnnotation() };
+		return new ParamDef[] { attribTypeParamDef, basisIdsParamDef };
 	}
 	
 }

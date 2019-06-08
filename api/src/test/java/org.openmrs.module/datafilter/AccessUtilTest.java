@@ -12,6 +12,7 @@ package org.openmrs.module.datafilter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.Connection;
 import java.util.List;
 
 import org.junit.Before;
@@ -21,6 +22,7 @@ import org.openmrs.Program;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UsernamePasswordCredentials;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.openmrs.util.DatabaseUtil;
 
 public class AccessUtilTest extends BaseModuleContextSensitiveTest {
 	
@@ -34,6 +36,12 @@ public class AccessUtilTest extends BaseModuleContextSensitiveTest {
 		Context.authenticate(new UsernamePasswordCredentials(username, password));
 	}
 	
+	public static void grantLocationAccessToUser(Integer userId, Integer locationId, Connection conn) {
+		String query = "INSERT INTO " + DataFilterConstants.MODULE_ID + "_user_basis_map VALUES (100," + userId + ", "
+		        + locationId + ", '" + Location.class.getName() + "')";
+		DatabaseUtil.executeSQL(conn, query, false);
+	}
+	
 	@Test
 	public void getAssignedBasisIds_shouldReturnAnEmptyListIfNoneConfiguredForTheAuthenticatedUser() {
 		assertEquals(0, AccessUtil.getAssignedBasisIds(Location.class).size());
@@ -44,12 +52,12 @@ public class AccessUtilTest extends BaseModuleContextSensitiveTest {
 		reloginAs("dyorke", "test");
 		List<String> basisIds = AccessUtil.getAssignedBasisIds(Location.class);
 		assertEquals(2, basisIds.size());
-		assertTrue(basisIds.contains("'4000'"));
-		assertTrue(basisIds.contains("'1'"));
+		assertTrue(basisIds.contains("4000"));
+		assertTrue(basisIds.contains("1"));
 		
 		basisIds = AccessUtil.getAssignedBasisIds(Program.class);
 		assertEquals(1, basisIds.size());
-		assertTrue(basisIds.contains("'1'"));
+		assertTrue(basisIds.contains("1"));
 	}
 	
 	@Test
@@ -63,6 +71,12 @@ public class AccessUtilTest extends BaseModuleContextSensitiveTest {
 		List<String> patientIds = AccessUtil.getAccessiblePersonIds(Location.class);
 		assertEquals(1, patientIds.size());
 		assertTrue(patientIds.contains("1001"));
+		
+		grantLocationAccessToUser(Context.getAuthenticatedUser().getUserId(), 4001, getConnection());
+		patientIds = AccessUtil.getAccessiblePersonIds(Location.class);
+		assertEquals(2, patientIds.size());
+		assertTrue(patientIds.contains("1001"));
+		assertTrue(patientIds.contains("1002"));
 	}
 	
 }

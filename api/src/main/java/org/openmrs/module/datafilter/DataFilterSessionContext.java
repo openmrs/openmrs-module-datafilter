@@ -94,10 +94,6 @@ public class DataFilterSessionContext extends SpringSessionContext {
 			if (attributeTypeId == null) {
 				//In theory this should match no attribute type hence no patients
 				attributeTypeId = -1;
-				//If we have an authenticated user then for sure the attributed type has never been set
-				if (Context.getAuthenticatedUser() != null) {
-					log.warn("No person attribute type has been configured to support filtering by Locations");
-				}
 			}
 		}
 		finally {
@@ -109,7 +105,7 @@ public class DataFilterSessionContext extends SpringSessionContext {
 		List<String> basisIds = new ArrayList();
 		basisIds.add("-1");
 		
-		if (Context.getAuthenticatedUser() != null) {
+		if (Context.isAuthenticated()) {
 			try {
 				tempSessionHolder.set(session);
 				basisIds.addAll(AccessUtil.getAssignedBasisIds(Location.class));

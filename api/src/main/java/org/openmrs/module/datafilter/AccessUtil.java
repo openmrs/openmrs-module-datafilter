@@ -139,7 +139,7 @@ public class AccessUtil {
 	}
 	
 	/**
-	 * Gets the id of the person attribute type that matches one of the uuid configured via the
+	 * Gets the id of the person attribute type that matches any of the uuids configured via the
 	 * {@link DataFilterConstants#GP_PERSON_ATTRIBUTE_TYPE_UUIDS} for the specified basis type.
 	 * 
 	 * @param basisType the basis type to match

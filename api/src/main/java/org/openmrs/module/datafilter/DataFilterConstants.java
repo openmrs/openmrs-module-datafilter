@@ -13,7 +13,9 @@ public class DataFilterConstants {
 	
 	public static final String MODULE_ID = "datafilter";
 	
-	public static final String FILTER_NAME_ENCOUNTER = "encounterFilter";
+	public static final String FILTER_NAME_ENCOUNTER = MODULE_ID + "_encounterFilter";
+	
+	public static final String FILTER_NAME_VISIT = MODULE_ID + "_visitFilter";
 	
 	public static final String PARAM_NAME_ATTRIB_TYPE_ID = "attributeTypeId";
 	

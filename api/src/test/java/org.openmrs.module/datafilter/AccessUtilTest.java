@@ -38,6 +38,7 @@ public class AccessUtilTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	public static void grantLocationAccessToUser(Integer userId, Integer locationId, Connection conn) {
+	    //TODO replace the hard coded id
 		String query = "INSERT INTO " + DataFilterConstants.MODULE_ID + "_user_basis_map VALUES (100," + userId + ", "
 		        + locationId + ", '" + Location.class.getName() + "')";
 		DatabaseUtil.executeSQL(conn, query, false);

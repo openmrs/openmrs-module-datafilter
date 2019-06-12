@@ -10,6 +10,7 @@
 package org.openmrs.module.datafilter;
 
 import static org.openmrs.module.datafilter.DataFilterConstants.FILTER_NAME_ENCOUNTER;
+import static org.openmrs.module.datafilter.DataFilterConstants.FILTER_NAME_VISIT;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,13 +116,24 @@ public class DataFilterSessionContext extends SpringSessionContext {
 			}
 		}
 		
-		Filter filter = session.getEnabledFilter(FILTER_NAME_ENCOUNTER);
-		if (filter == null) {
-			filter = session.enableFilter(FILTER_NAME_ENCOUNTER);
+		Filter encounterFilter = session.getEnabledFilter(FILTER_NAME_ENCOUNTER);
+		if (encounterFilter == null) {
+			encounterFilter = session.enableFilter(FILTER_NAME_ENCOUNTER);
 		}
 		
-		filter.setParameter(DataFilterConstants.PARAM_NAME_ATTRIB_TYPE_ID, attributeTypeId);
-		filter.setParameterList(DataFilterConstants.PARAM_NAME_BASIS_IDS, basisIds);
+		Filter visitFilter = session.getEnabledFilter(FILTER_NAME_VISIT);
+		if (visitFilter == null) {
+			visitFilter = session.enableFilter(FILTER_NAME_VISIT);
+		}
+		
+		List<Filter> filters = new ArrayList();
+		filters.add(encounterFilter);
+		filters.add(visitFilter);
+		
+		for (Filter filter : filters) {
+			filter.setParameter(DataFilterConstants.PARAM_NAME_ATTRIB_TYPE_ID, attributeTypeId);
+			filter.setParameterList(DataFilterConstants.PARAM_NAME_BASIS_IDS, basisIds);
+		}
 		
 		return session;
 	}

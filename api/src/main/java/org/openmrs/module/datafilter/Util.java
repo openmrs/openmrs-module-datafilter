@@ -17,6 +17,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
+import org.openmrs.Visit;
 import org.openmrs.module.ModuleException;
 import org.openmrs.module.datafilter.filter.FilterAnnotation;
 import org.openmrs.module.datafilter.filter.FilterDefAnnotation;
@@ -38,6 +39,9 @@ public class Util {
 			//TODO First check if the class has the @Entity annotation before we even bother to add others
 			addAnnotationToClass(Encounter.class, new FilterDefAnnotation(DataFilterConstants.FILTER_NAME_ENCOUNTER));
 			addAnnotationToClass(Encounter.class, new FilterAnnotation(DataFilterConstants.FILTER_NAME_ENCOUNTER,
+			        DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
+			addAnnotationToClass(Visit.class, new FilterDefAnnotation(DataFilterConstants.FILTER_NAME_VISIT));
+			addAnnotationToClass(Visit.class, new FilterAnnotation(DataFilterConstants.FILTER_NAME_VISIT,
 			        DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
 			
 			if (log.isInfoEnabled()) {

@@ -60,6 +60,16 @@
 				<version>${openMRSVersion}</version>
 				<scope>provided</scope>
 			</dependency>
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjrt</artifactId>
+                <version>${aspectJVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>${aspectJVersion}</version>
+            </dependency>
 
             <!-- Test dependencies -->
 			<dependency>

@@ -14,38 +14,22 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
-import org.hibernate.cfg.Environment;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openmrs.Encounter;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
-import org.openmrs.api.context.UsernamePasswordCredentials;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.TestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class EncounterFilterTest extends BaseModuleContextSensitiveTest {
+public class EncounterFilterTest extends BaseFilterTest {
 	
 	@Autowired
 	private EncounterService encounterService;
 	
-	@BeforeClass
-	public static void beforeClass() {
-		Context.addConfigProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, DataFilterSessionContext.class.getName());
-		Util.addFilterAnnotations();
-	}
-	
 	@Before
-	public void beforeTestMethod() {
-		executeDataSet(TestConstants.MODULE_TEST_DATASET_XML);
+	public void before() {
 		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "encounters.xml");
-	}
-	
-	private void reloginAs(String username, String password) {
-		Context.logout();
-		Context.authenticate(new UsernamePasswordCredentials(username, password));
 	}
 	
 	@Test

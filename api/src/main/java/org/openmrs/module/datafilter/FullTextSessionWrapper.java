@@ -10,6 +10,9 @@
 package org.openmrs.module.datafilter;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,6 +24,12 @@ import org.hibernate.search.FullTextSession;
 import org.hibernate.search.FullTextSharedSessionBuilder;
 import org.hibernate.search.MassIndexer;
 import org.hibernate.search.SearchFactory;
+import org.hibernate.search.filter.FullTextFilter;
+import org.openmrs.Location;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PersonAttribute;
+import org.openmrs.PersonName;
+import org.openmrs.api.APIException;
 
 /**
  * Custom implementation of the {@link FullTextSession} interface that acts a wrapper around a
@@ -31,6 +40,15 @@ import org.hibernate.search.SearchFactory;
 final class FullTextSessionWrapper extends SessionDelegatorBaseImpl implements FullTextSession {
 	
 	private static final Log log = LogFactory.getLog(FullTextSessionWrapper.class);
+	
+	private static final HashMap<Class<?>, String> CLASS_FIELD_MAP;
+	
+	static {
+		CLASS_FIELD_MAP = new HashMap(3);
+		CLASS_FIELD_MAP.put(PersonName.class, "person.personId");
+		CLASS_FIELD_MAP.put(PersonAttribute.class, "person.personId");
+		CLASS_FIELD_MAP.put(PatientIdentifier.class, "patient.patientId");
+	}
 	
 	private FullTextSession fullTextSession;
 	
@@ -44,12 +62,33 @@ final class FullTextSessionWrapper extends SessionDelegatorBaseImpl implements F
 	 */
 	@Override
 	public FullTextQuery createFullTextQuery(Query luceneQuery, Class<?>... entities) {
-		if (log.isDebugEnabled()) {
-			log.debug("Enabling filter on the full text session");
-			//TODO enable wrappers
+		if (entities.length > 1) {
+			throw new APIException("Can't apply full text filters to a query with multiple persistent classes");
 		}
-
-		return fullTextSession.createFullTextQuery(luceneQuery, entities);
+		
+		Class<?> entityClass = entities[0];
+		if (!CLASS_FIELD_MAP.containsKey(entityClass)) {
+			if (log.isDebugEnabled()) {
+				log.debug("Skipping enabling of filters on the full text query for " + entityClass.getName());
+			}
+		}
+		
+		if (log.isDebugEnabled()) {
+			log.debug("Enabling filters on the full text query for " + entityClass.getName());
+		}
+		
+		FullTextQuery query = fullTextSession.createFullTextQuery(luceneQuery, entityClass);
+		FullTextFilter filter = query.enableFullTextFilter(DataFilterConstants.FULL_TEXT_FILTER_NAME_PATIENT);
+		filter.setParameter("field", CLASS_FIELD_MAP.get(entityClass));
+		List<String> personIds = AccessUtil.getAccessiblePersonIds(Location.class);
+		if (personIds.isEmpty()) {
+			//If the user isn't granted access to patients at any basis, we add -1 because ids are all > 0,
+			//in theory the query will match no records if the user isn't granted access to any basis
+			personIds = Collections.singletonList("-1");
+		}
+		filter.setParameter("patientIds", personIds);
+		
+		return query;
 	}
 	
 	/**

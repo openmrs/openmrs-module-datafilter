@@ -59,8 +59,7 @@ public class PatientFilterTest extends BaseFilterTest {
 	@Test
 	public void getAllPatients_shouldReturnNoPatientsIfTheUserIsNotGrantedAccessToAnyBasis() {
 		reloginAs("dBeckham", "test");
-		Collection<Patient> encounters = patientService.getAllPatients();
-		assertEquals(0, encounters.size());
+		assertEquals(0, patientService.getAllPatients().size());
 	}
 	
 	@Test

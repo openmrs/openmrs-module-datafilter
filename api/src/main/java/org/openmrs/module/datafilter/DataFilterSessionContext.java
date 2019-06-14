@@ -102,7 +102,7 @@ public class DataFilterSessionContext extends SpringSessionContext {
 			tempSessionHolder.remove();
 		}
 		
-		//If the user isn't granted access to patients at any basis, we add -1 because ids are all >0,
+		//If the user isn't granted access to patients at any basis, we add -1 because ids are all > 0,
 		//in theory the query will match no records if the user isn't granted access to any basis
 		List<String> basisIds = new ArrayList();
 		basisIds.add("-1");

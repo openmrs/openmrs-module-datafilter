@@ -20,8 +20,10 @@ import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.module.ModuleException;
+import org.openmrs.module.datafilter.filter.ExcludePatientsByIdFullTextFilter;
 import org.openmrs.module.datafilter.filter.FilterAnnotation;
 import org.openmrs.module.datafilter.filter.FilterDefAnnotation;
+import org.openmrs.module.datafilter.filter.FullTextFilterDefAnnotation;
 
 public class Util {
 	
@@ -49,6 +51,8 @@ public class Util {
 			addAnnotationToClass(Patient.class, new FilterDefAnnotation(DataFilterConstants.FILTER_NAME_PATIENT));
 			addAnnotationToClass(Patient.class, new FilterAnnotation(DataFilterConstants.FILTER_NAME_PATIENT,
 			        DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
+			addAnnotationToClass(Patient.class, new FullTextFilterDefAnnotation(
+			        DataFilterConstants.FULL_TEXT_FILTER_NAME_PATIENT, ExcludePatientsByIdFullTextFilter.class));
 			
 			if (log.isInfoEnabled()) {
 				log.info("Successfully added filter annotations");

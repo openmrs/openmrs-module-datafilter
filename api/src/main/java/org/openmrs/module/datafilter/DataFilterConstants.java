@@ -16,8 +16,10 @@ public class DataFilterConstants {
 	public static final String FILTER_NAME_ENCOUNTER = MODULE_ID + "_encounterFilter";
 	
 	public static final String FILTER_NAME_VISIT = MODULE_ID + "_visitFilter";
-
-    public static final String FILTER_NAME_PATIENT = MODULE_ID + "_patientFilter";
+	
+	public static final String FILTER_NAME_PATIENT = MODULE_ID + "_patientFilter";
+	
+	public static final String FULL_TEXT_FILTER_NAME_PATIENT = MODULE_ID + "_patientFullTextFilter";
 	
 	public static final String PARAM_NAME_ATTRIB_TYPE_ID = "attributeTypeId";
 	

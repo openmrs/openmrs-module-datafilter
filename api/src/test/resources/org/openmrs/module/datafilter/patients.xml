@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+
+    This Source Code Form is subject to the terms of the Mozilla Public License,
+    v. 2.0. If a copy of the MPL was not distributed with this file, You can
+    obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+    the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+
+    Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+    graphic logo is a trademark of OpenMRS Inc.
+
+-->
+
+<dataset>
+    <person person_id="1501" gender="M" birthdate="1991-01-01 00:00:00.0" birthdate_estimated="0" dead="0" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="ab2b29c2-3ed6-4f63-b8c0-f762dc8d7563" />
+    <person person_id="1502" gender="M" birthdate="1992-01-01 00:00:00.0" birthdate_estimated="0" dead="0" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="bb2b29c2-3ed6-4f63-b8c0-f762dc8d7563" />
+    <person person_id="1503" gender="F" birthdate="1993-01-01 00:00:00.0" birthdate_estimated="0" dead="0" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="cb2b29c2-3ed6-4f63-b8c0-f762dc8d7563" />
+    <person person_id="1504" gender="F" birthdate="1994-01-01 00:00:00.0" birthdate_estimated="0" dead="0" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="db2b29c2-3ed6-4f63-b8c0-f762dc8d7563" />
+
+    <person_name person_name_id="2501" preferred="1" person_id="1501" given_name="Magidu" family_name="Musisi" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="189f3a7b-6482-487d-94ce-c07bb3ca3cc8" />
+    <person_name person_name_id="2502" preferred="1" person_id="1502" given_name="Magidu" family_name="Vubya" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="289f3a7b-6482-487d-94ce-c07bb3ca3cc8" />
+    <person_name person_name_id="2503" preferred="1" person_id="1503" given_name="Magidu" family_name="Navuga" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="389f3a7b-6482-487d-94ce-c07bb3ca3cc8" />
+    <person_name person_name_id="2504" preferred="1" person_id="1504" given_name="Magidu" family_name="Ssemakula" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="489f3a7b-6482-487d-94ce-c07bb3ca3cc8" />
+
+    <person_attribute person_attribute_id="7501" person_id="1501" value="4000" person_attribute_type_id="6000" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="a869f3da-b692-44b7-a33f-abf2c450474f" />
+    <person_attribute person_attribute_id="7502" person_id="1502" value="4001" person_attribute_type_id="6000" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="b868f3da-b692-44b7-a33f-abf2c450474f" />
+    <person_attribute person_attribute_id="7503" person_id="1503" value="4000" person_attribute_type_id="6000" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="c868f3da-b692-44b7-a33f-abf2c450474f" />
+
+    <patient patient_id="1501" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" />
+    <patient patient_id="1502" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" />
+    <patient patient_id="1503" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" />
+    <patient patient_id="1504" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" />
+
+    <patient_identifier patient_identifier_id="5501" patient_id="1501" identifier="M151" identifier_type="2" preferred="1" location_id="4000" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="af41949c-3bca-48d9-a4dc-9198f6b2873c" />
+    <patient_identifier patient_identifier_id="5502" patient_id="1502" identifier="M152" identifier_type="2" preferred="1" location_id="4001" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="bf41939c-3bca-48d9-a4dc-9198f6b2873c" />
+    <patient_identifier patient_identifier_id="5503" patient_id="1503" identifier="M153" identifier_type="2" preferred="1" location_id="4000" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="cf41939c-3bca-48d9-a4dc-9198f6b2873c" />
+    <patient_identifier patient_identifier_id="5504" patient_id="1504" identifier="M154" identifier_type="2" preferred="1" location_id="4000" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="df41939c-3bca-48d9-a4dc-9198f6b2873c" />
+</dataset>

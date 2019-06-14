@@ -33,7 +33,7 @@ public class EncounterFilterTest extends BaseFilterTest {
 	}
 	
 	@Test
-	public void getEncounters_shouldReturnEncountersBelongingToPatientsAccessibleToTheUser() throws Exception {
+	public void getEncounters_shouldReturnEncountersBelongingToPatientsAccessibleToTheUser() {
 		reloginAs("dyorke", "test");
 		final String name = "Navuga";
 		int expCount = 2;
@@ -54,7 +54,7 @@ public class EncounterFilterTest extends BaseFilterTest {
 	}
 	
 	@Test
-	public void getEncounters_shouldNoEncountersIfTheUserIsNotGrantedAccessToAnyBasis() throws Exception {
+	public void getEncounters_shouldReturnNoEncountersIfTheUserIsNotGrantedAccessToAnyBasis() {
 		reloginAs("dBeckham", "test");
 		final String name = "Navuga";
 		final int expCount = 0;

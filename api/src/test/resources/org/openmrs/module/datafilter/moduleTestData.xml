@@ -44,10 +44,12 @@
     <users user_id="3001" person_id="1101" system_id="1-3" username="dBeckham" password="4a1750c8607d0fa237de36c6305715c223415189" salt="c788c6ad82a157b712392ca695dfcf2eed193d7f" creator="1" date_created="2019-05-02 00:00:00.0" retired="false" uuid="c2d8f5c2-e131-11de-babe-001e378eb67f" />
 
     <privilege privilege="Get Encounters" description="Can View Encounters" uuid="ae80cb6d-c291-46c8-8d3a-96dc33d188fc" />
+    <privilege privilege="Get Patients" description="Can View Patients" uuid="be80cb6d-c291-46c8-8d3a-96dc33d188fc" />
 
     <role role="Physician" description="Physician" uuid="1280cb6d-c291-46c8-8d3a-96dc33d199fc" />
 
     <role_privilege role="Physician" privilege="Get Encounters" />
+    <role_privilege role="Physician" privilege="Get Patients" />
 
     <user_role user_id="3000" role="Physician" />
     <user_role user_id="3001" role="Physician" />

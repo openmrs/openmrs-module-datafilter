@@ -10,6 +10,7 @@
 package org.openmrs.module.datafilter;
 
 import static org.openmrs.module.datafilter.DataFilterConstants.FILTER_NAME_ENCOUNTER;
+import static org.openmrs.module.datafilter.DataFilterConstants.FILTER_NAME_PATIENT;
 import static org.openmrs.module.datafilter.DataFilterConstants.FILTER_NAME_VISIT;
 
 import java.util.ArrayList;
@@ -116,25 +117,21 @@ public class DataFilterSessionContext extends SpringSessionContext {
 			}
 		}
 		
-		Filter encounterFilter = session.getEnabledFilter(FILTER_NAME_ENCOUNTER);
-		if (encounterFilter == null) {
-			encounterFilter = session.enableFilter(FILTER_NAME_ENCOUNTER);
-		}
-		
-		Filter visitFilter = session.getEnabledFilter(FILTER_NAME_VISIT);
-		if (visitFilter == null) {
-			visitFilter = session.enableFilter(FILTER_NAME_VISIT);
-		}
-		
-		List<Filter> filters = new ArrayList();
-		filters.add(encounterFilter);
-		filters.add(visitFilter);
-		
-		for (Filter filter : filters) {
-			filter.setParameter(DataFilterConstants.PARAM_NAME_ATTRIB_TYPE_ID, attributeTypeId);
-			filter.setParameterList(DataFilterConstants.PARAM_NAME_BASIS_IDS, basisIds);
-		}
+		enableFilter(FILTER_NAME_PATIENT, attributeTypeId, basisIds, session);
+		enableFilter(FILTER_NAME_ENCOUNTER, attributeTypeId, basisIds, session);
+		enableFilter(FILTER_NAME_VISIT, attributeTypeId, basisIds, session);
 		
 		return session;
 	}
+	
+	private void enableFilter(String filterName, Integer attributeTypeId, List<String> basisIds, Session session) {
+		Filter filter = session.getEnabledFilter(filterName);
+		if (filter == null) {
+			filter = session.enableFilter(filterName);
+		}
+		
+		filter.setParameter(DataFilterConstants.PARAM_NAME_ATTRIB_TYPE_ID, attributeTypeId);
+		filter.setParameterList(DataFilterConstants.PARAM_NAME_BASIS_IDS, basisIds);
+	}
+	
 }

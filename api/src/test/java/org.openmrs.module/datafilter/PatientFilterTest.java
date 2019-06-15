@@ -37,6 +37,7 @@ public class PatientFilterTest extends BaseFilterTest {
 	@Before
 	public void before() {
 		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "patients.xml");
+		updateSearchIndex();
 	}
 	
 	@Test
@@ -73,7 +74,6 @@ public class PatientFilterTest extends BaseFilterTest {
 		    OpenmrsConstants.GLOBAL_PROPERTY_PERSON_ATTRIBUTE_SEARCH_MATCH_MODE,
 		    OpenmrsConstants.GLOBAL_PROPERTY_PERSON_ATTRIBUTE_SEARCH_MATCH_ANYWHERE);
 		reloginAs("dBeckham", "test");
-		updateSearchIndex();
 		final int expCount = 0;
 		assertEquals(expCount, patientService.getCountOfPatients(PATIENT_NAME).intValue());
 		assertEquals(expCount, patientService.getPatients(PATIENT_NAME).size());
@@ -86,7 +86,6 @@ public class PatientFilterTest extends BaseFilterTest {
 	@Test
 	public void getPatients_shouldReturnPatientsByNameAccessibleToTheUser() {
 		reloginAs("dyorke", "test");
-		updateSearchIndex();
 		int expCount = 2;
 		assertEquals(expCount, patientService.getCountOfPatients(PATIENT_NAME).intValue());
 		Collection<Patient> patients = patientService.getPatients(PATIENT_NAME);
@@ -107,7 +106,6 @@ public class PatientFilterTest extends BaseFilterTest {
 	@Test
 	public void getPatients_shouldReturnPatientsByIdentifierAccessibleToTheUser() {
 		reloginAs("dyorke", "test");
-		updateSearchIndex();
 		int expCount = 2;
 		assertEquals(expCount, patientService.getCountOfPatients(IDENTIFIER_PREFIX).intValue());
 		Collection<Patient> patients = patientService.getPatients(IDENTIFIER_PREFIX);
@@ -131,7 +129,6 @@ public class PatientFilterTest extends BaseFilterTest {
 		    OpenmrsConstants.GLOBAL_PROPERTY_PERSON_ATTRIBUTE_SEARCH_MATCH_MODE,
 		    OpenmrsConstants.GLOBAL_PROPERTY_PERSON_ATTRIBUTE_SEARCH_MATCH_ANYWHERE);
 		reloginAs("dyorke", "test");
-		updateSearchIndex();
 		int expCount = 2;
 		assertEquals(expCount, patientService.getCountOfPatients(TELEPHONE_AREA_CODE).intValue());
 		Collection<Patient> patients = patientService.getPatients(TELEPHONE_AREA_CODE);

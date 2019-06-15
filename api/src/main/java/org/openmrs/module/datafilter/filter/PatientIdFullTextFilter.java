@@ -22,7 +22,7 @@ import org.hibernate.search.annotations.Factory;
  * Full text Filter that can be applied to patient records and any domain objects that represent
  * patient clinical data e.g. Visits, Encounters, Obs, Orders etc.
  */
-public class ExcludePatientsByIdFullTextFilter {
+public class PatientIdFullTextFilter {
 	
 	private String field;
 	

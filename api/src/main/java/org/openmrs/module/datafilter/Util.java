@@ -69,7 +69,7 @@ public class Util {
 	 * @param clazz the class to add the annotation
 	 * @param annotation the annotation to add
 	 */
-	public static void addAnnotationToClass(Class<?> clazz, Annotation annotation) throws ReflectiveOperationException {
+	protected static void addAnnotationToClass(Class<?> clazz, Annotation annotation) throws ReflectiveOperationException {
 		
 		final String annotationName = annotation.annotationType().getName();
 		if (log.isDebugEnabled()) {

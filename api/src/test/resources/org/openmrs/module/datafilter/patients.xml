@@ -13,6 +13,8 @@
 -->
 
 <dataset>
+    <person_attribute_type person_attribute_type_id="6501" name="Telephone" description="The telephone number for the person" format="java.lang.String" searchable="1" creator="1" date_created="2019-05-01 00:00:00.0" retired="0" sort_weight="1" uuid="a4b6d540-a32e-44c7-91b3-292d97667519" />
+
     <person person_id="1501" gender="M" birthdate="1991-01-01 00:00:00.0" birthdate_estimated="0" dead="0" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="ab2b29c2-3ed6-4f63-b8c0-f762dc8d7563" />
     <person person_id="1502" gender="M" birthdate="1992-01-01 00:00:00.0" birthdate_estimated="0" dead="0" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="bb2b29c2-3ed6-4f63-b8c0-f762dc8d7563" />
     <person person_id="1503" gender="F" birthdate="1993-01-01 00:00:00.0" birthdate_estimated="0" dead="0" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="cb2b29c2-3ed6-4f63-b8c0-f762dc8d7563" />
@@ -24,8 +26,11 @@
     <person_name person_name_id="2504" preferred="1" person_id="1504" given_name="Magidu" family_name="Ssemakula" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="489f3a7b-6482-487d-94ce-c07bb3ca3cc8" />
 
     <person_attribute person_attribute_id="7501" person_id="1501" value="4000" person_attribute_type_id="6000" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="a869f3da-b692-44b7-a33f-abf2c450474f" />
-    <person_attribute person_attribute_id="7502" person_id="1502" value="4001" person_attribute_type_id="6000" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="b868f3da-b692-44b7-a33f-abf2c450474f" />
-    <person_attribute person_attribute_id="7503" person_id="1503" value="4000" person_attribute_type_id="6000" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="c868f3da-b692-44b7-a33f-abf2c450474f" />
+    <person_attribute person_attribute_id="7511" person_id="1501" value="3173459561" person_attribute_type_id="6501" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="b868f3da-b692-44b7-a33f-abf2c450474f" />
+    <person_attribute person_attribute_id="7502" person_id="1502" value="4001" person_attribute_type_id="6000" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="c868f3da-b692-44b7-a33f-abf2c450474f" />
+    <person_attribute person_attribute_id="7512" person_id="1502" value="3175479561" person_attribute_type_id="6501" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="d868f3da-b692-44b7-a33f-abf2c450474f" />
+    <person_attribute person_attribute_id="7503" person_id="1503" value="4000" person_attribute_type_id="6000" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="e868f3da-b692-44b7-a33f-abf2c450474f" />
+    <person_attribute person_attribute_id="7513" person_id="1503" value="3176789561" person_attribute_type_id="6501" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="f868f3da-b692-44b7-a33f-abf2c450474f" />
 
     <patient patient_id="1501" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" />
     <patient patient_id="1502" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" />

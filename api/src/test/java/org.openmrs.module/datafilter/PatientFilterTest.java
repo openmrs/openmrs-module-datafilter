@@ -20,6 +20,7 @@ import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.TestUtil;
+import org.openmrs.util.OpenmrsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class PatientFilterTest extends BaseFilterTest {
@@ -28,6 +29,10 @@ public class PatientFilterTest extends BaseFilterTest {
 	private PatientService patientService;
 	
 	private static final String PATIENT_NAME = "Magidu";
+	
+	private static final String IDENTIFIER_PREFIX = "M15";
+	
+	private static final String TELEPHONE_AREA_CODE = "317";
 	
 	@Before
 	public void before() {
@@ -63,7 +68,23 @@ public class PatientFilterTest extends BaseFilterTest {
 	}
 	
 	@Test
-	public void getPatients_shouldReturnPatientsAccessibleToTheUser() {
+	public void getPatients_shouldReturnNoPatientsIfTheUserIsNotGrantedAccessToAnyBasis() {
+		Context.getAdministrationService().setGlobalProperty(
+		    OpenmrsConstants.GLOBAL_PROPERTY_PERSON_ATTRIBUTE_SEARCH_MATCH_MODE,
+		    OpenmrsConstants.GLOBAL_PROPERTY_PERSON_ATTRIBUTE_SEARCH_MATCH_ANYWHERE);
+		reloginAs("dBeckham", "test");
+		updateSearchIndex();
+		final int expCount = 0;
+		assertEquals(expCount, patientService.getCountOfPatients(PATIENT_NAME).intValue());
+		assertEquals(expCount, patientService.getPatients(PATIENT_NAME).size());
+		assertEquals(expCount, patientService.getCountOfPatients(IDENTIFIER_PREFIX).intValue());
+		assertEquals(expCount, patientService.getPatients(IDENTIFIER_PREFIX).size());
+		assertEquals(expCount, patientService.getCountOfPatients(TELEPHONE_AREA_CODE).intValue());
+		assertEquals(expCount, patientService.getPatients(TELEPHONE_AREA_CODE).size());
+	}
+	
+	@Test
+	public void getPatients_shouldReturnPatientsByNameAccessibleToTheUser() {
 		reloginAs("dyorke", "test");
 		updateSearchIndex();
 		int expCount = 2;
@@ -84,13 +105,48 @@ public class PatientFilterTest extends BaseFilterTest {
 	}
 	
 	@Test
-	public void getPatients_shouldReturnNoPatientsIfTheUserIsNotGrantedAccessToAnyBasis() {
-		reloginAs("dBeckham", "test");
+	public void getPatients_shouldReturnPatientsByIdentifierAccessibleToTheUser() {
+		reloginAs("dyorke", "test");
 		updateSearchIndex();
-		final int expCount = 0;
-		assertEquals(expCount, patientService.getCountOfPatients(PATIENT_NAME).intValue());
-		Collection<Patient> encounters = patientService.getPatients(PATIENT_NAME);
-		assertEquals(expCount, encounters.size());
+		int expCount = 2;
+		assertEquals(expCount, patientService.getCountOfPatients(IDENTIFIER_PREFIX).intValue());
+		Collection<Patient> patients = patientService.getPatients(IDENTIFIER_PREFIX);
+		assertEquals(expCount, patients.size());
+		assertTrue(TestUtil.containsId(patients, 1501));
+		assertTrue(TestUtil.containsId(patients, 1503));
+		
+		AccessUtilTest.grantLocationAccessToUser(Context.getAuthenticatedUser().getUserId(), 4001, getConnection());
+		expCount = 3;
+		assertEquals(expCount, patientService.getCountOfPatients(IDENTIFIER_PREFIX).intValue());
+		patients = patientService.getPatients(IDENTIFIER_PREFIX);
+		assertEquals(expCount, patients.size());
+		assertTrue(TestUtil.containsId(patients, 1501));
+		assertTrue(TestUtil.containsId(patients, 1502));
+		assertTrue(TestUtil.containsId(patients, 1503));
+	}
+	
+	@Test
+	public void getPatients_shouldReturnPatientsByPersonAttributeAccessibleToTheUser() {
+		Context.getAdministrationService().setGlobalProperty(
+		    OpenmrsConstants.GLOBAL_PROPERTY_PERSON_ATTRIBUTE_SEARCH_MATCH_MODE,
+		    OpenmrsConstants.GLOBAL_PROPERTY_PERSON_ATTRIBUTE_SEARCH_MATCH_ANYWHERE);
+		reloginAs("dyorke", "test");
+		updateSearchIndex();
+		int expCount = 2;
+		assertEquals(expCount, patientService.getCountOfPatients(TELEPHONE_AREA_CODE).intValue());
+		Collection<Patient> patients = patientService.getPatients(TELEPHONE_AREA_CODE);
+		assertEquals(expCount, patients.size());
+		assertTrue(TestUtil.containsId(patients, 1501));
+		assertTrue(TestUtil.containsId(patients, 1503));
+		
+		AccessUtilTest.grantLocationAccessToUser(Context.getAuthenticatedUser().getUserId(), 4001, getConnection());
+		expCount = 3;
+		assertEquals(expCount, patientService.getCountOfPatients(TELEPHONE_AREA_CODE).intValue());
+		patients = patientService.getPatients(TELEPHONE_AREA_CODE);
+		assertEquals(expCount, patients.size());
+		assertTrue(TestUtil.containsId(patients, 1501));
+		assertTrue(TestUtil.containsId(patients, 1502));
+		assertTrue(TestUtil.containsId(patients, 1503));
 	}
 	
 }

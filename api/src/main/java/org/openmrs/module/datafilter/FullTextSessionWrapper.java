@@ -47,7 +47,7 @@ final class FullTextSessionWrapper extends SessionDelegatorBaseImpl implements F
 		CLASS_FIELD_MAP = new HashMap(3);
 		CLASS_FIELD_MAP.put(PersonName.class, "person.personId");
 		CLASS_FIELD_MAP.put(PersonAttribute.class, "person.personId");
-		CLASS_FIELD_MAP.put(PatientIdentifier.class, "patient.patientId");
+		CLASS_FIELD_MAP.put(PatientIdentifier.class, "patient.personId");
 	}
 	
 	private FullTextSession fullTextSession;

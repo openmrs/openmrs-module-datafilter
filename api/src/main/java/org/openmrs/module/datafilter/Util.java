@@ -20,10 +20,10 @@ import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.module.ModuleException;
-import org.openmrs.module.datafilter.filter.ExcludePatientsByIdFullTextFilter;
 import org.openmrs.module.datafilter.filter.FilterAnnotation;
 import org.openmrs.module.datafilter.filter.FilterDefAnnotation;
 import org.openmrs.module.datafilter.filter.FullTextFilterDefAnnotation;
+import org.openmrs.module.datafilter.filter.PatientIdFullTextFilter;
 
 public class Util {
 	
@@ -52,7 +52,7 @@ public class Util {
 			addAnnotationToClass(Patient.class, new FilterAnnotation(DataFilterConstants.FILTER_NAME_PATIENT,
 			        DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
 			addAnnotationToClass(Patient.class, new FullTextFilterDefAnnotation(
-			        DataFilterConstants.FULL_TEXT_FILTER_NAME_PATIENT, ExcludePatientsByIdFullTextFilter.class));
+			        DataFilterConstants.FULL_TEXT_FILTER_NAME_PATIENT, PatientIdFullTextFilter.class));
 			
 			if (log.isInfoEnabled()) {
 				log.info("Successfully added filter annotations");
@@ -69,7 +69,7 @@ public class Util {
 	 * @param clazz the class to add the annotation
 	 * @param annotation the annotation to add
 	 */
-	private static void addAnnotationToClass(Class<?> clazz, Annotation annotation) throws ReflectiveOperationException {
+	public static void addAnnotationToClass(Class<?> clazz, Annotation annotation) throws ReflectiveOperationException {
 		
 		final String annotationName = annotation.annotationType().getName();
 		if (log.isDebugEnabled()) {

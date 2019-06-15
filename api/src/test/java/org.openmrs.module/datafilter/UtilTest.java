@@ -14,30 +14,21 @@ import static org.junit.Assert.assertTrue;
 
 import java.lang.annotation.Annotation;
 
-import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.junit.Test;
-import org.openmrs.Encounter;
+import org.openmrs.Concept;
+import org.openmrs.module.datafilter.filter.FilterDefAnnotation;
 
-public class DataFilterActivatorTest {
-	
-	private DataFilterActivator activator = new DataFilterActivator();
-	
-	private Class<?>[] filteredEntityClasses = new Class[] { Encounter.class };
+public class UtilTest {
 	
 	@Test
-	public void willStart_shouldAddFilterAnnotationsToTheFilteredEntityClasses() {
+	public void willStart_shouldAddFilterAnnotationsToTheFilteredEntityClasses() throws ReflectiveOperationException {
 		Class<? extends Annotation> annotationClass = FilterDef.class;
-		for (Class<?> clazz : filteredEntityClasses) {
-			assertFalse(clazz.isAnnotationPresent(annotationClass));
-		}
+		Class<?> clazz = Concept.class;
+		assertFalse(clazz.isAnnotationPresent(annotationClass));
 		
-		activator.willStart();
+		Util.addAnnotationToClass(clazz, new FilterDefAnnotation("some name"));
 		
-		annotationClass = Filter.class;
-		for (Class<?> clazz : filteredEntityClasses) {
-			assertTrue(clazz.isAnnotationPresent(annotationClass));
-		}
+		assertTrue(clazz.isAnnotationPresent(annotationClass));
 	}
-	
 }

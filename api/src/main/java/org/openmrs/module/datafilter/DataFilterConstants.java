@@ -17,6 +17,8 @@ public class DataFilterConstants {
 	
 	public static final String FILTER_NAME_VISIT = MODULE_ID + "_visitFilter";
 	
+	public static final String FILTER_NAME_OBS = MODULE_ID + "_obsFilter";
+	
 	public static final String FILTER_NAME_PATIENT = MODULE_ID + "_patientFilter";
 	
 	public static final String FULL_TEXT_FILTER_NAME_PATIENT = MODULE_ID + "_patientFullTextFilter";

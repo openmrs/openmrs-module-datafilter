@@ -14,9 +14,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
+import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.module.ModuleException;
@@ -47,6 +49,10 @@ public class Util {
 			addAnnotationToClass(Visit.class, new FilterDefAnnotation(DataFilterConstants.FILTER_NAME_VISIT));
 			addAnnotationToClass(Visit.class, new FilterAnnotation(DataFilterConstants.FILTER_NAME_VISIT,
 			        DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
+			
+			addAnnotationToClass(Obs.class, new FilterDefAnnotation(DataFilterConstants.FILTER_NAME_OBS));
+			addAnnotationToClass(Obs.class, new FilterAnnotation(DataFilterConstants.FILTER_NAME_OBS,
+			        StringUtils.replaceOnce(DataFilterConstants.FILTER_CONDITION_PATIENT_ID, "patient_id", "person_id")));
 			
 			addAnnotationToClass(Patient.class, new FilterDefAnnotation(DataFilterConstants.FILTER_NAME_PATIENT));
 			addAnnotationToClass(Patient.class, new FilterAnnotation(DataFilterConstants.FILTER_NAME_PATIENT,
@@ -84,6 +90,9 @@ public class Util {
 			        .invoke(clazz);
 			//TODO handle the case where the annotation is already present in case of module restart
 			//TODO We also need to take of FilterDefs and Filters annotations if present
+			if (map.size() == 0) {
+				//map = new LinkedHashMap<>();
+			}
 			map.put(annotation.annotationType(), annotation);
 			
 			if (log.isDebugEnabled()) {

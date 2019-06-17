@@ -33,6 +33,15 @@ public class EncounterFilterTest extends BaseFilterTest {
 	}
 	
 	@Test
+	public void getEncounters_shouldReturnNoEncountersIfTheUserIsNotGrantedAccessToAnyBasis() {
+		reloginAs("dBeckham", "test");
+		final String name = "Navuga";
+		final int expCount = 0;
+		assertEquals(expCount, encounterService.getCountOfEncounters(name, false).intValue());
+		assertEquals(expCount, encounterService.getEncounters(name, 0, Integer.MAX_VALUE, false).size());
+	}
+	
+	@Test
 	public void getEncounters_shouldReturnEncountersBelongingToPatientsAccessibleToTheUser() {
 		reloginAs("dyorke", "test");
 		final String name = "Navuga";
@@ -51,16 +60,6 @@ public class EncounterFilterTest extends BaseFilterTest {
 		assertTrue(TestUtil.containsId(encounters, 1000));
 		assertTrue(TestUtil.containsId(encounters, 1001));
 		assertTrue(TestUtil.containsId(encounters, 1002));
-	}
-	
-	@Test
-	public void getEncounters_shouldReturnNoEncountersIfTheUserIsNotGrantedAccessToAnyBasis() {
-		reloginAs("dBeckham", "test");
-		final String name = "Navuga";
-		final int expCount = 0;
-		assertEquals(expCount, encounterService.getCountOfEncounters(name, false).intValue());
-		Collection<Encounter> encounters = encounterService.getEncounters(name, 0, Integer.MAX_VALUE, false);
-		assertEquals(expCount, encounters.size());
 	}
 	
 }

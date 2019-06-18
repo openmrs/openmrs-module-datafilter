@@ -22,10 +22,9 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.module.ModuleException;
-import org.openmrs.module.datafilter.filter.FilterAnnotation;
-import org.openmrs.module.datafilter.filter.FilterDefAnnotation;
-import org.openmrs.module.datafilter.filter.FullTextFilterDefAnnotation;
-import org.openmrs.module.datafilter.filter.PatientIdFullTextFilter;
+import org.openmrs.module.datafilter.annotations.FilterAnnotation;
+import org.openmrs.module.datafilter.annotations.FilterDefAnnotation;
+import org.openmrs.module.datafilter.annotations.FullTextFilterDefAnnotation;
 
 public class Util {
 	

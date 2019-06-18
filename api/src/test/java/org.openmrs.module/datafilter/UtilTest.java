@@ -17,7 +17,7 @@ import java.lang.annotation.Annotation;
 import org.hibernate.annotations.FilterDef;
 import org.junit.Test;
 import org.openmrs.Concept;
-import org.openmrs.module.datafilter.filter.FilterDefAnnotation;
+import org.openmrs.module.datafilter.annotations.FilterDefAnnotation;
 
 public class UtilTest {
 	

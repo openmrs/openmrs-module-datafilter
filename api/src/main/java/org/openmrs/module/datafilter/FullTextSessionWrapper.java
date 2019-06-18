@@ -10,9 +10,9 @@
 package org.openmrs.module.datafilter;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -80,7 +80,7 @@ final class FullTextSessionWrapper extends SessionDelegatorBaseImpl implements F
 		FullTextQuery query = fullTextSession.createFullTextQuery(luceneQuery, entityClass);
 		FullTextFilter filter = query.enableFullTextFilter(DataFilterConstants.FULL_TEXT_FILTER_NAME_PATIENT);
 		filter.setParameter("field", CLASS_FIELD_MAP.get(entityClass));
-		Set<String> personIds = AccessUtil.getAccessiblePersonIds(Location.class);
+		Collection<String> personIds = AccessUtil.getAccessiblePersonIds(Location.class);
 		if (personIds.isEmpty()) {
 			//If the user isn't granted access to patients at any basis, we add -1 because ids are all > 0,
 			//in theory the query will match no records if the user isn't granted access to any basis

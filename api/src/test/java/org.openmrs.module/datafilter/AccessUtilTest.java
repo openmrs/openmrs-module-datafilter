@@ -14,7 +14,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
-import java.util.Set;
+import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -62,7 +62,7 @@ public class AccessUtilTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getAssignedBasisIds_shouldReturnAListOfAccessibleBasisIdsForTheAuthenticatedUser() {
 		reloginAs("dyorke", "test");
-		Set<String> basisIds = AccessUtil.getAssignedBasisIds(Location.class);
+		Collection<String> basisIds = AccessUtil.getAssignedBasisIds(Location.class);
 		assertEquals(2, basisIds.size());
 		assertTrue(basisIds.contains("4000"));
 		assertTrue(basisIds.contains("1"));
@@ -80,7 +80,7 @@ public class AccessUtilTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getAccessiblePersonIds_shouldReturnAListOfAccessiblePersonIdsForTheAuthenticatedUser() {
 		reloginAs("dyorke", "test");
-		Set<String> patientIds = AccessUtil.getAccessiblePersonIds(Location.class);
+		Collection<String> patientIds = AccessUtil.getAccessiblePersonIds(Location.class);
 		assertEquals(1, patientIds.size());
 		assertTrue(patientIds.contains("1001"));
 		

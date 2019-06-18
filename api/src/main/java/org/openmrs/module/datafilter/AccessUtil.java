@@ -12,6 +12,7 @@ package org.openmrs.module.datafilter;
 import static org.openmrs.module.datafilter.DataFilterConstants.GP_PERSON_ATTRIBUTE_TYPE_UUIDS;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -57,13 +58,13 @@ public class AccessUtil {
 	        + UUIDS_PLACEHOLDER + ")";
 	
 	/**
-	 * Gets the list of person ids for all the persons associated to the bases of the specified type,
-	 * the basis could be something like Location, Program etc.
+	 * Gets the collection of person ids for all the persons associated to the bases of the specified
+	 * type, the basis could be something like Location, Program etc.
 	 * 
 	 * @param basisType the type to base on
-	 * @return a list of patient ids
+	 * @return a set of patient ids
 	 */
-	public static Set<String> getAccessiblePersonIds(Class<? extends BaseOpenmrsObject> basisType) {
+	public static Collection<String> getAccessiblePersonIds(Class<? extends BaseOpenmrsObject> basisType) {
 		if (log.isDebugEnabled()) {
 			log.debug("Looking up accessible persons for user with Id: " + Context.getAuthenticatedUser().getId());
 		}
@@ -78,7 +79,7 @@ public class AccessUtil {
 			log.debug("Filtering by person attribute type with id " + attributeTypeId);
 		}
 		
-		Set<String> accessibleBasisIds = getAssignedBasisIds(basisType);
+		Collection<String> accessibleBasisIds = getAssignedBasisIds(basisType);
 		if (!accessibleBasisIds.isEmpty()) {
 			if (log.isDebugEnabled()) {
 				log.debug(
@@ -107,13 +108,13 @@ public class AccessUtil {
 	}
 	
 	/**
-	 * Gets the list of basis ids in single quotes for all the bases the authenticated user is granted
-	 * access to that match the specified basis type.
+	 * Gets the collection of basis ids in single quotes for all the bases the authenticated user is
+	 * granted access to that match the specified basis type.
 	 *
 	 * @param basisType the type to base on
-	 * @return a list of basis ids
+	 * @return a collection of basis ids
 	 */
-	public static Set<String> getAssignedBasisIds(Class<? extends BaseOpenmrsObject> basisType) {
+	public static Collection<String> getAssignedBasisIds(Class<? extends BaseOpenmrsObject> basisType) {
 		if (log.isDebugEnabled()) {
 			log.debug("Looking up assigned bases for the authenticated user");
 		}
@@ -188,10 +189,11 @@ public class AccessUtil {
 	}
 	
 	/**
-	 * Gets all the child location ids including those of nested child location at all levels.
+	 * Gets all the child location ids for the location with the specified location id including those
+	 * of nested child location at all levels.
 	 * 
 	 * @param locationId the location whose descendants location ids to return
-	 * @return a list of location ids
+	 * @return a collection of location ids
 	 */
 	private static Set<String> getAllDescendantLocationIds(String locationId) {
 		Set<String> ids = new HashSet();

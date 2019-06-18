@@ -14,7 +14,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
-import java.util.List;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +38,7 @@ public class AccessUtilTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	public static void grantLocationAccessToUser(Integer userId, Integer locationId, Connection conn) {
-	    //TODO replace the hard coded id
+		//TODO replace the hard coded id
 		String query = "INSERT INTO " + DataFilterConstants.MODULE_ID + "_user_basis_map VALUES (100," + userId + ", "
 		        + locationId + ", '" + Location.class.getName() + "')";
 		DatabaseUtil.executeSQL(conn, query, false);
@@ -62,7 +62,7 @@ public class AccessUtilTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getAssignedBasisIds_shouldReturnAListOfAccessibleBasisIdsForTheAuthenticatedUser() {
 		reloginAs("dyorke", "test");
-		List<String> basisIds = AccessUtil.getAssignedBasisIds(Location.class);
+		Set<String> basisIds = AccessUtil.getAssignedBasisIds(Location.class);
 		assertEquals(2, basisIds.size());
 		assertTrue(basisIds.contains("4000"));
 		assertTrue(basisIds.contains("1"));
@@ -80,15 +80,17 @@ public class AccessUtilTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getAccessiblePersonIds_shouldReturnAListOfAccessiblePersonIdsForTheAuthenticatedUser() {
 		reloginAs("dyorke", "test");
-		List<String> patientIds = AccessUtil.getAccessiblePersonIds(Location.class);
+		Set<String> patientIds = AccessUtil.getAccessiblePersonIds(Location.class);
 		assertEquals(1, patientIds.size());
 		assertTrue(patientIds.contains("1001"));
 		
 		grantLocationAccessToUser(Context.getAuthenticatedUser().getUserId(), 4001, getConnection());
 		patientIds = AccessUtil.getAccessiblePersonIds(Location.class);
-		assertEquals(2, patientIds.size());
+		//Should include the child location too
+		assertEquals(3, patientIds.size());
 		assertTrue(patientIds.contains("1001"));
 		assertTrue(patientIds.contains("1002"));
+		assertTrue(patientIds.contains("1003"));
 	}
 	
 }

@@ -11,6 +11,7 @@ package org.openmrs.module.datafilter.filter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.lucene.queries.TermsFilter;
 import org.apache.lucene.search.CachingWrapperFilter;
@@ -26,7 +27,7 @@ public class PatientIdFullTextFilter {
 	
 	private String field;
 	
-	private List<String> patientIds;
+	private Set<String> patientIds;
 	
 	/**
 	 * Sets the field
@@ -42,7 +43,7 @@ public class PatientIdFullTextFilter {
 	 *
 	 * @param patientIds the patientIds to set
 	 */
-	public void setPatientIds(List<String> patientIds) {
+	public void setPatientIds(Set<String> patientIds) {
 		this.patientIds = patientIds;
 	}
 	

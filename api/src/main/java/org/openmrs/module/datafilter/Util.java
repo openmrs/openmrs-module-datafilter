@@ -89,10 +89,7 @@ public class Util {
 			Map<Class<? extends Annotation>, Annotation> map = (Map<Class<? extends Annotation>, Annotation>) method
 			        .invoke(clazz);
 			//TODO handle the case where the annotation is already present in case of module restart
-			//TODO We also need to take of FilterDefs and Filters annotations if present
-			if (map.size() == 0) {
-				//map = new LinkedHashMap<>();
-			}
+			//TODO We also need to take care of FilterDefs and Filters annotations if present
 			map.put(annotation.annotationType(), annotation);
 			
 			if (log.isDebugEnabled()) {

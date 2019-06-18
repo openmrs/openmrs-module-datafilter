@@ -13,12 +13,15 @@ import static org.openmrs.module.datafilter.DataFilterConstants.GP_PERSON_ATTRIB
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.BaseOpenmrsObject;
+import org.openmrs.Location;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.util.PrivilegeConstants;
@@ -60,7 +63,7 @@ public class AccessUtil {
 	 * @param basisType the type to base on
 	 * @return a list of patient ids
 	 */
-	public static List<String> getAccessiblePersonIds(Class<? extends BaseOpenmrsObject> basisType) {
+	public static Set<String> getAccessiblePersonIds(Class<? extends BaseOpenmrsObject> basisType) {
 		if (log.isDebugEnabled()) {
 			log.debug("Looking up accessible persons for user with Id: " + Context.getAuthenticatedUser().getId());
 		}
@@ -75,24 +78,32 @@ public class AccessUtil {
 			log.debug("Filtering by person attribute type with id " + attributeTypeId);
 		}
 		
-		List<String> accessibleBasisIds = getAssignedBasisIds(basisType);
+		Set<String> accessibleBasisIds = getAssignedBasisIds(basisType);
 		if (!accessibleBasisIds.isEmpty()) {
 			if (log.isDebugEnabled()) {
 				log.debug(
 				    "Filtering on " + basisType.getSimpleName() + "(s) with id(s): " + String.join(",", accessibleBasisIds));
 			}
 			
+			if (Location.class.isAssignableFrom(basisType)) {
+				Set<String> descendantIds = new HashSet();
+				for (String id : accessibleBasisIds) {
+					descendantIds.addAll(getAllDescendantLocationIds(id));
+				}
+				accessibleBasisIds.addAll(descendantIds);
+			}
+			
 			String personQuery = DataFilterConstants.PERSON_ID_QUERY
 			        .replace(DataFilterConstants.ATTRIB_TYPE_ID_PLACEHOLDER, attributeTypeId.toString())
 			        .replace(DataFilterConstants.BASIS_IDS_PLACEHOLDER, String.join(",", accessibleBasisIds));
 			List<List<Object>> personRows = runQueryWithElevatedPrivileges(personQuery);
-			List<String> personIds = new ArrayList<>();
+			Set<String> personIds = new HashSet();
 			personRows.forEach((List<Object> personRow) -> personIds.add(personRow.get(0).toString()));
 			
 			return personIds;
 		}
 		
-		return Collections.EMPTY_LIST;
+		return Collections.EMPTY_SET;
 	}
 	
 	/**
@@ -102,7 +113,7 @@ public class AccessUtil {
 	 * @param basisType the type to base on
 	 * @return a list of basis ids
 	 */
-	public static List<String> getAssignedBasisIds(Class<? extends BaseOpenmrsObject> basisType) {
+	public static Set<String> getAssignedBasisIds(Class<? extends BaseOpenmrsObject> basisType) {
 		if (log.isDebugEnabled()) {
 			log.debug("Looking up assigned bases for the authenticated user");
 		}
@@ -111,14 +122,14 @@ public class AccessUtil {
 		String query = BASIS_QUERY.replace(ID_PLACEHOLDER, userId).replace(BASIS_TYPE_PLACEHOLDER, basisType.getName());
 		
 		List<List<Object>> rows = runQueryWithElevatedPrivileges(query);
-		List<String> basisIds = new ArrayList<>();
+		Set<String> basisIds = new HashSet();
 		rows.forEach((List<Object> row) -> basisIds.add(row.get(0).toString()));
 		
 		return basisIds;
 	}
 	
 	/**
-	 * Runs the speficied query with PrivilegeConstants.SQL_LEVEL_ACCESS enabled.
+	 * Runs the specified query with PrivilegeConstants.SQL_LEVEL_ACCESS enabled.
 	 * 
 	 * <pre>
 	 * TODO Use Daemon.runInDaemonThread instead, probably when this class is reimplemented
@@ -129,7 +140,7 @@ public class AccessUtil {
 	 */
 	private static List<List<Object>> runQueryWithElevatedPrivileges(String query) {
 		try {
-			//TODO Use Daeamon.runInDaemonThread instead, probably when this class is reimplemented
+			//TODO Use Daemon.runInDaemonThread instead, probably when this class is reimplemented
 			Context.addProxyPrivilege(PrivilegeConstants.SQL_LEVEL_ACCESS);
 			return Context.getAdministrationService().executeSQL(query, true);
 		}
@@ -174,6 +185,31 @@ public class AccessUtil {
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * Gets all the child location ids including those of nested child location at all levels.
+	 * 
+	 * @param locationId the location whose descendants location ids to return
+	 * @return a list of location ids
+	 */
+	private static Set<String> getAllDescendantLocationIds(String locationId) {
+		Set<String> ids = new HashSet();
+		Location location;
+		try {
+			//TODO Use Daemon.runInDaemonThread instead, probably when this class is reimplemented
+			Context.addProxyPrivilege(PrivilegeConstants.GET_LOCATIONS);
+			location = Context.getLocationService().getLocation(Integer.valueOf(locationId));
+		}
+		finally {
+			Context.removeProxyPrivilege(PrivilegeConstants.GET_LOCATIONS);
+		}
+		
+		for (Location l : location.getDescendantLocations(true)) {
+			ids.add(l.getId().toString());
+		}
+		
+		return ids;
 	}
 	
 }

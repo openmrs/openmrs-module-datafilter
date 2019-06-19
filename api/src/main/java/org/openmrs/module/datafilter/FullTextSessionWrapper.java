@@ -67,17 +67,18 @@ final class FullTextSessionWrapper extends SessionDelegatorBaseImpl implements F
 		}
 		
 		Class<?> entityClass = entities[0];
+		FullTextQuery query = fullTextSession.createFullTextQuery(luceneQuery, entityClass);
 		if (!CLASS_FIELD_MAP.containsKey(entityClass)) {
 			if (log.isDebugEnabled()) {
 				log.debug("Skipping enabling of filters on the full text query for " + entityClass.getName());
 			}
+			return query;
 		}
 		
 		if (log.isDebugEnabled()) {
 			log.debug("Enabling filters on the full text query for " + entityClass.getName());
 		}
 		
-		FullTextQuery query = fullTextSession.createFullTextQuery(luceneQuery, entityClass);
 		FullTextFilter filter = query.enableFullTextFilter(DataFilterConstants.FULL_TEXT_FILTER_NAME_PATIENT);
 		filter.setParameter("field", CLASS_FIELD_MAP.get(entityClass));
 		Collection<String> personIds = AccessUtil.getAccessiblePersonIds(Location.class);

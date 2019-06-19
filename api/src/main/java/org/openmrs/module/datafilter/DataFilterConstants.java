@@ -39,4 +39,8 @@ public class DataFilterConstants {
 	
 	public static final String GP_PERSON_ATTRIBUTE_TYPE_UUIDS = MODULE_ID + ".personAttributeTypeUuids";
 	
+	public static final String GP_RUN_IN_STRICT_MODE = MODULE_ID + ".runInStrictMode";
+	
+	public static final String ILLEGAL_RECORD_ACCESS_MESSAGE = "Illegal Record Access";
+	
 }

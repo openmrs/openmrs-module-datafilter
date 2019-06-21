@@ -51,12 +51,13 @@ public class PatientFilterTest extends BaseFilterTest {
 		assertTrue(TestUtil.containsId(patients, 1503));
 		
 		AccessUtilTest.grantLocationAccessToUser(Context.getAuthenticatedUser().getUserId(), 4001, getConnection());
-		expCount = 5;
+		expCount = 6;
 		assertEquals(expCount, patientService.getAllPatients().size());
 		patients = patientService.getAllPatients();
 		assertEquals(expCount, patients.size());
 		assertTrue(TestUtil.containsId(patients, 1001));
 		assertTrue(TestUtil.containsId(patients, 1002));
+        assertTrue(TestUtil.containsId(patients, 1003));
 		assertTrue(TestUtil.containsId(patients, 1501));
 		assertTrue(TestUtil.containsId(patients, 1502));
 		assertTrue(TestUtil.containsId(patients, 1503));

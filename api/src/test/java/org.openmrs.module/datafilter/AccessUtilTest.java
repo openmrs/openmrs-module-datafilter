@@ -21,20 +21,13 @@ import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.Program;
 import org.openmrs.api.context.Context;
-import org.openmrs.api.context.UsernamePasswordCredentials;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.util.DatabaseUtil;
 
-public class AccessUtilTest extends BaseModuleContextSensitiveTest {
+public class AccessUtilTest extends BaseFilterTest {
 	
 	@Before
 	public void beforeTestMethod() {
 		executeDataSet(TestConstants.MODULE_TEST_DATASET_XML);
-	}
-	
-	private void reloginAs(String username, String password) {
-		Context.logout();
-		Context.authenticate(new UsernamePasswordCredentials(username, password));
 	}
 	
 	public static void grantLocationAccessToUser(Integer userId, Integer locationId, Connection conn) {
@@ -62,10 +55,22 @@ public class AccessUtilTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getAssignedBasisIds_shouldReturnAListOfAccessibleBasisIdsForTheAuthenticatedUser() {
 		reloginAs("dyorke", "test");
+		final Integer englandLocationId = 4000;
+		final Integer unknownLocationId = 1;
 		Collection<String> basisIds = AccessUtil.getAssignedBasisIds(Location.class);
 		assertEquals(2, basisIds.size());
-		assertTrue(basisIds.contains("4000"));
-		assertTrue(basisIds.contains("1"));
+		assertTrue(basisIds.contains(englandLocationId.toString()));
+		assertTrue(basisIds.contains(unknownLocationId.toString()));
+		
+		//Should include child locations
+		final Integer ugandaLocationId = 4001;
+		grantLocationAccessToUser(Context.getAuthenticatedUser().getUserId(), ugandaLocationId, getConnection());
+		basisIds = AccessUtil.getAssignedBasisIds(Location.class);
+		assertEquals(4, basisIds.size());
+		assertTrue(basisIds.contains(englandLocationId.toString()));
+		assertTrue(basisIds.contains(unknownLocationId.toString()));
+		assertTrue(basisIds.contains(ugandaLocationId.toString()));
+		assertTrue(basisIds.contains("4002"));
 		
 		basisIds = AccessUtil.getAssignedBasisIds(Program.class);
 		assertEquals(1, basisIds.size());

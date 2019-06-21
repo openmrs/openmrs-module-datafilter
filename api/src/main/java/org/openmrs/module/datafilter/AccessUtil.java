@@ -86,14 +86,6 @@ public class AccessUtil {
 				    "Filtering on " + basisType.getSimpleName() + "(s) with id(s): " + String.join(",", accessibleBasisIds));
 			}
 			
-			if (Location.class.isAssignableFrom(basisType)) {
-				Set<String> descendantIds = new HashSet();
-				for (String id : accessibleBasisIds) {
-					descendantIds.addAll(getAllDescendantLocationIds(id));
-				}
-				accessibleBasisIds.addAll(descendantIds);
-			}
-			
 			String personQuery = DataFilterConstants.PERSON_ID_QUERY
 			        .replace(DataFilterConstants.ATTRIB_TYPE_ID_PLACEHOLDER, attributeTypeId.toString())
 			        .replace(DataFilterConstants.BASIS_IDS_PLACEHOLDER, String.join(",", accessibleBasisIds));
@@ -125,6 +117,15 @@ public class AccessUtil {
 		List<List<Object>> rows = runQueryWithElevatedPrivileges(query);
 		Set<String> basisIds = new HashSet();
 		rows.forEach((List<Object> row) -> basisIds.add(row.get(0).toString()));
+		
+		//Include child locations in case of locations
+		if (Location.class.isAssignableFrom(basisType)) {
+			Set<String> descendantIds = new HashSet();
+			for (String id : basisIds) {
+				descendantIds.addAll(getAllDescendantLocationIds(id));
+			}
+			basisIds.addAll(descendantIds);
+		}
 		
 		return basisIds;
 	}

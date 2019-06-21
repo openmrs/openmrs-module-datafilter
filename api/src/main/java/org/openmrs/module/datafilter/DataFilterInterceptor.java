@@ -35,9 +35,9 @@ import org.springframework.stereotype.Component;
 
 /**
  * This interceptor provides a safety net to catch any cases where an entity that the authenticated
- * user has no access to is getting loaded from the DB, by default the module runs in a non strict
- * mode implying that the interceptor is disabled by default, also note that the interceptor isn't
- * applied for super and daemon user.
+ * user has no access to is getting loaded from the DB, by default the module runs in strict mode
+ * implying that the interceptor is enabled by default, also note that the interceptor isn't applied
+ * for super and daemon user.
  */
 @Component("dataFilterInterceptor")
 public class DataFilterInterceptor extends EmptyInterceptor {
@@ -70,7 +70,7 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 				session.setFlushMode(FlushMode.MANUAL);
 				try {
 					AdministrationService as = Context.getAdministrationService();
-					Boolean strictMode = as.getGlobalPropertyValue(DataFilterConstants.GP_RUN_IN_STRICT_MODE, false);
+					Boolean strictMode = as.getGlobalPropertyValue(DataFilterConstants.GP_RUN_IN_STRICT_MODE, true);
 					if (!strictMode) {
 						if (log.isDebugEnabled()) {
 							log.trace("Skipping DataFilterInterceptor because the module is not running in strict mode");

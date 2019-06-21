@@ -9,12 +9,15 @@
  */
 package org.openmrs.module.datafilter;
 
+import java.util.List;
+
 import org.hibernate.cfg.Environment;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UsernamePasswordCredentials;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.openmrs.util.DatabaseUtil;
 
 public abstract class BaseFilterTest extends BaseModuleContextSensitiveTest {
 	
@@ -32,5 +35,28 @@ public abstract class BaseFilterTest extends BaseModuleContextSensitiveTest {
 	protected void reloginAs(String username, String password) {
 		Context.logout();
 		Context.authenticate(new UsernamePasswordCredentials(username, password));
+	}
+	
+	@Override
+	public void updateSearchIndex() {
+		//Disable the interceptor so we can update the search index
+		List<List<Object>> rows = DatabaseUtil.executeSQL(getConnection(),
+		    "SELECT property_value FROM global_property WHERE property = '" + DataFilterConstants.GP_RUN_IN_STRICT_MODE
+		            + "'",
+		    true);
+		if (rows.isEmpty()) {
+			DatabaseUtil.executeSQL(getConnection(), "INSERT INTO global_property (property, property_value) VALUES ('"
+			        + DataFilterConstants.GP_RUN_IN_STRICT_MODE + "', 'false')",
+			    false);
+		}
+		
+		try {
+			super.updateSearchIndex();
+		}
+		finally {
+			//DatabaseUtil.executeSQL(getConnection(), "UPDATE global_property SET property_value = '" + v
+			//        + "' WHERE property= '" + DataFilterConstants.GP_RUN_IN_STRICT_MODE + "'",
+			//   false);
+		}
 	}
 }

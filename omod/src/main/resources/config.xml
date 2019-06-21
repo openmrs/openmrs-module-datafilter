@@ -40,5 +40,15 @@
         </description>
     </globalProperty>
 
+    <globalProperty>
+        <property>${project.parent.artifactId}.runInStrictMode</property>
+        <description>
+            When the value is set to false, the user can view a record that they don't have access,
+            this can arise if they have a filtered record's unique identifier or a link to it since
+            filters are not applied when looking up records by id, it's highly recommended to always
+            run in strict mode and only turn this off when running in a non-production environment.
+        </description>
+    </globalProperty>
+
 </module>
 

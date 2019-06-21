@@ -17,9 +17,12 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -53,6 +56,9 @@ public class DataFilterInterceptorTest {
 		mockStatic(AccessUtil.class);
 		adminService = mock(AdministrationService.class);
 		when(Context.getAdministrationService()).thenReturn(adminService);
+		SessionFactory sf = mock(SessionFactory.class);
+		when(sf.getCurrentSession()).thenReturn(mock(Session.class));
+		when(Context.getRegisteredComponents(eq(SessionFactory.class))).thenReturn(Collections.singletonList(sf));
 		when(adminService.getGlobalPropertyValue(eq(DataFilterConstants.GP_RUN_IN_STRICT_MODE), anyBoolean()))
 		        .thenReturn(true);
 	}

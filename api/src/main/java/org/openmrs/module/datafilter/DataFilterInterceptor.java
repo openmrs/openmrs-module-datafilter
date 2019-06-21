@@ -17,6 +17,9 @@ import java.util.stream.Stream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.EmptyInterceptor;
+import org.hibernate.FlushMode;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.type.Type;
 import org.openmrs.Encounter;
 import org.openmrs.Location;
@@ -49,7 +52,6 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 	 */
 	@Override
 	public boolean onLoad(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
-		
 		if (Daemon.isDaemonThread()) {
 			if (log.isDebugEnabled()) {
 				log.trace("Skipping DataFilterInterceptor for daemon thread");
@@ -61,14 +63,25 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 					log.trace("Skipping DataFilterInterceptor for super user");
 				}
 			} else {
-				AdministrationService as = Context.getAdministrationService();
-				Boolean strictMode = as.getGlobalPropertyValue(DataFilterConstants.GP_RUN_IN_STRICT_MODE, false);
-				if (!strictMode) {
-					if (log.isDebugEnabled()) {
-						log.trace("Skipping DataFilterInterceptor because the module is not running in strict mode");
+				Session session = Context.getRegisteredComponents(SessionFactory.class).get(0).getCurrentSession();
+				//Hibernate will flush any changes in the current session before querying the DB when fetching
+				//the GP value below and we end up in this method again, therefore we need to disable auto flush
+				final FlushMode flushMode = session.getFlushMode();
+				session.setFlushMode(FlushMode.MANUAL);
+				try {
+					AdministrationService as = Context.getAdministrationService();
+					Boolean strictMode = as.getGlobalPropertyValue(DataFilterConstants.GP_RUN_IN_STRICT_MODE, false);
+					if (!strictMode) {
+						if (log.isDebugEnabled()) {
+							log.trace("Skipping DataFilterInterceptor because the module is not running in strict mode");
+						}
+					} else if (user == null || !AccessUtil.getAccessiblePersonIds(Location.class).contains(id.toString())) {
+						throw new ContextAuthenticationException(DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE);
 					}
-				} else if (user == null || !AccessUtil.getAccessiblePersonIds(Location.class).contains(id.toString())) {
-					throw new ContextAuthenticationException(DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE);
+				}
+				finally {
+					//reset
+					session.setFlushMode(flushMode);
 				}
 			}
 		}

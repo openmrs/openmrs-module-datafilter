@@ -14,8 +14,9 @@ import static org.openmrs.module.datafilter.DataFilterConstants.FILTER_NAME_OBS;
 import static org.openmrs.module.datafilter.DataFilterConstants.FILTER_NAME_PATIENT;
 import static org.openmrs.module.datafilter.DataFilterConstants.FILTER_NAME_VISIT;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -114,11 +115,7 @@ public class DataFilterSessionContext extends SpringSessionContext {
 			tempSessionHolder.remove();
 		}
 		
-		//If the user isn't granted access to patients at any basis, we add -1 because ids are all > 0,
-		//in theory the query will match no records if the user isn't granted access to any basis
-		List<String> basisIds = new ArrayList();
-		basisIds.add("-1");
-		
+		Collection<String> basisIds = new HashSet();
 		if (Context.isAuthenticated()) {
 			try {
 				tempSessionHolder.set(session);
@@ -129,6 +126,12 @@ public class DataFilterSessionContext extends SpringSessionContext {
 			}
 		}
 		
+		if (basisIds.isEmpty()) {
+			//If the user isn't granted access to patients at any basis, we add -1 because ids are all > 0,
+			//in theory the query will match no records if the user isn't granted access to any basis
+			basisIds = Collections.singleton("-1");
+		}
+		
 		enableFilter(FILTER_NAME_PATIENT, attributeTypeId, basisIds, session);
 		enableFilter(FILTER_NAME_VISIT, attributeTypeId, basisIds, session);
 		enableFilter(FILTER_NAME_ENCOUNTER, attributeTypeId, basisIds, session);
@@ -137,7 +140,7 @@ public class DataFilterSessionContext extends SpringSessionContext {
 		return session;
 	}
 	
-	private void enableFilter(String filterName, Integer attributeTypeId, List<String> basisIds, Session session) {
+	private void enableFilter(String filterName, Integer attributeTypeId, Collection<String> basisIds, Session session) {
 		Filter filter = session.getEnabledFilter(filterName);
 		if (filter == null) {
 			filter = session.enableFilter(filterName);

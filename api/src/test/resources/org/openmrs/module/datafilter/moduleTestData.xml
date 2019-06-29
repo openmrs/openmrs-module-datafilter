@@ -32,7 +32,7 @@
     <person_name person_name_id="2001" preferred="true" person_id="1001" given_name="Emmanuel" middle_name="Wasswa" family_name="Navuga" creator="1" date_created="2019-05-02 00:00:00.0" voided="false" uuid="289e3a7b-6482-487d-94ce-c07bb3ca3cc8" />
     <person_name person_name_id="2002" preferred="true" person_id="1002" given_name="Emmanuella" middle_name="Nakato" family_name="Navuga" creator="1" date_created="2019-05-02 00:00:00.0" voided="false" uuid="389e3a7b-6482-487d-94ce-c07bb3ca3cc8" />
     <person_name person_name_id="2003" preferred="true" person_id="1101" given_name="David" middle_name="Beckham" creator="1" date_created="2019-05-02 00:00:00.0" voided="false" uuid="489e3a7b-6482-487d-94ce-c07bb3ca3cc8" />
-    <person_name person_name_id="2004" preferred="true" person_id="1101" given_name="Makayla" middle_name="Nakimuli" family_name="Navuga" creator="1" date_created="2019-05-02 00:00:00.0" voided="false" uuid="589e3a7b-6482-487d-94ce-c07bb3ca3cc8" />
+    <person_name person_name_id="2004" preferred="true" person_id="1003" given_name="Makayla" middle_name="Nakimuli" family_name="Navuga" creator="1" date_created="2019-05-02 00:00:00.0" voided="false" uuid="589e3a7b-6482-487d-94ce-c07bb3ca3cc8" />
 
     <person_attribute person_attribute_id="7000" person_id="1001" value="4000" person_attribute_type_id="6000" creator="1" date_created="2019-05-24 00:00:00.0" voided="false" uuid="a768f3da-b692-44b7-a33f-abf2c450474f" />
     <person_attribute person_attribute_id="7001" person_id="1002" value="4001" person_attribute_type_id="6000" creator="1" date_created="2019-05-24 00:00:00.0" voided="false" uuid="b768f3da-b692-44b7-a33f-abf2c450474f" />

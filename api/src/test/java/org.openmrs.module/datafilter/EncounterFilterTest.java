@@ -62,4 +62,17 @@ public class EncounterFilterTest extends BaseFilterTest {
 		assertTrue(TestUtil.containsId(encounters, 1002));
 	}
 	
+	@Test
+	public void getEncounters_shouldReturnAllEncountersIfTheAuthenticatedUserIsASuperUser() {
+		assertTrue(Context.getAuthenticatedUser().isSuperUser());
+		final String name = "Navuga";
+		final int expCount = 3;
+		assertEquals(expCount, encounterService.getCountOfEncounters(name, false).intValue());
+		Collection<Encounter> encounters = encounterService.getEncounters(name, 0, Integer.MAX_VALUE, false);
+		assertEquals(expCount, encounters.size());
+		assertTrue(TestUtil.containsId(encounters, 1000));
+		assertTrue(TestUtil.containsId(encounters, 1001));
+		assertTrue(TestUtil.containsId(encounters, 1002));
+	}
+	
 }

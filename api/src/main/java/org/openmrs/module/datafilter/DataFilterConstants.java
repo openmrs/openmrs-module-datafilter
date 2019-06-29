@@ -9,6 +9,10 @@
  */
 package org.openmrs.module.datafilter;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class DataFilterConstants {
 	
 	public static final String MODULE_ID = "datafilter";
@@ -20,6 +24,9 @@ public class DataFilterConstants {
 	public static final String FILTER_NAME_OBS = MODULE_ID + "_obsFilter";
 	
 	public static final String FILTER_NAME_PATIENT = MODULE_ID + "_patientFilter";
+	
+	public static final Set<String> FILTER_NAMES = Stream
+	        .of(FILTER_NAME_PATIENT, FILTER_NAME_VISIT, FILTER_NAME_ENCOUNTER, FILTER_NAME_OBS).collect(Collectors.toSet());
 	
 	public static final String FULL_TEXT_FILTER_NAME_PATIENT = MODULE_ID + "_patientFullTextFilter";
 	

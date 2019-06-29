@@ -30,6 +30,7 @@ import org.openmrs.PatientIdentifier;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonName;
 import org.openmrs.api.APIException;
+import org.openmrs.api.context.Context;
 
 /**
  * Custom implementation of the {@link FullTextSession} interface that acts a wrapper around a
@@ -68,10 +69,20 @@ final class FullTextSessionWrapper extends SessionDelegatorBaseImpl implements F
 		
 		Class<?> entityClass = entities[0];
 		FullTextQuery query = fullTextSession.createFullTextQuery(luceneQuery, entityClass);
+		
+		if (Context.isAuthenticated() && Context.getAuthenticatedUser().isSuperUser()) {
+			if (log.isTraceEnabled()) {
+				log.trace("Skipping enabling of filters for super user");
+			}
+			
+			return query;
+		}
+		
 		if (!CLASS_FIELD_MAP.containsKey(entityClass)) {
 			if (log.isDebugEnabled()) {
 				log.debug("Skipping enabling of filters on the full text query for " + entityClass.getName());
 			}
+			
 			return query;
 		}
 		

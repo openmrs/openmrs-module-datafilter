@@ -68,19 +68,30 @@ public class DataFilterSessionContext extends SpringSessionContext {
 	@Override
 	public Session currentSession() throws HibernateException {
 		if (tempSessionHolder.get() != null) {
-			//This method being called recursively from below, so return the cached session object
+			//This method being again from below, return the cached session object to avoid stack overflow
 			if (log.isTraceEnabled()) {
-				log.trace("Recursive call to getting the current session");
+				log.trace("Session holder already contains a session object");
 			}
 			return tempSessionHolder.get();
 		}
 		
 		Session session = super.currentSession();
-		//TODO Do not apply filters for a super user
 		if (Daemon.isDaemonThread()) {
 			if (log.isTraceEnabled()) {
-				log.trace("Skipping filters on daemon thread");
+				log.trace("Skipping enabling of filters on daemon thread");
 			}
+			return session;
+		}
+		
+		if (Context.isAuthenticated() && Context.getAuthenticatedUser().isSuperUser()) {
+			if (log.isTraceEnabled()) {
+				log.trace("Disabling filters for super user");
+			}
+			
+			for (String filter : DataFilterConstants.FILTER_NAMES) {
+				session.disableFilter(filter);
+			}
+			
 			return session;
 		}
 		

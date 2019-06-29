@@ -73,4 +73,15 @@ public class ObsFilterTest extends BaseFilterTest {
 		assertTrue(TestUtil.containsId(observations, 1003));
 	}
 	
+	@Test
+	public void getObs_shouldReturnAllObsIfTheAuthenticatedUserIsASuperUser() {
+		assertTrue(Context.getAuthenticatedUser().isSuperUser());
+		int expCount = 3;
+		Collection<Obs> observations = getObservations();
+		assertEquals(expCount, observations.size());
+		assertTrue(TestUtil.containsId(observations, 1001));
+		assertTrue(TestUtil.containsId(observations, 1002));
+		assertTrue(TestUtil.containsId(observations, 1003));
+	}
+	
 }

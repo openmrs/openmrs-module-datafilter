@@ -52,12 +52,11 @@ public class PatientFilterTest extends BaseFilterTest {
 		
 		AccessUtilTest.grantLocationAccessToUser(Context.getAuthenticatedUser().getUserId(), 4001, getConnection());
 		expCount = 6;
-		assertEquals(expCount, patientService.getAllPatients().size());
 		patients = patientService.getAllPatients();
 		assertEquals(expCount, patients.size());
 		assertTrue(TestUtil.containsId(patients, 1001));
 		assertTrue(TestUtil.containsId(patients, 1002));
-        assertTrue(TestUtil.containsId(patients, 1003));
+		assertTrue(TestUtil.containsId(patients, 1003));
 		assertTrue(TestUtil.containsId(patients, 1501));
 		assertTrue(TestUtil.containsId(patients, 1502));
 		assertTrue(TestUtil.containsId(patients, 1503));
@@ -67,6 +66,19 @@ public class PatientFilterTest extends BaseFilterTest {
 	public void getAllPatients_shouldReturnNoPatientsIfTheUserIsNotGrantedAccessToAnyBasis() {
 		reloginAs("dBeckham", "test");
 		assertEquals(0, patientService.getAllPatients().size());
+	}
+	
+	@Test
+	public void getAllPatients_shouldReturnAllPatientsIfTheAuthenticatedUserIsASuperUser() throws Exception {
+		assertTrue(Context.getAuthenticatedUser().isSuperUser());
+		Collection<Patient> patients = patientService.getAllPatients();
+		assertEquals(11, patients.size());
+		assertTrue(TestUtil.containsId(patients, 1001));
+		assertTrue(TestUtil.containsId(patients, 1002));
+		assertTrue(TestUtil.containsId(patients, 1003));
+		assertTrue(TestUtil.containsId(patients, 1501));
+		assertTrue(TestUtil.containsId(patients, 1502));
+		assertTrue(TestUtil.containsId(patients, 1503));
 	}
 	
 	@Test
@@ -125,6 +137,19 @@ public class PatientFilterTest extends BaseFilterTest {
 	}
 	
 	@Test
+	public void getPatients_shouldReturnAllPatientsByIndentifierIfTheAuthenticatedUserIsASuperUser() {
+		assertTrue(Context.getAuthenticatedUser().isSuperUser());
+		int expCount = 4;
+		assertEquals(expCount, patientService.getCountOfPatients(IDENTIFIER_PREFIX).intValue());
+		Collection<Patient> patients = patientService.getPatients(IDENTIFIER_PREFIX);
+		assertEquals(expCount, patients.size());
+		assertTrue(TestUtil.containsId(patients, 1501));
+		assertTrue(TestUtil.containsId(patients, 1502));
+		assertTrue(TestUtil.containsId(patients, 1503));
+		assertTrue(TestUtil.containsId(patients, 1504));
+	}
+	
+	@Test
 	public void getPatients_shouldReturnPatientsByPersonAttributeAccessibleToTheUser() {
 		Context.getAdministrationService().setGlobalProperty(
 		    OpenmrsConstants.GLOBAL_PROPERTY_PERSON_ATTRIBUTE_SEARCH_MATCH_MODE,
@@ -141,6 +166,21 @@ public class PatientFilterTest extends BaseFilterTest {
 		expCount = 3;
 		assertEquals(expCount, patientService.getCountOfPatients(TELEPHONE_AREA_CODE).intValue());
 		patients = patientService.getPatients(TELEPHONE_AREA_CODE);
+		assertEquals(expCount, patients.size());
+		assertTrue(TestUtil.containsId(patients, 1501));
+		assertTrue(TestUtil.containsId(patients, 1502));
+		assertTrue(TestUtil.containsId(patients, 1503));
+	}
+	
+	@Test
+	public void getPatients_shouldReturnAllPatientsByPersonAttributeTypeIfTheAuthenticatedUserIsASuperUser() {
+		assertTrue(Context.getAuthenticatedUser().isSuperUser());
+		Context.getAdministrationService().setGlobalProperty(
+		    OpenmrsConstants.GLOBAL_PROPERTY_PERSON_ATTRIBUTE_SEARCH_MATCH_MODE,
+		    OpenmrsConstants.GLOBAL_PROPERTY_PERSON_ATTRIBUTE_SEARCH_MATCH_ANYWHERE);
+		int expCount = 3;
+		assertEquals(expCount, patientService.getCountOfPatients(TELEPHONE_AREA_CODE).intValue());
+		Collection<Patient> patients = patientService.getPatients(TELEPHONE_AREA_CODE);
 		assertEquals(expCount, patients.size());
 		assertTrue(TestUtil.containsId(patients, 1501));
 		assertTrue(TestUtil.containsId(patients, 1502));

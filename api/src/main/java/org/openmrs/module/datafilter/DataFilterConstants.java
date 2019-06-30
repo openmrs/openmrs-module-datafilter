@@ -38,8 +38,8 @@ public class DataFilterConstants {
 	
 	public final static String BASIS_IDS_PLACEHOLDER = ":" + PARAM_NAME_BASIS_IDS;
 	
-	public static final String PERSON_ID_QUERY = "SELECT pa.person_id FROM person_attribute pa WHERE "
-	        + "pa.person_attribute_type_id = :" + PARAM_NAME_ATTRIB_TYPE_ID + " AND pa.value in (:" + PARAM_NAME_BASIS_IDS
+	public static final String PERSON_ID_QUERY = "SELECT DISTINCT pa.person_id FROM person_attribute pa WHERE "
+	        + "pa.person_attribute_type_id = :" + PARAM_NAME_ATTRIB_TYPE_ID + " AND pa.value IN (:" + PARAM_NAME_BASIS_IDS
 	        + ") AND pa.voided = 0";
 	
 	public static final String FILTER_CONDITION_PATIENT_ID = "patient_id in (" + PERSON_ID_QUERY + ")";

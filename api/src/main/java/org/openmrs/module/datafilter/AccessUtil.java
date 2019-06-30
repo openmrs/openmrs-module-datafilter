@@ -43,22 +43,23 @@ public class AccessUtil {
 	
 	private static final Log log = LogFactory.getLog(AccessUtil.class);
 	
-	private final static String ID_PLACEHOLDER = "@id";
+	private final static String AUTHORIZED_ENTITY_ID_PLACEHOLDER = "@id";
 	
-	private final static String TYPE_PLACEHOLDER = "@type";
+	private final static String AUTHORIZED_ENTITY_TYPE_PLACEHOLDER = "@authorizedEntityType";
 	
-	private final static String BASIS_TYPE_PLACEHOLDER = "@basis";
+	private final static String BASIS_TYPE_PLACEHOLDER = "@basisType";
 	
 	private final static String UUIDS_PLACEHOLDER = "@uuids";
 	
-	private final static String BASIS_QUERY = "SELECT basis_id FROM " + DataFilterConstants.MODULE_ID
-	        + "_authorized_entity_basis_map WHERE authorized_entity_identifier = " + ID_PLACEHOLDER
-	        + " AND authorized_entity_type = '" + TYPE_PLACEHOLDER + "' AND basis_type = '" + BASIS_TYPE_PLACEHOLDER + "'";
+	private final static String BASIS_QUERY = "SELECT DISTINCT basis_id FROM " + DataFilterConstants.MODULE_ID
+	        + "_authorized_entity_basis_map WHERE authorized_entity_identifier = " + AUTHORIZED_ENTITY_ID_PLACEHOLDER
+	        + " AND authorized_entity_type = '" + AUTHORIZED_ENTITY_TYPE_PLACEHOLDER + "' AND basis_type = '"
+	        + BASIS_TYPE_PLACEHOLDER + "'";
 	
-	private final static String GP_QUERY = "select property_value from global_property where property = '"
+	private final static String GP_QUERY = "SELECT property_value FROM global_property WHERE property = '"
 	        + GP_PERSON_ATTRIBUTE_TYPE_UUIDS + "'";
 	
-	private final static String ATTRIBUTE_TYPE_QUERY = "select person_attribute_type_id, format from person_attribute_type where uuid in ("
+	private final static String ATTRIBUTE_TYPE_QUERY = "SELECT person_attribute_type_id, format FROM person_attribute_type WHERE uuid IN ("
 	        + UUIDS_PLACEHOLDER + ")";
 	
 	/**
@@ -116,8 +117,8 @@ public class AccessUtil {
 		}
 		
 		String userId = Context.getAuthenticatedUser().getUserId().toString();
-		String query = BASIS_QUERY.replace(ID_PLACEHOLDER, userId);
-		query = query.replace(TYPE_PLACEHOLDER, User.class.getName());
+		String query = BASIS_QUERY.replace(AUTHORIZED_ENTITY_ID_PLACEHOLDER, userId);
+		query = query.replace(AUTHORIZED_ENTITY_TYPE_PLACEHOLDER, User.class.getName());
 		query = query.replace(BASIS_TYPE_PLACEHOLDER, basisType.getName());
 		
 		List<List<Object>> rows = runQueryWithElevatedPrivileges(query);

@@ -62,8 +62,8 @@
     <user_role user_id="3000" role="Physician" />
     <user_role user_id="3001" role="Physician" />
 
-    <datafilter_user_basis_map user_basis_map_id="1" user_id="3000" basis_id="4000" basis_type="org.openmrs.Location" />
-    <datafilter_user_basis_map user_basis_map_id="2" user_id="3000" basis_id="1" basis_type="org.openmrs.Location" />
-    <datafilter_user_basis_map user_basis_map_id="3" user_id="3000" basis_id="1" basis_type="org.openmrs.Program" />
-    <datafilter_user_basis_map user_basis_map_id="4" user_id="501" basis_id="4000" basis_type="org.openmrs.Location" />
+    <datafilter_authorized_entity_basis_map authorized_entity_basis_map_id="1" authorized_entity_identifier="3000" authorized_entity_type="org.openmrs.User" basis_id="4000" basis_type="org.openmrs.Location" />
+    <datafilter_authorized_entity_basis_map authorized_entity_basis_map_id="2" authorized_entity_identifier="3000" authorized_entity_type="org.openmrs.User" basis_id="1" basis_type="org.openmrs.Location" />
+    <datafilter_authorized_entity_basis_map authorized_entity_basis_map_id="3" authorized_entity_identifier="3000" authorized_entity_type="org.openmrs.User" basis_id="1" basis_type="org.openmrs.Program" />
+    <datafilter_authorized_entity_basis_map authorized_entity_basis_map_id="4" authorized_entity_identifier="501" authorized_entity_type="org.openmrs.User" basis_id="4000" basis_type="org.openmrs.Location" />
 </dataset>

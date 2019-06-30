@@ -32,8 +32,8 @@ public class AccessUtilTest extends BaseFilterTest {
 	
 	public static void grantLocationAccessToUser(Integer userId, Integer locationId, Connection conn) {
 		//TODO replace the hard coded id
-		String query = "INSERT INTO " + DataFilterConstants.MODULE_ID + "_user_basis_map VALUES (100," + userId + ", "
-		        + locationId + ", '" + Location.class.getName() + "')";
+		String query = "INSERT INTO " + DataFilterConstants.MODULE_ID + "_authorized_entity_basis_map VALUES (100, '"
+		        + userId + "', 'org.openmrs.User', " + locationId + ", '" + Location.class.getName() + "')";
 		DatabaseUtil.executeSQL(conn, query, false);
 	}
 	

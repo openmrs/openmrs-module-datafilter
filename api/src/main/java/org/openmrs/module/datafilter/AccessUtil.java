@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.BaseOpenmrsObject;
 import org.openmrs.Location;
+import org.openmrs.User;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.util.PrivilegeConstants;
@@ -44,12 +45,15 @@ public class AccessUtil {
 	
 	private final static String ID_PLACEHOLDER = "@id";
 	
+	private final static String TYPE_PLACEHOLDER = "@type";
+	
 	private final static String BASIS_TYPE_PLACEHOLDER = "@basis";
 	
 	private final static String UUIDS_PLACEHOLDER = "@uuids";
 	
-	private final static String BASIS_QUERY = "select basis_id from " + DataFilterConstants.MODULE_ID
-	        + "_user_basis_map where user_id = " + ID_PLACEHOLDER + " and basis_type = '" + BASIS_TYPE_PLACEHOLDER + "'";
+	private final static String BASIS_QUERY = "SELECT basis_id FROM " + DataFilterConstants.MODULE_ID
+	        + "_authorized_entity_basis_map WHERE authorized_entity_identifier = " + ID_PLACEHOLDER
+	        + " AND authorized_entity_type = '" + TYPE_PLACEHOLDER + "' AND basis_type = '" + BASIS_TYPE_PLACEHOLDER + "'";
 	
 	private final static String GP_QUERY = "select property_value from global_property where property = '"
 	        + GP_PERSON_ATTRIBUTE_TYPE_UUIDS + "'";
@@ -112,7 +116,9 @@ public class AccessUtil {
 		}
 		
 		String userId = Context.getAuthenticatedUser().getUserId().toString();
-		String query = BASIS_QUERY.replace(ID_PLACEHOLDER, userId).replace(BASIS_TYPE_PLACEHOLDER, basisType.getName());
+		String query = BASIS_QUERY.replace(ID_PLACEHOLDER, userId);
+		query = query.replace(TYPE_PLACEHOLDER, User.class.getName());
+		query = query.replace(BASIS_TYPE_PLACEHOLDER, basisType.getName());
 		
 		List<List<Object>> rows = runQueryWithElevatedPrivileges(query);
 		Set<String> basisIds = new HashSet();

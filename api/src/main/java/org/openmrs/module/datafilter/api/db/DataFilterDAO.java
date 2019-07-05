@@ -9,22 +9,22 @@
  */
 package org.openmrs.module.datafilter.api.db;
 
-import org.openmrs.module.datafilter.AuthorizedEntityBasisMap;
+import org.openmrs.module.datafilter.EntityBasisMap;
 
 public interface DataFilterDAO {
 	
 	/**
-	 * Saves the specified AuthorizedEntityBasisMap instance to the database
+	 * Saves the specified EntityBasisMap instance to the database
 	 * 
-	 * @param authorizedEntityBasisMap
+	 * @param entityBasisMap
 	 */
-	AuthorizedEntityBasisMap saveAuthorizedBasisMapById(AuthorizedEntityBasisMap authorizedEntityBasisMap);
+	EntityBasisMap saveEntityBasisMapById(EntityBasisMap entityBasisMap);
 	
 	/**
-	 * Deletes the specified AuthorizedEntityBasisMap instance from the database
+	 * Deletes the specified EntityBasisMap instance from the database
 	 * 
-	 * @param authorizedEntityBasisMap
+	 * @param entityBasisMap
 	 */
-	void deleteAuthorizedBasisMap(AuthorizedEntityBasisMap authorizedEntityBasisMap);
+	void deleteEntityBasisMap(EntityBasisMap entityBasisMap);
 	
 }

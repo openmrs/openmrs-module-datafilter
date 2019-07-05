@@ -25,24 +25,24 @@ import org.openmrs.Creatable;
 import org.openmrs.User;
 
 /**
- * An instance of this class encapsulates information about a mapping between an authorized entity
- * and a basis they have been granted access to e.g. an authorized entity could be a user or a role
- * and a basis could be a location or a program that is linked to a records they have access to.
+ * An instance of this class encapsulates information about a mapping between an entity and a basis
+ * they have been granted access to e.g. an entity could be a user or a role and a basis could be a
+ * location or a program that is linked to a records they have access to.
  */
 @Entity
-@Table(name = DataFilterConstants.MODULE_ID + "_authorized_entity_basis_map")
-public class AuthorizedEntityBasisMap extends BaseOpenmrsObject implements Creatable {
+@Table(name = DataFilterConstants.MODULE_ID + "_entity_basis_map")
+public class EntityBasisMap extends BaseOpenmrsObject implements Creatable {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "authorized_entity_basis_map_id")
-	private Integer authorizedBasisMapId;
+	@Column(name = "entity_basis_map_id")
+	private Integer entityBasisMapId;
 	
-	@Column(name = "authorized_entity_identifier", nullable = false, updatable = false)
-	private String authorizedEntityIdentifier;
+	@Column(name = "entity_identifier", nullable = false, updatable = false)
+	private String entityIdentifier;
 	
-	@Column(name = "authorized_entity_type", nullable = false, updatable = false)
-	private String authorizedEntityType;
+	@Column(name = "entity_type", nullable = false, updatable = false)
+	private String entityType;
 	
 	@Column(name = "basis_id", nullable = false, updatable = false)
 	private Integer basisId;
@@ -62,7 +62,7 @@ public class AuthorizedEntityBasisMap extends BaseOpenmrsObject implements Creat
 	 */
 	@Override
 	public Integer getId() {
-		return getAuthorizedBasisMapId();
+		return getEntityBasisMapId();
 	}
 	
 	/**
@@ -70,61 +70,61 @@ public class AuthorizedEntityBasisMap extends BaseOpenmrsObject implements Creat
 	 */
 	@Override
 	public void setId(Integer id) {
-		setAuthorizedBasisMapId(id);
+		setEntityBasisMapId(id);
 	}
 	
 	/**
-	 * Gets the authorizedBasisMapId
+	 * Gets the entityBasisMapId
 	 *
-	 * @return the authorizedBasisMapId
+	 * @return the entityBasisMapId
 	 */
-	public Integer getAuthorizedBasisMapId() {
-		return authorizedBasisMapId;
+	public Integer getEntityBasisMapId() {
+		return entityBasisMapId;
 	}
 	
 	/**
-	 * Sets the authorizedBasisMapId
+	 * Sets the entityBasisMapId
 	 *
-	 * @param authorizedBasisMapId the authorizedBasisMapId to set
+	 * @param entityBasisMapId the entityBasisMapId to set
 	 */
-	public void setAuthorizedBasisMapId(Integer authorizedBasisMapId) {
-		this.authorizedBasisMapId = authorizedBasisMapId;
+	public void setEntityBasisMapId(Integer entityBasisMapId) {
+		this.entityBasisMapId = entityBasisMapId;
 	}
 	
 	/**
-	 * Gets the authorizedEntityIdentifier
+	 * Gets the entityIdentifier
 	 *
-	 * @return the authorizedEntityIdentifier
+	 * @return the entityIdentifier
 	 */
-	public String getAuthorizedEntityIdentifier() {
-		return authorizedEntityIdentifier;
+	public String getEntityIdentifier() {
+		return entityIdentifier;
 	}
 	
 	/**
-	 * Sets the authorizedEntityIdentifier
+	 * Sets the entityIdentifier
 	 *
-	 * @param authorizedEntityIdentifier the authorizedEntityIdentifier to set
+	 * @param entityIdentifier the entityIdentifier to set
 	 */
-	public void setAuthorizedEntityIdentifier(String authorizedEntityIdentifier) {
-		this.authorizedEntityIdentifier = authorizedEntityIdentifier;
+	public void setEntityIdentifier(String entityIdentifier) {
+		this.entityIdentifier = entityIdentifier;
 	}
 	
 	/**
-	 * Gets the authorizedEntityType
+	 * Gets the entityType
 	 *
-	 * @return the authorizedEntityType
+	 * @return the entityType
 	 */
-	public String getAuthorizedEntityType() {
-		return authorizedEntityType;
+	public String getEntityType() {
+		return entityType;
 	}
 	
 	/**
-	 * Sets the authorizedEntityType
+	 * Sets the entityType
 	 *
-	 * @param authorizedEntityType the authorizedEntityType to set
+	 * @param entityType the entityType to set
 	 */
-	public void setAuthorizedEntityType(String authorizedEntityType) {
-		this.authorizedEntityType = authorizedEntityType;
+	public void setEntityType(String entityType) {
+		this.entityType = entityType;
 	}
 	
 	/**

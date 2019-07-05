@@ -10,7 +10,7 @@
 package org.openmrs.module.datafilter.api.db.hibernate;
 
 import org.hibernate.SessionFactory;
-import org.openmrs.module.datafilter.AuthorizedEntityBasisMap;
+import org.openmrs.module.datafilter.EntityBasisMap;
 import org.openmrs.module.datafilter.api.db.DataFilterDAO;
 
 public class HibernateDataFilterDAO implements DataFilterDAO {
@@ -27,18 +27,18 @@ public class HibernateDataFilterDAO implements DataFilterDAO {
 	}
 	
 	/**
-	 * @see DataFilterDAO#saveAuthorizedBasisMapById(AuthorizedEntityBasisMap)
+	 * @see DataFilterDAO#saveEntityBasisMapById(EntityBasisMap)
 	 */
 	@Override
-	public AuthorizedEntityBasisMap saveAuthorizedBasisMapById(AuthorizedEntityBasisMap authorizedBasisMap) {
+	public EntityBasisMap saveEntityBasisMapById(EntityBasisMap entityBasisMap) {
 		return null;
 	}
 	
 	/**
-	 * @see DataFilterDAO#deleteAuthorizedBasisMap(AuthorizedEntityBasisMap)
+	 * @see DataFilterDAO#deleteEntityBasisMap(EntityBasisMap)
 	 */
 	@Override
-	public void deleteAuthorizedBasisMap(AuthorizedEntityBasisMap authorizedBasisMap) {
+	public void deleteEntityBasisMap(EntityBasisMap entityBasisMap) {
 		
 	}
 	

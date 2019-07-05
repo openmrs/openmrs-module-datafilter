@@ -9,6 +9,9 @@
  */
 package org.openmrs.module.datafilter.api.impl;
 
+import java.util.List;
+
+import org.openmrs.OpenmrsObject;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.datafilter.api.DataFilterService;
 import org.openmrs.module.datafilter.api.db.DataFilterDAO;
@@ -26,6 +29,42 @@ public class DataFilterServiceImpl extends BaseOpenmrsService implements DataFil
 	 */
 	public void setDao(DataFilterDAO dao) {
 		this.dao = dao;
+	}
+	
+	/**
+	 * @see DataFilterService#grantAccess(OpenmrsObject, OpenmrsObject)
+	 */
+	@Transactional
+	@Override
+	public void grantAccess(OpenmrsObject openmrsObject, OpenmrsObject basis) {
+		
+	}
+	
+	/**
+	 * @see DataFilterService#grantAccess(OpenmrsObject, List)
+	 */
+	@Transactional
+	@Override
+	public void grantAccess(OpenmrsObject openmrsObject, List<OpenmrsObject> basis) {
+		
+	}
+	
+	/**
+	 * @see DataFilterService#revokeAccess(OpenmrsObject, OpenmrsObject)
+	 */
+	@Transactional
+	@Override
+	public void revokeAccess(OpenmrsObject openmrsObject, OpenmrsObject bases) {
+		
+	}
+	
+	/**
+	 * @see DataFilterService#revokeAccess(OpenmrsObject, List)
+	 */
+	@Transactional
+	@Override
+	public void revokeAccess(OpenmrsObject openmrsObject, List<OpenmrsObject> bases) {
+		
 	}
 	
 }

@@ -9,8 +9,37 @@
  */
 package org.openmrs.module.datafilter.api;
 
+import java.util.List;
+
+import org.openmrs.OpenmrsObject;
 import org.openmrs.api.OpenmrsService;
 
 public interface DataFilterService extends OpenmrsService {
+	
+	/**
+	 * Grants access to records associated to the specified basis to the specified entity
+	 * 
+	 * @param entity the entity to grant access
+	 * @param basis the basis associated to the records to be accessed
+	 */
+	void grantAccess(OpenmrsObject entity, OpenmrsObject basis);
+	
+	/**
+	 * @param entity the entity to grant access
+	 * @param bases the bases associated to the records to be accessed
+	 */
+	void grantAccess(OpenmrsObject entity, List<OpenmrsObject> bases);
+	
+	/**
+	 * @param entity the entity from which to revoke access
+	 * @param basis the basis associated to the records from which to revoke access
+	 */
+	void revokeAccess(OpenmrsObject entity, OpenmrsObject basis);
+	
+	/**
+	 * @param entity the entity from which to revoke access
+	 * @param bases the bases associated to the records from which to revoke access
+	 */
+	void revokeAccess(OpenmrsObject entity, List<OpenmrsObject> bases);
 	
 }

@@ -31,7 +31,7 @@ import org.openmrs.User;
  */
 @Entity
 @Table(name = DataFilterConstants.MODULE_ID + "_authorized_entity_basis_map")
-public class AuthorizedBasisMap extends BaseOpenmrsObject implements Creatable {
+public class AuthorizedEntityBasisMap extends BaseOpenmrsObject implements Creatable {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

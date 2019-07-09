@@ -33,10 +33,11 @@ public class AccessUtilTest extends BaseFilterTest {
 	
 	public static void grantLocationAccessToUser(Integer userId, Integer locationId, Connection conn) {
 		//TODO replace the hard coded id
-		String columns = "entity_basis_map_id, entity_identifier, entity_type,  basis_id, basis_type, "
+		String classname = Location.class.getName();
+		String columns = "entity_basis_map_id, entity_identifier, entity_type, basis_identifier, basis_type, "
 		        + "creator, date_created, uuid";
 		String query = "INSERT INTO " + DataFilterConstants.MODULE_ID + "_entity_basis_map (" + columns + ") "
-		        + "VALUES (100, '" + userId + "', 'org.openmrs.User', " + locationId + ", '" + Location.class.getName()
+		        + "VALUES (100, '" + userId + "', 'org.openmrs.User', '" + locationId + "', '" + classname
 		        + "', 1, '2019-05-01 00:00:00.0', '" + UUID.randomUUID().toString() + "')";
 		DatabaseUtil.executeSQL(conn, query, false);
 	}

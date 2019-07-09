@@ -62,8 +62,8 @@
     <user_role user_id="3000" role="Physician" />
     <user_role user_id="3001" role="Physician" />
 
-    <datafilter_entity_basis_map entity_basis_map_id="1" entity_identifier="3000" entity_type="org.openmrs.User" basis_id="4000" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="ae41928c-3bca-56r4-a4dc-9198f6b2873c" />
-    <datafilter_entity_basis_map entity_basis_map_id="2" entity_identifier="3000" entity_type="org.openmrs.User" basis_id="1" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="be41928c-3bca-56r4-a4dc-9198f6b2873c" />
-    <datafilter_entity_basis_map entity_basis_map_id="3" entity_identifier="3000" entity_type="org.openmrs.User" basis_id="1" basis_type="org.openmrs.Program" creator="1" date_created="2019-05-01 00:00:00.0" uuid="ce41928c-3bca-56r4-a4dc-9198f6b2873c" />
-    <datafilter_entity_basis_map entity_basis_map_id="4" entity_identifier="501" entity_type="org.openmrs.User" basis_id="4000" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="de41928c-3bca-56r4-a4dc-9198f6b2873c" />
+    <datafilter_entity_basis_map entity_basis_map_id="1" entity_identifier="3000" entity_type="org.openmrs.User" basis_identifier="4000" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="ae41928c-3bca-56r4-a4dc-9198f6b2873c" />
+    <datafilter_entity_basis_map entity_basis_map_id="2" entity_identifier="3000" entity_type="org.openmrs.User" basis_identifier="1" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="be41928c-3bca-56r4-a4dc-9198f6b2873c" />
+    <datafilter_entity_basis_map entity_basis_map_id="3" entity_identifier="3000" entity_type="org.openmrs.User" basis_identifier="1" basis_type="org.openmrs.Program" creator="1" date_created="2019-05-01 00:00:00.0" uuid="ce41928c-3bca-56r4-a4dc-9198f6b2873c" />
+    <datafilter_entity_basis_map entity_basis_map_id="4" entity_identifier="501" entity_type="org.openmrs.User" basis_identifier="4000" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="de41928c-3bca-56r4-a4dc-9198f6b2873c" />
 </dataset>

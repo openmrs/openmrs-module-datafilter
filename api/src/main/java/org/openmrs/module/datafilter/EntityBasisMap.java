@@ -44,8 +44,8 @@ public class EntityBasisMap extends BaseOpenmrsObject implements Creatable {
 	@Column(name = "entity_type", nullable = false, updatable = false)
 	private String entityType;
 	
-	@Column(name = "basis_id", nullable = false, updatable = false)
-	private Integer basisId;
+	@Column(name = "basis_identifier", nullable = false, updatable = false)
+	private String basisIdentifier;
 	
 	@Column(name = "basis_type", nullable = false, updatable = false)
 	private String basisType;
@@ -132,17 +132,17 @@ public class EntityBasisMap extends BaseOpenmrsObject implements Creatable {
 	 *
 	 * @return the basisId
 	 */
-	public Integer getBasisId() {
-		return basisId;
+	public String getBasisIdentifier() {
+		return basisIdentifier;
 	}
 	
 	/**
 	 * Sets the basisId
 	 *
-	 * @param basisId the basisId to set
+	 * @param basisIdentifier the basisId to set
 	 */
-	public void setBasisId(Integer basisId) {
-		this.basisId = basisId;
+	public void setBasisIdentifier(String basisIdentifier) {
+		this.basisIdentifier = basisIdentifier;
 	}
 	
 	/**

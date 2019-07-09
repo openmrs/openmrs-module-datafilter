@@ -42,7 +42,7 @@
             <column name="entity_type" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="basis_id" type="int">
+            <column name="basis_identifier" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
             <column name="basis_type" type="varchar(255)">

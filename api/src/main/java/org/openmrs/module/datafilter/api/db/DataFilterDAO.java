@@ -14,6 +14,17 @@ import org.openmrs.module.datafilter.EntityBasisMap;
 public interface DataFilterDAO {
 	
 	/**
+	 * Gets the EntityBasisMap that matches the specified argument values
+	 *
+	 * @param entityIdentifier the entity identifier to match
+	 * @param entityType entity type to match
+	 * @param basisIdentifier the basis identifier to match
+	 * @param basisType basis type to match
+	 * @return the matching EntityBasisMap otherwise null
+	 */
+	EntityBasisMap getEntityBasisMap(String entityIdentifier, String entityType, String basisIdentifier, String basisType);
+	
+	/**
 	 * Saves the specified EntityBasisMap instance to the database
 	 * 
 	 * @param entityBasisMap

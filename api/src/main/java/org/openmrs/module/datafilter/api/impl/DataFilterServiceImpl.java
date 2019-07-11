@@ -12,7 +12,10 @@ package org.openmrs.module.datafilter.api.impl;
 import java.util.List;
 
 import org.openmrs.OpenmrsObject;
+import org.openmrs.Role;
+import org.openmrs.api.APIException;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.module.datafilter.EntityBasisMap;
 import org.openmrs.module.datafilter.api.DataFilterService;
 import org.openmrs.module.datafilter.api.db.DataFilterDAO;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,4 +70,46 @@ public class DataFilterServiceImpl extends BaseOpenmrsService implements DataFil
 		
 	}
 	
+	/**
+	 * @see DataFilterService#hasAccess(OpenmrsObject, OpenmrsObject)
+	 */
+	@Override
+	public boolean hasAccess(OpenmrsObject entity, OpenmrsObject basis) {
+		String entityId = null;
+		String basisId = null;
+		try {
+			entityId = entity.getId().toString();
+		}
+		catch (UnsupportedOperationException e) {
+			if (entity instanceof Role) {
+				entityId = entity.getId().toString();
+			}
+		}
+		
+		try {
+			basisId = basis.getId().toString();
+		}
+		catch (UnsupportedOperationException e) {
+			if (basis instanceof Role) {
+				basisId = basis.getId().toString();
+			}
+		}
+		
+		if (entityId == null) {
+			throw new APIException("Failed to determine entityId");
+		}
+		
+		if (basisId == null) {
+			throw new APIException("Failed to determine basisId");
+		}
+		
+		EntityBasisMap map = dao.getEntityBasisMap(entityId, entity.getClass().getName(), basisId,
+		    basis.getClass().getName());
+		
+		if (map != null) {
+			return true;
+		}
+		
+		return false;
+	}
 }

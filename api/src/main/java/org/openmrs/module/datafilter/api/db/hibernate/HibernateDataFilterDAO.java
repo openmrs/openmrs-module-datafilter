@@ -9,7 +9,9 @@
  */
 package org.openmrs.module.datafilter.api.db.hibernate;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.openmrs.module.datafilter.EntityBasisMap;
 import org.openmrs.module.datafilter.api.db.DataFilterDAO;
 
@@ -24,6 +26,22 @@ public class HibernateDataFilterDAO implements DataFilterDAO {
 	 */
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
+	}
+	
+	/**
+	 * @see DataFilterDAO#getEntityBasisMap(String, String, String, String)
+	 */
+	@Override
+	public EntityBasisMap getEntityBasisMap(String entityIdentifier, String entityType, String basisIdentifier,
+	                                        String basisType) {
+		
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(EntityBasisMap.class);
+		criteria.add(Restrictions.eq("entityIdentifier", entityIdentifier).ignoreCase());
+		criteria.add(Restrictions.eq("entityType", entityType).ignoreCase());
+		criteria.add(Restrictions.eq("basisIdentifier", basisIdentifier).ignoreCase());
+		criteria.add(Restrictions.eq("basisType", basisType).ignoreCase());
+		
+		return (EntityBasisMap) criteria.uniqueResult();
 	}
 	
 	/**

@@ -36,13 +36,13 @@
             <column name="entity_basis_map_id" type="int" autoIncrement="true" >
                 <constraints primaryKey="true" nullable="false" unique="true" />
             </column>
-            <column name="entity_identifier" type="varchar(255)">
+            <column name="entity_identifier" type="varchar(127)">
                 <constraints nullable="false" />
             </column>
             <column name="entity_type" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="basis_identifier" type="varchar(255)">
+            <column name="basis_identifier" type="varchar(127)">
                 <constraints nullable="false" />
             </column>
             <column name="basis_type" type="varchar(255)">
@@ -64,6 +64,10 @@
                                  constraintName="entity_basis_map_creator"
                                  referencedTableName="users"
                                  referencedColumnNames="user_id" />
+
+        <addUniqueConstraint tableName="${project.parent.artifactId}_entity_basis_map"
+                             columnNames="entity_identifier, entity_type, basis_identifier, basis_type"
+                             constraintName="entity_basis_UK" />
 
     </changeSet>
 

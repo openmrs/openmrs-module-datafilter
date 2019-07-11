@@ -19,6 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.openmrs.BaseOpenmrsObject;
 import org.openmrs.Creatable;
@@ -27,10 +28,13 @@ import org.openmrs.User;
 /**
  * An instance of this class encapsulates information about a mapping between an entity and a basis
  * they have been granted access to e.g. an entity could be a user or a role and a basis could be a
- * location or a program that is linked to a records they have access to.
+ * location or a program that is linked to records they should have access to.
  */
 @Entity
-@Table(name = DataFilterConstants.MODULE_ID + "_entity_basis_map")
+@Table(name = DataFilterConstants.MODULE_ID
+        + "_entity_basis_map", uniqueConstraints = @UniqueConstraint(name = DataFilterConstants.MODULE_ID
+                + "_entity_basis_map", columnNames = { "entity_identifier", "entity_type", "basis_identifier",
+                        "basis_type" }))
 public class EntityBasisMap extends BaseOpenmrsObject implements Creatable {
 	
 	@Id
@@ -38,13 +42,13 @@ public class EntityBasisMap extends BaseOpenmrsObject implements Creatable {
 	@Column(name = "entity_basis_map_id")
 	private Integer entityBasisMapId;
 	
-	@Column(name = "entity_identifier", nullable = false, updatable = false)
+	@Column(name = "entity_identifier", nullable = false, updatable = false, length = 127)
 	private String entityIdentifier;
 	
 	@Column(name = "entity_type", nullable = false, updatable = false)
 	private String entityType;
 	
-	@Column(name = "basis_identifier", nullable = false, updatable = false)
+	@Column(name = "basis_identifier", nullable = false, updatable = false, length = 127)
 	private String basisIdentifier;
 	
 	@Column(name = "basis_type", nullable = false, updatable = false)

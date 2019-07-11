@@ -70,8 +70,8 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 				session.setFlushMode(FlushMode.MANUAL);
 				try {
 					AdministrationService as = Context.getAdministrationService();
-					Boolean strictMode = as.getGlobalPropertyValue(DataFilterConstants.GP_RUN_IN_STRICT_MODE, true);
-					if (!strictMode) {
+					String strictModeStr = as.getGlobalProperty(DataFilterConstants.GP_RUN_IN_STRICT_MODE);
+					if ("false".equalsIgnoreCase(strictModeStr)) {
 						if (log.isDebugEnabled()) {
 							log.trace("Skipping DataFilterInterceptor because the module is not running in strict mode");
 						}

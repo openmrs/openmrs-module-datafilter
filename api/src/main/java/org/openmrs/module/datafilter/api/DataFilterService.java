@@ -42,4 +42,13 @@ public interface DataFilterService extends OpenmrsService {
 	 */
 	void revokeAccess(OpenmrsObject entity, List<OpenmrsObject> bases);
 	
+	/**
+	 * Checks whether the specified entity has access to the specified basis
+	 * 
+	 * @param entity the entity to check whether they have access to the basis
+	 * @param basis the basis to against
+	 * @return true if the entity has access otherwise false
+	 */
+	boolean hasAccess(OpenmrsObject entity, OpenmrsObject basis);
+	
 }

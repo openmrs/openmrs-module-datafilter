@@ -106,8 +106,7 @@ public class DataFilterInterceptorTest {
 	
 	@Test
 	public void onLoad_shouldPassIfTheInterceptorIsDisabled() {
-		when(adminService.getGlobalPropertyValue(eq(DataFilterConstants.GP_RUN_IN_STRICT_MODE), anyBoolean()))
-		        .thenReturn(false);
+		when(adminService.getGlobalProperty(eq(DataFilterConstants.GP_RUN_IN_STRICT_MODE))).thenReturn("false");
 		interceptor.onLoad(new Patient(), null, null, null, null);
 	}
 	

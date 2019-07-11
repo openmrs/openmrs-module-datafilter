@@ -29,7 +29,7 @@ public interface DataFilterDAO {
 	 * 
 	 * @param entityBasisMap
 	 */
-	EntityBasisMap saveEntityBasisMapById(EntityBasisMap entityBasisMap);
+	EntityBasisMap saveEntityBasisMap(EntityBasisMap entityBasisMap);
 	
 	/**
 	 * Deletes the specified EntityBasisMap instance from the database

@@ -12,9 +12,14 @@ package org.openmrs.module.datafilter.api;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collection;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Location;
+import org.openmrs.OpenmrsObject;
 import org.openmrs.Program;
 import org.openmrs.User;
 import org.openmrs.module.datafilter.BaseDataFilterTest;
@@ -47,7 +52,48 @@ public class DataFilterServiceTest extends BaseDataFilterTest {
 	
 	@Test
 	public void grantAccess_shouldGrantTheUserAccessToRecordsAtTheSpecifiedBasis() {
-		throw new APIException("Fail");
+		User user = new User(3000);
+		Location location = new Location(4001);
+		assertFalse(service.hasAccess(user, location));
+		service.grantAccess(user, location);
+		assertTrue(service.hasAccess(user, location));
+	}
+	
+	@Test
+	public void grantAccess_shouldGrantTheUserAccessToRecordsAtTheSpecifiedBases() {
+		User user = new User(501);
+		Collection<OpenmrsObject> bases = Stream.of(new Location(1), new Location(4001)).collect(Collectors.toSet());
+		for (OpenmrsObject basis : bases) {
+			assertFalse(service.hasAccess(user, basis));
+		}
+		
+		service.grantAccess(user, bases);
+		for (OpenmrsObject basis : bases) {
+			assertTrue(service.hasAccess(user, basis));
+		}
+	}
+	
+	@Test
+	public void revokeAccess_shouldRevokeAccessForTheUserToRecordsAtTheSpecifiedBasis() {
+		User user = new User(3000);
+		Location location = new Location(4000);
+		assertTrue(service.hasAccess(user, location));
+		service.revokeAccess(user, location);
+		assertFalse(service.hasAccess(user, location));
+	}
+	
+	@Test
+	public void revokeAccess_shouldRevokeAccessForTheUserToRecordsAtTheSpecifiedBases() {
+		User user = new User(3000);
+		Collection<OpenmrsObject> bases = Stream.of(new Location(1), new Location(4000)).collect(Collectors.toSet());
+		for (OpenmrsObject basis : bases) {
+			assertTrue(service.hasAccess(user, basis));
+		}
+		
+		service.revokeAccess(user, bases);
+		for (OpenmrsObject basis : bases) {
+			assertFalse(service.hasAccess(user, basis));
+		}
 	}
 	
 }

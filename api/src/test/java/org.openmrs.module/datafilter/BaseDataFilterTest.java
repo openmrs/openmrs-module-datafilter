@@ -44,9 +44,6 @@ public abstract class BaseDataFilterTest extends BaseModuleContextSensitiveTest 
 		finally {
 			if (resetToStrict) {
 				Context.addProxyPrivilege(PrivilegeConstants.MANAGE_GLOBAL_PROPERTIES);
-				if (originalValue == null) {
-					originalValue = "";
-				}
 				gp.setPropertyValue(originalValue);
 				as.saveGlobalProperty(gp);
 				Context.removeProxyPrivilege(PrivilegeConstants.MANAGE_GLOBAL_PROPERTIES);

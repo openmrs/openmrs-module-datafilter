@@ -9,11 +9,14 @@
  */
 package org.openmrs.module.datafilter.api.impl;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.OpenmrsObject;
 import org.openmrs.Role;
 import org.openmrs.api.APIException;
+import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.datafilter.EntityBasisMap;
 import org.openmrs.module.datafilter.api.DataFilterService;
@@ -39,17 +42,27 @@ public class DataFilterServiceImpl extends BaseOpenmrsService implements DataFil
 	 */
 	@Transactional
 	@Override
-	public void grantAccess(OpenmrsObject openmrsObject, OpenmrsObject basis) {
-		
+	public void grantAccess(OpenmrsObject entity, OpenmrsObject basis) {
+		Context.getService(DataFilterService.class).grantAccess(entity, Collections.singleton(basis));
 	}
 	
 	/**
-	 * @see DataFilterService#grantAccess(OpenmrsObject, List)
+	 * @see DataFilterService#grantAccess(OpenmrsObject, Collection)
 	 */
 	@Transactional
 	@Override
-	public void grantAccess(OpenmrsObject openmrsObject, List<OpenmrsObject> basis) {
-		
+	public void grantAccess(OpenmrsObject entity, Collection<OpenmrsObject> bases) {
+		for (OpenmrsObject basis : bases) {
+			if (!hasAccess(entity, basis)) {
+				EntityBasisMap map = new EntityBasisMap();
+				map.setEntityIdentifier(getIdentifier(entity));
+				map.setEntityType(entity.getClass().getName());
+				map.setBasisIdentifier(getIdentifier(basis));
+				map.setBasisType(basis.getClass().getName());
+				
+				dao.saveEntityBasisMap(map);
+			}
+		}
 	}
 	
 	/**
@@ -57,17 +70,23 @@ public class DataFilterServiceImpl extends BaseOpenmrsService implements DataFil
 	 */
 	@Transactional
 	@Override
-	public void revokeAccess(OpenmrsObject openmrsObject, OpenmrsObject bases) {
-		
+	public void revokeAccess(OpenmrsObject entity, OpenmrsObject basis) {
+		Context.getService(DataFilterService.class).revokeAccess(entity, Collections.singleton(basis));
 	}
 	
 	/**
-	 * @see DataFilterService#revokeAccess(OpenmrsObject, List)
+	 * @see DataFilterService#revokeAccess(OpenmrsObject, Collection)
 	 */
 	@Transactional
 	@Override
-	public void revokeAccess(OpenmrsObject openmrsObject, List<OpenmrsObject> bases) {
-		
+	public void revokeAccess(OpenmrsObject entity, Collection<OpenmrsObject> bases) {
+		for (OpenmrsObject basis : bases) {
+			EntityBasisMap map = dao.getEntityBasisMap(getIdentifier(entity), entity.getClass().getName(),
+			    getIdentifier(basis), basis.getClass().getName());
+			if (map != null) {
+				dao.deleteEntityBasisMap(map);
+			}
+		}
 	}
 	
 	/**
@@ -75,35 +94,7 @@ public class DataFilterServiceImpl extends BaseOpenmrsService implements DataFil
 	 */
 	@Override
 	public boolean hasAccess(OpenmrsObject entity, OpenmrsObject basis) {
-		String entityId = null;
-		String basisId = null;
-		try {
-			entityId = entity.getId().toString();
-		}
-		catch (UnsupportedOperationException e) {
-			if (entity instanceof Role) {
-				entityId = entity.getId().toString();
-			}
-		}
-		
-		try {
-			basisId = basis.getId().toString();
-		}
-		catch (UnsupportedOperationException e) {
-			if (basis instanceof Role) {
-				basisId = basis.getId().toString();
-			}
-		}
-		
-		if (entityId == null) {
-			throw new APIException("Failed to determine entityId");
-		}
-		
-		if (basisId == null) {
-			throw new APIException("Failed to determine basisId");
-		}
-		
-		EntityBasisMap map = dao.getEntityBasisMap(entityId, entity.getClass().getName(), basisId,
+		EntityBasisMap map = dao.getEntityBasisMap(getIdentifier(entity), entity.getClass().getName(), getIdentifier(basis),
 		    basis.getClass().getName());
 		
 		if (map != null) {
@@ -112,4 +103,23 @@ public class DataFilterServiceImpl extends BaseOpenmrsService implements DataFil
 		
 		return false;
 	}
+	
+	private String getIdentifier(OpenmrsObject openmrsObject) {
+		String entityId = null;
+		try {
+			entityId = openmrsObject.getId().toString();
+		}
+		catch (UnsupportedOperationException e) {
+			if (openmrsObject instanceof Role) {
+				entityId = openmrsObject.getId().toString();
+			}
+		}
+		
+		if (StringUtils.isBlank(entityId)) {
+			throw new APIException("Failed to determine for Object: " + openmrsObject);
+		}
+		
+		return entityId;
+	}
+	
 }

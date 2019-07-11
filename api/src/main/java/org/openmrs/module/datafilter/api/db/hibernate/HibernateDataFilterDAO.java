@@ -45,11 +45,12 @@ public class HibernateDataFilterDAO implements DataFilterDAO {
 	}
 	
 	/**
-	 * @see DataFilterDAO#saveEntityBasisMapById(EntityBasisMap)
+	 * @see DataFilterDAO#saveEntityBasisMap(EntityBasisMap)
 	 */
 	@Override
-	public EntityBasisMap saveEntityBasisMapById(EntityBasisMap entityBasisMap) {
-		return null;
+	public EntityBasisMap saveEntityBasisMap(EntityBasisMap entityBasisMap) {
+		sessionFactory.getCurrentSession().save(entityBasisMap);
+		return entityBasisMap;
 	}
 	
 	/**
@@ -57,7 +58,7 @@ public class HibernateDataFilterDAO implements DataFilterDAO {
 	 */
 	@Override
 	public void deleteEntityBasisMap(EntityBasisMap entityBasisMap) {
-		
+		sessionFactory.getCurrentSession().delete(entityBasisMap);
 	}
 	
 }

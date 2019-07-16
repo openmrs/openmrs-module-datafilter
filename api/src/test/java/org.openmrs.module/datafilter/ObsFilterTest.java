@@ -51,8 +51,7 @@ public class ObsFilterTest extends BaseFilterTest {
 	@Test
 	public void getObs_shouldReturnNoObsIfTheUserIsNotGrantedAccessToAnyBasis() {
 		reloginAs("dBeckham", "test");
-		final int expCount = 0;
-		assertEquals(expCount, getObservations().size());
+		assertEquals(0, getObservations().size());
 	}
 	
 	@Test

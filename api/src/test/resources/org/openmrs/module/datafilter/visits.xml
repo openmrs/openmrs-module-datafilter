@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+
+    This Source Code Form is subject to the terms of the Mozilla Public License,
+    v. 2.0. If a copy of the MPL was not distributed with this file, You can
+    obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+    the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+
+    Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+    graphic logo is a trademark of OpenMRS Inc.
+
+-->
+
+<dataset>
+    <visit_type visit_type_id="2000" name="Some Visit Type" description="Test Visit Type" creator="1" date_created="2019-05-24 11:00:00.0" retired="0" uuid="a0e679b0-8e59-401d-8a4a-976a0b183519"/>
+
+    <visit visit_id="1000" patient_id="1001" visit_type_id="2000" date_started="2019-05-24 11:00:00.0" location_id="4000" indication_concept_id="5497" creator="1" date_created="2019-05-24 11:00:00.0" voided="0" uuid="ae6d5d48-6b78-11e0-93c3-18a905e044dc" />
+    <visit visit_id="1001" patient_id="1001" visit_type_id="2000" date_started="2019-05-24 11:00:00.0" location_id="4000" indication_concept_id="5497" creator="1" date_created="2019-05-24 15:00:00.0" voided="0" uuid="be6d5d48-6b78-11e0-93c3-18a905e044dc" />
+    <visit visit_id="1002" patient_id="1002" visit_type_id="2000" date_started="2019-05-24 11:00:00.0" location_id="4001" indication_concept_id="5497" creator="1" date_created="2019-05-24 11:00:00.0" voided="0" uuid="ce6d5d48-6b78-11e0-93c3-18a905e044dc" />
+</dataset>

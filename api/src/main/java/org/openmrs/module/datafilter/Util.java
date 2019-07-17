@@ -34,7 +34,7 @@ public class Util {
 	 * Sets up location based filtering by adding the filter annotations to persistent classes mapped
 	 * with JPA annotations that need to be filtered.
 	 */
-	protected static void configureLocationBasedFilter() {
+	protected static void configureLocationBasedFiltering() {
 		if (log.isInfoEnabled()) {
 			log.info("Setting up location based filtering");
 		}

@@ -45,7 +45,7 @@ public class DataFilterActivator extends BaseModuleActivator {
 	@Override
 	public void willStart() {
 		Context.addConfigProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, DataFilterSessionContext.class.getName());
-		Util.configureLocationBasedFilter();
+		Util.configureLocationBasedFiltering();
 	}
 	
 	/**

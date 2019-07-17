@@ -20,8 +20,9 @@ public abstract class BaseFilterTest extends BaseDataFilterTest {
 	@BeforeClass
 	public static void beforeClass() {
 		Context.addConfigProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, DataFilterSessionContext.class.getName());
-		Util.configureLocationBasedFilter();
+		Util.configureLocationBasedFiltering();
 	}
+	
 	@Before
 	public void beforeTestMethod() {
 		executeDataSet(TestConstants.MODULE_TEST_DATASET_XML);

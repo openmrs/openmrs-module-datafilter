@@ -31,40 +31,43 @@ public class Util {
 	private static final Log log = LogFactory.getLog(Util.class);
 	
 	/**
-	 * Adds the filter annotations to persistent classes mapped with JPA annotations that need to be
-	 * filtered
+	 * Sets up location based filtering by adding the filter annotations to persistent classes mapped
+	 * with JPA annotations that need to be filtered.
 	 */
-	protected static void addFilterAnnotations() {
+	protected static void configureLocationBasedFilter() {
 		if (log.isInfoEnabled()) {
-			log.info("Adding filter annotations");
+			log.info("Setting up location based filtering");
 		}
 		
 		try {
 			//TODO First check if the class has the @Entity annotation before we even bother to add others
-			addAnnotationToClass(Encounter.class, new FilterDefAnnotation(DataFilterConstants.FILTER_NAME_ENCOUNTER));
-			addAnnotationToClass(Encounter.class, new FilterAnnotation(DataFilterConstants.FILTER_NAME_ENCOUNTER,
+			addAnnotationToClass(Encounter.class,
+			    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER));
+			addAnnotationToClass(Encounter.class,
+			    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER,
+			            DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
+			
+			addAnnotationToClass(Visit.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT));
+			addAnnotationToClass(Visit.class, new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT,
 			        DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
 			
-			addAnnotationToClass(Visit.class, new FilterDefAnnotation(DataFilterConstants.FILTER_NAME_VISIT));
-			addAnnotationToClass(Visit.class, new FilterAnnotation(DataFilterConstants.FILTER_NAME_VISIT,
-			        DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
-			
-			addAnnotationToClass(Obs.class, new FilterDefAnnotation(DataFilterConstants.FILTER_NAME_OBS));
-			addAnnotationToClass(Obs.class, new FilterAnnotation(DataFilterConstants.FILTER_NAME_OBS,
+			addAnnotationToClass(Obs.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS));
+			addAnnotationToClass(Obs.class, new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS,
 			        StringUtils.replaceOnce(DataFilterConstants.FILTER_CONDITION_PATIENT_ID, "patient_id", "person_id")));
 			
-			addAnnotationToClass(Patient.class, new FilterDefAnnotation(DataFilterConstants.FILTER_NAME_PATIENT));
-			addAnnotationToClass(Patient.class, new FilterAnnotation(DataFilterConstants.FILTER_NAME_PATIENT,
+			addAnnotationToClass(Patient.class,
+			    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT));
+			addAnnotationToClass(Patient.class, new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT,
 			        DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
 			addAnnotationToClass(Patient.class, new FullTextFilterDefAnnotation(
-			        DataFilterConstants.FULL_TEXT_FILTER_NAME_PATIENT, PatientIdFullTextFilter.class));
+			        DataFilterConstants.LOCATION_BASED_FULL_TEXT_FILTER_NAME_PATIENT, PatientIdFullTextFilter.class));
 			
 			if (log.isInfoEnabled()) {
-				log.info("Successfully added filter annotations");
+				log.info("Successfully set up location based filtering");
 			}
 		}
 		catch (ReflectiveOperationException e) {
-			throw new ModuleException("Failed to add filter annotations", e);
+			throw new ModuleException("Failed to set up location based filtering", e);
 		}
 	}
 	

@@ -22,7 +22,8 @@ import org.openmrs.module.datafilter.annotations.FilterDefAnnotation;
 public class UtilTest {
 	
 	@Test
-	public void willStart_shouldAddFilterAnnotationsToTheFilteredEntityClasses() throws ReflectiveOperationException {
+	public void addAnnotationToClass_shouldAddTheSpecifiedAnnotationToTheSpecifiedClass()
+	    throws ReflectiveOperationException {
 		Class<? extends Annotation> annotationClass = FilterDef.class;
 		Class<?> clazz = Concept.class;
 		assertFalse(clazz.isAnnotationPresent(annotationClass));

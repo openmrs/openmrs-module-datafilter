@@ -9,10 +9,10 @@
  */
 package org.openmrs.module.datafilter;
 
-import static org.openmrs.module.datafilter.DataFilterConstants.FILTER_NAME_ENCOUNTER;
-import static org.openmrs.module.datafilter.DataFilterConstants.FILTER_NAME_OBS;
-import static org.openmrs.module.datafilter.DataFilterConstants.FILTER_NAME_PATIENT;
-import static org.openmrs.module.datafilter.DataFilterConstants.FILTER_NAME_VISIT;
+import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER;
+import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS;
+import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT;
+import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -132,10 +132,10 @@ public class DataFilterSessionContext extends SpringSessionContext {
 			basisIds = Collections.singleton("-1");
 		}
 		
-		enableFilter(FILTER_NAME_PATIENT, attributeTypeId, basisIds, session);
-		enableFilter(FILTER_NAME_VISIT, attributeTypeId, basisIds, session);
-		enableFilter(FILTER_NAME_ENCOUNTER, attributeTypeId, basisIds, session);
-		enableFilter(FILTER_NAME_OBS, attributeTypeId, basisIds, session);
+		enableFilter(LOCATION_BASED_FILTER_NAME_PATIENT, attributeTypeId, basisIds, session);
+		enableFilter(LOCATION_BASED_FILTER_NAME_VISIT, attributeTypeId, basisIds, session);
+		enableFilter(LOCATION_BASED_FILTER_NAME_ENCOUNTER, attributeTypeId, basisIds, session);
+		enableFilter(LOCATION_BASED_FILTER_NAME_OBS, attributeTypeId, basisIds, session);
 		
 		return session;
 	}

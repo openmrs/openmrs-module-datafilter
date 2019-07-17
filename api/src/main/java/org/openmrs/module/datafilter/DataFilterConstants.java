@@ -17,18 +17,20 @@ public class DataFilterConstants {
 	
 	public static final String MODULE_ID = "datafilter";
 	
-	public static final String FILTER_NAME_ENCOUNTER = MODULE_ID + "_encounterFilter";
+	public static final String LOCATION_BASED_FILTER_NAME_ENCOUNTER = MODULE_ID + "_locationBasedEncounterFilter";
 	
-	public static final String FILTER_NAME_VISIT = MODULE_ID + "_visitFilter";
+	public static final String LOCATION_BASED_FILTER_NAME_VISIT = MODULE_ID + "_locationBasedVisitFilter";
 	
-	public static final String FILTER_NAME_OBS = MODULE_ID + "_obsFilter";
+	public static final String LOCATION_BASED_FILTER_NAME_OBS = MODULE_ID + "_locationBasedObsFilter";
 	
-	public static final String FILTER_NAME_PATIENT = MODULE_ID + "_patientFilter";
+	public static final String LOCATION_BASED_FILTER_NAME_PATIENT = MODULE_ID + "_locationBasedPatientFilter";
 	
-	public static final Set<String> FILTER_NAMES = Stream
-	        .of(FILTER_NAME_PATIENT, FILTER_NAME_VISIT, FILTER_NAME_ENCOUNTER, FILTER_NAME_OBS).collect(Collectors.toSet());
+	public static final Set<String> FILTER_NAMES = Stream.of(LOCATION_BASED_FILTER_NAME_PATIENT,
+	    LOCATION_BASED_FILTER_NAME_VISIT, LOCATION_BASED_FILTER_NAME_ENCOUNTER, LOCATION_BASED_FILTER_NAME_OBS)
+	        .collect(Collectors.toSet());
 	
-	public static final String FULL_TEXT_FILTER_NAME_PATIENT = MODULE_ID + "_patientFullTextFilter";
+	public static final String LOCATION_BASED_FULL_TEXT_FILTER_NAME_PATIENT = MODULE_ID
+	        + "_locationBasedPatientFullTextFilter";
 	
 	public static final String PARAM_NAME_ATTRIB_TYPE_ID = "attributeTypeId";
 	

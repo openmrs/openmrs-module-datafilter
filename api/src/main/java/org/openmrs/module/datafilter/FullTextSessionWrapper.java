@@ -90,7 +90,7 @@ final class FullTextSessionWrapper extends SessionDelegatorBaseImpl implements F
 			log.debug("Enabling filters on the full text query for " + entityClass.getName());
 		}
 		
-		FullTextFilter filter = query.enableFullTextFilter(DataFilterConstants.FULL_TEXT_FILTER_NAME_PATIENT);
+		FullTextFilter filter = query.enableFullTextFilter(DataFilterConstants.LOCATION_BASED_FULL_TEXT_FILTER_NAME_PATIENT);
 		filter.setParameter("field", CLASS_FIELD_MAP.get(entityClass));
 		Collection<String> personIds = AccessUtil.getAccessiblePersonIds(Location.class);
 		if (personIds.isEmpty()) {

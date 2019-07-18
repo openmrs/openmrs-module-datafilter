@@ -18,16 +18,18 @@ import org.hibernate.type.StringType;
 import org.openmrs.module.datafilter.DataFilterConstants;
 
 /**
- * An instance of this class represents a {@link FilterDef} to be added to an annotated persistent
- * class
+ * An instance of this class represents a {@link FilterDef} annotation to be added to a persistent
+ * class mapped with annotations.
  */
 public class FilterDefAnnotation implements FilterDef {
 	
-	ParamDefAnnotation attribTypeParamDef = new ParamDefAnnotation(DataFilterConstants.PARAM_NAME_ATTRIB_TYPE_ID,
-	        IntegerType.INSTANCE.getName());
+	private static final ParamDefAnnotation ATTRIB_TYPE_PARAM_DEF = new ParamDefAnnotation(
+	        DataFilterConstants.PARAM_NAME_ATTRIB_TYPE_ID, IntegerType.INSTANCE.getName());
 	
-	ParamDefAnnotation basisIdsParamDef = new ParamDefAnnotation(DataFilterConstants.PARAM_NAME_BASIS_IDS,
-	        StringType.INSTANCE.getName());
+	private static final ParamDefAnnotation BASIS_IDS_PARAM_DEF = new ParamDefAnnotation(
+	        DataFilterConstants.PARAM_NAME_BASIS_IDS, StringType.INSTANCE.getName());
+	
+	private static final ParamDef[] PARAMETERS = new ParamDef[] { ATTRIB_TYPE_PARAM_DEF, BASIS_IDS_PARAM_DEF };
 	
 	private String name;
 	
@@ -69,7 +71,7 @@ public class FilterDefAnnotation implements FilterDef {
 	 */
 	@Override
 	public ParamDef[] parameters() {
-		return new ParamDef[] { attribTypeParamDef, basisIdsParamDef };
+		return PARAMETERS;
 	}
 	
 }

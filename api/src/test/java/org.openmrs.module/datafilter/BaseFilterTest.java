@@ -12,15 +12,20 @@ package org.openmrs.module.datafilter;
 import org.hibernate.cfg.Environment;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.openmrs.Encounter;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UsernamePasswordCredentials;
+import org.openmrs.module.datafilter.annotations.FilterDefsAnnotation;
+import org.openmrs.module.datafilter.annotations.FiltersAnnotation;
 
 public abstract class BaseFilterTest extends BaseDataFilterTest {
 	
 	@BeforeClass
-	public static void beforeClass() {
-		Context.addConfigProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, DataFilterSessionContext.class.getName());
+	public static void beforeClass() throws ReflectiveOperationException {
+		Util.addAnnotationToClass(Encounter.class, new FilterDefsAnnotation());
+		Util.addAnnotationToClass(Encounter.class, new FiltersAnnotation());
 		Util.configureLocationBasedFiltering();
+		Context.addConfigProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, DataFilterSessionContext.class.getName());
 	}
 	
 	@Before

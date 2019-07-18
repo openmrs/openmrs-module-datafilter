@@ -15,8 +15,8 @@ import org.hibernate.search.annotations.FilterCacheModeType;
 import org.hibernate.search.annotations.FullTextFilterDef;
 
 /**
- * An instance of this class represents a {@link FullTextFilterDef} to be added to an annotated
- * persistent class that supports hibernate full text search.
+ * An instance of this class represents a {@link FullTextFilterDef} annotation to be added to a
+ * persistent class mapped with annotations and supports hibernate full text search.
  */
 public class FullTextFilterDefAnnotation implements FullTextFilterDef {
 	

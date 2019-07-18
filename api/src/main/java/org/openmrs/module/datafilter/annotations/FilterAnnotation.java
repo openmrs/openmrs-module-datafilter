@@ -15,8 +15,8 @@ import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.SqlFragmentAlias;
 
 /**
- * An instance of this class represents a {@link Filter} to be added to an annotated persistent
- * class
+ * An instance of this class represents a {@link Filter} annotation to be added to a persistent
+ * class mapped with annotations.
  */
 public class FilterAnnotation implements Filter {
 	

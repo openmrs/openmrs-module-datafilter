@@ -14,8 +14,8 @@ import java.lang.annotation.Annotation;
 import org.hibernate.annotations.ParamDef;
 
 /**
- * An instance of this class represents a {@link ParamDef} to be added to
- * {@link FilterDefAnnotation} instance
+ * An instance of this class represents a {@link ParamDef} annotation to be added to
+ * {@link FilterDefAnnotation} instance.
  */
 public class ParamDefAnnotation implements ParamDef {
 	

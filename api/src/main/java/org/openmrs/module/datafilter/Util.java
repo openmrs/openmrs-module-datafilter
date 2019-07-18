@@ -17,6 +17,8 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.annotations.FilterDefs;
+import org.hibernate.annotations.Filters;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -40,12 +42,11 @@ public class Util {
 		}
 		
 		try {
-			//TODO First check if the class has the @Entity annotation before we even bother to add others
-			addAnnotationToClass(Encounter.class,
-			    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER));
-			addAnnotationToClass(Encounter.class,
+			registerFilter(Encounter.class,
+			    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER),
 			    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER,
-			            DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
+			            DataFilterConstants.FILTER_CONDITION_PATIENT_ID),
+			    0);
 			
 			addAnnotationToClass(Visit.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT));
 			addAnnotationToClass(Visit.class, new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT,
@@ -69,6 +70,26 @@ public class Util {
 		catch (ReflectiveOperationException e) {
 			throw new ModuleException("Failed to set up location based filtering", e);
 		}
+	}
+	
+	/**
+	 * Adds the specified {@link org.hibernate.annotations.FilterDef} and
+	 * {@link org.hibernate.annotations.Filter} annotations to the specified class object at the
+	 * specified index of the wrapped filterDefs and filters arrays.
+	 * 
+	 * @param entityClass the class object to add the annotations
+	 * @param filterDefAnnotation the {@link org.hibernate.annotations.FilterDef} annotation to add
+	 * @param filterAnnotation the {@link org.hibernate.annotations.Filter} annotation to add
+	 * @param index the index at which to set the annotations.
+	 */
+	protected static void registerFilter(Class<?> entityClass, FilterDefAnnotation filterDefAnnotation,
+	                                     FilterAnnotation filterAnnotation, int index) {
+		
+		FilterDefs filterDefs = entityClass.getAnnotation(FilterDefs.class);
+		filterDefs.value()[index] = filterDefAnnotation;
+		
+		Filters filters = entityClass.getAnnotation(Filters.class);
+		filters.value()[index] = filterAnnotation;
 	}
 	
 	/**

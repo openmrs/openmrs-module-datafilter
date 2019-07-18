@@ -12,8 +12,12 @@ package org.openmrs.module.datafilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.cfg.Environment;
+import org.openmrs.Encounter;
+import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
+import org.openmrs.module.datafilter.annotations.FilterDefsAnnotation;
+import org.openmrs.module.datafilter.annotations.FiltersAnnotation;
 
 public class DataFilterActivator extends BaseModuleActivator {
 	
@@ -44,8 +48,20 @@ public class DataFilterActivator extends BaseModuleActivator {
 	 */
 	@Override
 	public void willStart() {
-		Context.addConfigProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, DataFilterSessionContext.class.getName());
+		//TODO Possibly the module should use a configuration file where other modules
+		//or admins can register their own filters
+		try {
+			//TODO First check if the class has the @Entity annotation before we even bother to add others
+			Util.addAnnotationToClass(Encounter.class, new FilterDefsAnnotation());
+			Util.addAnnotationToClass(Encounter.class, new FiltersAnnotation());
+		}
+		catch (ReflectiveOperationException e) {
+			throw new APIException(e);
+		}
+		
 		Util.configureLocationBasedFiltering();
+		
+		Context.addConfigProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, DataFilterSessionContext.class.getName());
 	}
 	
 	/**

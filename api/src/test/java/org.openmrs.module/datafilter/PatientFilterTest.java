@@ -137,7 +137,7 @@ public class PatientFilterTest extends BaseFilterTest {
 	}
 	
 	@Test
-	public void getPatients_shouldReturnAllPatientsByIndentifierIfTheAuthenticatedUserIsASuperUser() {
+	public void getPatients_shouldReturnAllPatientsByIdentifierIfTheAuthenticatedUserIsASuperUser() {
 		assertTrue(Context.getAuthenticatedUser().isSuperUser());
 		int expCount = 4;
 		assertEquals(expCount, patientService.getCountOfPatients(IDENTIFIER_PREFIX).intValue());

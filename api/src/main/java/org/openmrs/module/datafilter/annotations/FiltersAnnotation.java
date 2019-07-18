@@ -18,16 +18,14 @@ import org.hibernate.annotations.Filters;
  * An instance of this class represents a {@link Filters} annotation to be added to a persistent
  * class mapped with annotations.
  */
-public class FiltersAnnotation implements Filters {
-	
-	private Filter[] filters = new Filter[1];
+public class FiltersAnnotation extends BaseAggregateAnnotation<Filter> implements Filters {
 	
 	/**
 	 * @see Filters#value()
 	 */
 	@Override
 	public Filter[] value() {
-		return filters;
+		return group;
 	}
 	
 	/**
@@ -38,4 +36,11 @@ public class FiltersAnnotation implements Filters {
 		return Filters.class;
 	}
 	
+	/**
+	 * @see BaseAggregateAnnotation#getGroupedAnnotationType()
+	 */
+	@Override
+	public Class<Filter> getGroupedAnnotationType() {
+		return Filter.class;
+	}
 }

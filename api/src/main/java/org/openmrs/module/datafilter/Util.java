@@ -24,6 +24,7 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.module.ModuleException;
+import org.openmrs.module.datafilter.annotations.AggregateAnnotation;
 import org.openmrs.module.datafilter.annotations.FilterAnnotation;
 import org.openmrs.module.datafilter.annotations.FilterDefAnnotation;
 import org.openmrs.module.datafilter.annotations.FullTextFilterDefAnnotation;
@@ -42,24 +43,23 @@ public class Util {
 		}
 		
 		try {
+			registerFilter(Visit.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT),
+			    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT,
+			            DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
+			
 			registerFilter(Encounter.class,
 			    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER),
 			    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER,
-			            DataFilterConstants.FILTER_CONDITION_PATIENT_ID),
-			    0);
+			            DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
 			
-			addAnnotationToClass(Visit.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT));
-			addAnnotationToClass(Visit.class, new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT,
-			        DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
+			registerFilter(Obs.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS),
+			    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS, StringUtils
+			            .replaceOnce(DataFilterConstants.FILTER_CONDITION_PATIENT_ID, "patient_id", "person_id")));
 			
-			addAnnotationToClass(Obs.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS));
-			addAnnotationToClass(Obs.class, new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS,
-			        StringUtils.replaceOnce(DataFilterConstants.FILTER_CONDITION_PATIENT_ID, "patient_id", "person_id")));
+			registerFilter(Patient.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT),
+			    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT,
+			            DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
 			
-			addAnnotationToClass(Patient.class,
-			    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT));
-			addAnnotationToClass(Patient.class, new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT,
-			        DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
 			addAnnotationToClass(Patient.class, new FullTextFilterDefAnnotation(
 			        DataFilterConstants.LOCATION_BASED_FULL_TEXT_FILTER_NAME_PATIENT, PatientIdFullTextFilter.class));
 			
@@ -74,22 +74,20 @@ public class Util {
 	
 	/**
 	 * Adds the specified {@link org.hibernate.annotations.FilterDef} and
-	 * {@link org.hibernate.annotations.Filter} annotations to the specified class object at the
-	 * specified index of the wrapped filterDefs and filters arrays.
+	 * {@link org.hibernate.annotations.Filter} annotations to the specified class object.
 	 * 
 	 * @param entityClass the class object to add the annotations
 	 * @param filterDefAnnotation the {@link org.hibernate.annotations.FilterDef} annotation to add
 	 * @param filterAnnotation the {@link org.hibernate.annotations.Filter} annotation to add
-	 * @param index the index at which to set the annotations.
 	 */
 	protected static void registerFilter(Class<?> entityClass, FilterDefAnnotation filterDefAnnotation,
-	                                     FilterAnnotation filterAnnotation, int index) {
+	                                     FilterAnnotation filterAnnotation) {
 		
 		FilterDefs filterDefs = entityClass.getAnnotation(FilterDefs.class);
-		filterDefs.value()[index] = filterDefAnnotation;
+		((AggregateAnnotation) filterDefs).add(filterDefAnnotation);
 		
 		Filters filters = entityClass.getAnnotation(Filters.class);
-		filters.value()[index] = filterAnnotation;
+		((AggregateAnnotation) filters).add(filterAnnotation);
 	}
 	
 	/**

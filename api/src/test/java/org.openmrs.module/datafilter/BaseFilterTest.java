@@ -13,6 +13,9 @@ import org.hibernate.cfg.Environment;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.openmrs.Encounter;
+import org.openmrs.Obs;
+import org.openmrs.Patient;
+import org.openmrs.Visit;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UsernamePasswordCredentials;
 import org.openmrs.module.datafilter.annotations.FilterDefsAnnotation;
@@ -22,8 +25,14 @@ public abstract class BaseFilterTest extends BaseDataFilterTest {
 	
 	@BeforeClass
 	public static void beforeClass() throws ReflectiveOperationException {
+		Util.addAnnotationToClass(Patient.class, new FilterDefsAnnotation());
+		Util.addAnnotationToClass(Patient.class, new FiltersAnnotation());
+		Util.addAnnotationToClass(Visit.class, new FilterDefsAnnotation());
+		Util.addAnnotationToClass(Visit.class, new FiltersAnnotation());
 		Util.addAnnotationToClass(Encounter.class, new FilterDefsAnnotation());
 		Util.addAnnotationToClass(Encounter.class, new FiltersAnnotation());
+		Util.addAnnotationToClass(Obs.class, new FilterDefsAnnotation());
+		Util.addAnnotationToClass(Obs.class, new FiltersAnnotation());
 		Util.configureLocationBasedFiltering();
 		Context.addConfigProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, DataFilterSessionContext.class.getName());
 	}

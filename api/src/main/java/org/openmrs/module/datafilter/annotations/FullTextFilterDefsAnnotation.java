@@ -11,36 +11,37 @@ package org.openmrs.module.datafilter.annotations;
 
 import java.lang.annotation.Annotation;
 
-import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.FilterDefs;
+import org.hibernate.search.annotations.FullTextFilterDef;
+import org.hibernate.search.annotations.FullTextFilterDefs;
 
 /**
  * An instance of this class represents a {@link FilterDefs} annotation to be added to a persistent
  * class mapped with annotations.
  */
-public class FilterDefsAnnotation extends BaseAggregateAnnotation<FilterDef> implements FilterDefs {
+public class FullTextFilterDefsAnnotation extends BaseAggregateAnnotation<FullTextFilterDef> implements FullTextFilterDefs {
 	
 	/**
-	 * @see FilterDefs#value()
+	 * @see FullTextFilterDefs#value()
 	 */
 	@Override
-	public FilterDef[] value() {
+	public FullTextFilterDef[] value() {
 		return group;
 	}
 	
 	/**
-	 * @see FilterDefs#annotationType()
+	 * @see FullTextFilterDefs#annotationType()
 	 */
 	@Override
 	public Class<? extends Annotation> annotationType() {
-		return FilterDefs.class;
+		return FullTextFilterDefs.class;
 	}
 	
 	/**
 	 * @see BaseAggregateAnnotation#getGroupedAnnotationType()
 	 */
 	@Override
-	public Class<FilterDef> getGroupedAnnotationType() {
-		return FilterDef.class;
+	public Class<FullTextFilterDef> getGroupedAnnotationType() {
+		return FullTextFilterDef.class;
 	}
 }

@@ -19,11 +19,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.annotations.FilterDefs;
 import org.hibernate.annotations.Filters;
+import org.hibernate.search.annotations.FullTextFilterDefs;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
-import org.openmrs.module.ModuleException;
 import org.openmrs.module.datafilter.annotations.AggregateAnnotation;
 import org.openmrs.module.datafilter.annotations.FilterAnnotation;
 import org.openmrs.module.datafilter.annotations.FilterDefAnnotation;
@@ -42,33 +42,27 @@ public class Util {
 			log.info("Setting up location based filtering");
 		}
 		
-		try {
-			registerFilter(Visit.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT),
-			    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT,
-			            DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
-			
-			registerFilter(Encounter.class,
-			    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER),
-			    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER,
-			            DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
-			
-			registerFilter(Obs.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS),
-			    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS, StringUtils
-			            .replaceOnce(DataFilterConstants.FILTER_CONDITION_PATIENT_ID, "patient_id", "person_id")));
-			
-			registerFilter(Patient.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT),
-			    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT,
-			            DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
-			
-			addAnnotationToClass(Patient.class, new FullTextFilterDefAnnotation(
-			        DataFilterConstants.LOCATION_BASED_FULL_TEXT_FILTER_NAME_PATIENT, PatientIdFullTextFilter.class));
-			
-			if (log.isInfoEnabled()) {
-				log.info("Successfully set up location based filtering");
-			}
-		}
-		catch (ReflectiveOperationException e) {
-			throw new ModuleException("Failed to set up location based filtering", e);
+		registerFilter(Visit.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT),
+		    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT,
+		            DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
+		
+		registerFilter(Encounter.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER),
+		    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER,
+		            DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
+		
+		registerFilter(Obs.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS),
+		    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS,
+		            StringUtils.replaceOnce(DataFilterConstants.FILTER_CONDITION_PATIENT_ID, "patient_id", "person_id")));
+		
+		registerFilter(Patient.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT),
+		    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT,
+		            DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
+		
+		registerFullTextFilter(Patient.class, new FullTextFilterDefAnnotation(
+		        DataFilterConstants.LOCATION_BASED_FULL_TEXT_FILTER_NAME_PATIENT, PatientIdFullTextFilter.class));
+		
+		if (log.isInfoEnabled()) {
+			log.info("Successfully set up location based filtering");
 		}
 	}
 	
@@ -88,6 +82,20 @@ public class Util {
 		
 		Filters filters = entityClass.getAnnotation(Filters.class);
 		((AggregateAnnotation) filters).add(filterAnnotation);
+	}
+	
+	/**
+	 * Adds the specified {@link org.hibernate.search.annotations.FullTextFilterDef} annotation to the
+	 * specified class object.
+	 *
+	 * @param entityClass the class object to add the annotation
+	 * @param filterDefAnnotation the {@link org.hibernate.search.annotations.FullTextFilterDef}
+	 *            annotation to add
+	 */
+	protected static void registerFullTextFilter(Class<?> entityClass, FullTextFilterDefAnnotation filterDefAnnotation) {
+		
+		FullTextFilterDefs filterDefs = entityClass.getAnnotation(FullTextFilterDefs.class);
+		((AggregateAnnotation) filterDefs).add(filterDefAnnotation);
 	}
 	
 	/**

@@ -20,6 +20,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UsernamePasswordCredentials;
 import org.openmrs.module.datafilter.annotations.FilterDefsAnnotation;
 import org.openmrs.module.datafilter.annotations.FiltersAnnotation;
+import org.openmrs.module.datafilter.annotations.FullTextFilterDefsAnnotation;
 
 public abstract class BaseFilterTest extends BaseDataFilterTest {
 	
@@ -27,6 +28,7 @@ public abstract class BaseFilterTest extends BaseDataFilterTest {
 	public static void beforeClass() throws ReflectiveOperationException {
 		Util.addAnnotationToClass(Patient.class, new FilterDefsAnnotation());
 		Util.addAnnotationToClass(Patient.class, new FiltersAnnotation());
+		Util.addAnnotationToClass(Patient.class, new FullTextFilterDefsAnnotation());
 		Util.addAnnotationToClass(Visit.class, new FilterDefsAnnotation());
 		Util.addAnnotationToClass(Visit.class, new FiltersAnnotation());
 		Util.addAnnotationToClass(Encounter.class, new FilterDefsAnnotation());

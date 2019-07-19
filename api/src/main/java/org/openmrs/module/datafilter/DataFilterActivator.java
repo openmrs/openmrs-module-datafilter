@@ -13,11 +13,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.cfg.Environment;
 import org.openmrs.Encounter;
+import org.openmrs.Obs;
+import org.openmrs.Patient;
+import org.openmrs.Visit;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.datafilter.annotations.FilterDefsAnnotation;
 import org.openmrs.module.datafilter.annotations.FiltersAnnotation;
+import org.openmrs.module.datafilter.annotations.FullTextFilterDefsAnnotation;
 
 public class DataFilterActivator extends BaseModuleActivator {
 	
@@ -52,8 +56,15 @@ public class DataFilterActivator extends BaseModuleActivator {
 		//or admins can register their own filters
 		try {
 			//TODO First check if the class has the @Entity annotation before we even bother to add others
+			Util.addAnnotationToClass(Patient.class, new FilterDefsAnnotation());
+			Util.addAnnotationToClass(Patient.class, new FiltersAnnotation());
+			Util.addAnnotationToClass(Patient.class, new FullTextFilterDefsAnnotation());
+			Util.addAnnotationToClass(Visit.class, new FilterDefsAnnotation());
+			Util.addAnnotationToClass(Visit.class, new FiltersAnnotation());
 			Util.addAnnotationToClass(Encounter.class, new FilterDefsAnnotation());
 			Util.addAnnotationToClass(Encounter.class, new FiltersAnnotation());
+			Util.addAnnotationToClass(Obs.class, new FilterDefsAnnotation());
+			Util.addAnnotationToClass(Obs.class, new FiltersAnnotation());
 		}
 		catch (ReflectiveOperationException e) {
 			throw new APIException(e);

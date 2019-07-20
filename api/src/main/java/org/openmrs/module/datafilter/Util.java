@@ -85,11 +85,8 @@ public class Util {
 	protected static void registerFilter(Class<?> entityClass, FilterDefAnnotation filterDefAnnotation,
 	                                     FilterAnnotation filterAnnotation) {
 		
-		FilterDefs filterDefs = entityClass.getAnnotation(FilterDefs.class);
-		((AggregateAnnotation) filterDefs).add(filterDefAnnotation);
-		
-		Filters filters = entityClass.getAnnotation(Filters.class);
-		((AggregateAnnotation) filters).add(filterAnnotation);
+		addAnnotationToGroup(entityClass, FilterDefs.class, filterDefAnnotation);
+		addAnnotationToGroup(entityClass, Filters.class, filterAnnotation);
 	}
 	
 	/**
@@ -101,9 +98,22 @@ public class Util {
 	 *            annotation to add
 	 */
 	protected static void registerFullTextFilter(Class<?> entityClass, FullTextFilterDefAnnotation filterDefAnnotation) {
+		addAnnotationToGroup(entityClass, FullTextFilterDefs.class, filterDefAnnotation);
+	}
+	
+	/**
+	 * Utility method that adds a grouped annotation to it's containing aggregate annotation.
+	 * 
+	 * @param entityClass the class that has the aggregate annotation
+	 * @param aggregateAnnotationClass the aggregate annotation type
+	 * @param toAdd the grouped annotation instance to add
+	 * @param <A>
+	 */
+	private static <A extends Annotation> void addAnnotationToGroup(Class<?> entityClass, Class<A> aggregateAnnotationClass,
+	                                                                Object toAdd) {
 		
-		FullTextFilterDefs filterDefs = entityClass.getAnnotation(FullTextFilterDefs.class);
-		((AggregateAnnotation) filterDefs).add(filterDefAnnotation);
+		A aggregateAnnotation = entityClass.getAnnotation(aggregateAnnotationClass);
+		((AggregateAnnotation) aggregateAnnotation).add(toAdd);
 	}
 	
 	/**

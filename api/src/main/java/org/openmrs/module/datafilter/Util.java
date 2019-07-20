@@ -67,6 +67,14 @@ public class Util {
 	}
 	
 	/**
+	 * Sets up privilege based filtering by adding the filter annotations to persistent classes mapped
+	 * with JPA annotations that need to be filtered.
+	 */
+	protected static void configurePrivilegeBasedFiltering() {
+		
+	}
+	
+	/**
 	 * Adds the specified {@link org.hibernate.annotations.FilterDef} and
 	 * {@link org.hibernate.annotations.Filter} annotations to the specified class object.
 	 * 

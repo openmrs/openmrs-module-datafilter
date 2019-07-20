@@ -11,11 +11,11 @@ package org.openmrs.module.datafilter;
 
 import org.junit.BeforeClass;
 
-public abstract class BaseLocationBasedFilterTest extends BaseFilterTest {
+public abstract class BasePrivilegeBasedFilterTest extends BaseFilterTest {
 	
 	@BeforeClass
 	public static void beforeBaseLocationBasedFilterClass() {
-		Util.configureLocationBasedFiltering();
+		Util.configurePrivilegeBasedFiltering();
 	}
 	
 }

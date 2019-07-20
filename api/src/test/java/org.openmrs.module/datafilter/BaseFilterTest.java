@@ -25,7 +25,7 @@ import org.openmrs.module.datafilter.annotations.FullTextFilterDefsAnnotation;
 public abstract class BaseFilterTest extends BaseDataFilterTest {
 	
 	@BeforeClass
-	public static void beforeClass() throws ReflectiveOperationException {
+	public static void beforeBaseFilterClass() throws ReflectiveOperationException {
 		Util.addAnnotationToClass(Patient.class, new FilterDefsAnnotation());
 		Util.addAnnotationToClass(Patient.class, new FiltersAnnotation());
 		Util.addAnnotationToClass(Patient.class, new FullTextFilterDefsAnnotation());
@@ -35,7 +35,6 @@ public abstract class BaseFilterTest extends BaseDataFilterTest {
 		Util.addAnnotationToClass(Encounter.class, new FiltersAnnotation());
 		Util.addAnnotationToClass(Obs.class, new FilterDefsAnnotation());
 		Util.addAnnotationToClass(Obs.class, new FiltersAnnotation());
-		Util.configureLocationBasedFiltering();
 		Context.addConfigProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, DataFilterSessionContext.class.getName());
 	}
 	

@@ -23,7 +23,7 @@ import org.openmrs.test.TestUtil;
 import org.openmrs.util.OpenmrsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class PatientFilterTest extends BaseFilterTest {
+public class PatientFilterTest extends BaseLocationBasedFilterTest {
 	
 	@Autowired
 	private PatientService patientService;

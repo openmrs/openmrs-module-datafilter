@@ -52,4 +52,6 @@ public class DataFilterConstants {
 	
 	public static final String ILLEGAL_RECORD_ACCESS_MESSAGE = "Illegal Record Access";
 	
+	public static final String DISABLED = "disabled";
+	
 }

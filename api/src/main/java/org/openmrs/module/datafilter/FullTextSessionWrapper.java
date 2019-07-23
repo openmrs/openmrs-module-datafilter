@@ -9,6 +9,8 @@
  */
 package org.openmrs.module.datafilter;
 
+import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
@@ -83,6 +85,10 @@ final class FullTextSessionWrapper extends SessionDelegatorBaseImpl implements F
 				log.debug("Skipping enabling of filters on the full text query for " + entityClass.getName());
 			}
 			
+			return query;
+		}
+		
+		if (AccessUtil.isFilterDisabled(LOCATION_BASED_FILTER_NAME_PATIENT)) {
 			return query;
 		}
 		

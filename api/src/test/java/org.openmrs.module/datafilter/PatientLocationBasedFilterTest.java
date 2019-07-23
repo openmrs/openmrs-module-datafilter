@@ -187,4 +187,25 @@ public class PatientLocationBasedFilterTest extends BaseLocationBasedFilterTest 
 		assertTrue(TestUtil.containsId(patients, 1503));
 	}
 	
+	@Test
+	public void getAllPatients_shouldReturnAllPatientsIfLocationFilteringIsDisabled() {
+		DataFilterTestUtils.disableLocationFiltering();
+		reloginAs("dyorke", "test");
+		assertEquals(11, patientService.getAllPatients().size());
+	}
+	
+	@Test
+	public void getPatients_shouldReturnAllPatientsIfLocationFilteringIsDisabled() {
+		DataFilterTestUtils.disableLocationFiltering();
+		reloginAs("dyorke", "test");
+		int expCount = 4;
+		assertEquals(expCount, patientService.getCountOfPatients(IDENTIFIER_PREFIX).intValue());
+		Collection<Patient> patients = patientService.getPatients(IDENTIFIER_PREFIX);
+		assertEquals(expCount, patients.size());
+		assertTrue(TestUtil.containsId(patients, 1501));
+		assertTrue(TestUtil.containsId(patients, 1502));
+		assertTrue(TestUtil.containsId(patients, 1503));
+		assertTrue(TestUtil.containsId(patients, 1504));
+	}
+	
 }

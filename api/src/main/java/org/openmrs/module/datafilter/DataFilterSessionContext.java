@@ -132,10 +132,33 @@ public class DataFilterSessionContext extends SpringSessionContext {
 			basisIds = Collections.singleton("-1");
 		}
 		
-		enableFilter(LOCATION_BASED_FILTER_NAME_PATIENT, attributeTypeId, basisIds, session);
-		enableFilter(LOCATION_BASED_FILTER_NAME_VISIT, attributeTypeId, basisIds, session);
-		enableFilter(LOCATION_BASED_FILTER_NAME_ENCOUNTER, attributeTypeId, basisIds, session);
-		enableFilter(LOCATION_BASED_FILTER_NAME_OBS, attributeTypeId, basisIds, session);
+		tempSessionHolder.set(session);
+		boolean isLocFilterDisabled;
+		boolean isVisitFilterDisabled;
+		boolean isEncFilterDisabled;
+		boolean isObsFilterDisabled;
+		try {
+			isLocFilterDisabled = AccessUtil.isFilterDisabled(LOCATION_BASED_FILTER_NAME_PATIENT);
+			isVisitFilterDisabled = AccessUtil.isFilterDisabled(LOCATION_BASED_FILTER_NAME_VISIT);
+			isEncFilterDisabled = AccessUtil.isFilterDisabled(LOCATION_BASED_FILTER_NAME_ENCOUNTER);
+			isObsFilterDisabled = AccessUtil.isFilterDisabled(LOCATION_BASED_FILTER_NAME_OBS);
+		}
+		finally {
+			tempSessionHolder.remove();
+		}
+		
+		if (!isLocFilterDisabled) {
+			enableFilter(LOCATION_BASED_FILTER_NAME_PATIENT, attributeTypeId, basisIds, session);
+		}
+		if (!isVisitFilterDisabled) {
+			enableFilter(LOCATION_BASED_FILTER_NAME_VISIT, attributeTypeId, basisIds, session);
+		}
+		if (!isEncFilterDisabled) {
+			enableFilter(LOCATION_BASED_FILTER_NAME_ENCOUNTER, attributeTypeId, basisIds, session);
+		}
+		if (!isObsFilterDisabled) {
+			enableFilter(LOCATION_BASED_FILTER_NAME_OBS, attributeTypeId, basisIds, session);
+		}
 		
 		return session;
 	}

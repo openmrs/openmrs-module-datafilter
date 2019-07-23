@@ -221,4 +221,25 @@ public class AccessUtil {
 		return ids;
 	}
 	
+	/**
+	 * Checks if the filter matching the specified name is disabled, every filter can be disabled via a
+	 * global property, the name of the global property is the filter name with the a hyphen and
+	 * disabled word appended to the end.
+	 * 
+	 * @param filterName the name of the filter to match
+	 * @return true if the filter is disabled otherwise false
+	 */
+	public static boolean isFilterDisabled(String filterName) {
+		List<List<Object>> rows = runQueryWithElevatedPrivileges(
+		    "SELECT property_value FROM global_property WHERE property = '" + filterName + "_" + DataFilterConstants.DISABLED
+		            + "'");
+		for (List<Object> row : rows) {
+			if ("true".equals(row.get(0))) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 }

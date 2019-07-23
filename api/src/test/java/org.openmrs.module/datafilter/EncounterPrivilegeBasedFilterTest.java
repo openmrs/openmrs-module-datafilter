@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collection;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Encounter;
 import org.openmrs.api.EncounterService;
@@ -22,6 +23,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.test.TestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@Ignore
 public class EncounterPrivilegeBasedFilterTest extends BasePrivilegeBasedFilterTest {
 	
 	@Autowired
@@ -60,7 +62,7 @@ public class EncounterPrivilegeBasedFilterTest extends BasePrivilegeBasedFilterT
 		assertTrue(TestUtil.containsId(encounters, 1000));
 		assertTrue(TestUtil.containsId(encounters, 1001));
 		assertTrue(TestUtil.containsId(encounters, 1002));
-        assertTrue(TestUtil.containsId(encounters, 1003));
+		assertTrue(TestUtil.containsId(encounters, 1003));
 	}
 	
 	@Test
@@ -74,7 +76,7 @@ public class EncounterPrivilegeBasedFilterTest extends BasePrivilegeBasedFilterT
 		assertTrue(TestUtil.containsId(encounters, 1000));
 		assertTrue(TestUtil.containsId(encounters, 1001));
 		assertTrue(TestUtil.containsId(encounters, 1002));
-        assertTrue(TestUtil.containsId(encounters, 1003));
+		assertTrue(TestUtil.containsId(encounters, 1003));
 	}
 	
 }

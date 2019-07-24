@@ -233,13 +233,7 @@ public class AccessUtil {
 		List<List<Object>> rows = runQueryWithElevatedPrivileges(
 		    "SELECT property_value FROM global_property WHERE property = '" + filterName + "_" + DataFilterConstants.DISABLED
 		            + "'");
-		for (List<Object> row : rows) {
-			if ("true".equals(row.get(0))) {
-				return true;
-			}
-		}
-		
-		return false;
+		return !rows.isEmpty() && !rows.get(0).isEmpty() && "true".equalsIgnoreCase(rows.get(0).get(0).toString().trim());
 	}
 	
 }

@@ -75,4 +75,14 @@ public class EncounterLocationBasedFilterTest extends BaseLocationBasedFilterTes
 		assertTrue(TestUtil.containsId(encounters, 1002));
 	}
 	
+	@Test
+	public void getEncounters_shouldReturnAllEncountersIfLocationFilteringIsDisabled() {
+		DataFilterTestUtils.disableLocationFiltering();
+		reloginAs("dyorke", "test");
+		final int expCount = 3;
+		final String name = "Navuga";
+		assertEquals(expCount, encounterService.getCountOfEncounters(name, false).intValue());
+		assertEquals(3, encounterService.getEncounters(name, 0, Integer.MAX_VALUE, false).size());
+	}
+	
 }

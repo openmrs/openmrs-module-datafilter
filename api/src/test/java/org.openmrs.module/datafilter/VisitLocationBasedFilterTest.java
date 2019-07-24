@@ -74,4 +74,11 @@ public class VisitLocationBasedFilterTest extends BaseLocationBasedFilterTest {
 		assertTrue(TestUtil.containsId(visits, 1002));
 	}
 	
+	@Test
+	public void getVisits_shouldReturnAllVisitsIfLocationFilteringIsDisabled() {
+		DataFilterTestUtils.disableLocationFiltering();
+		reloginAs("dyorke", "test");
+		assertEquals(3, getVisits().size());
+	}
+	
 }

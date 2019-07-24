@@ -83,4 +83,11 @@ public class ObsLocationBasedFilterTest extends BaseLocationBasedFilterTest {
 		assertTrue(TestUtil.containsId(observations, 1003));
 	}
 	
+	@Test
+	public void getObs_shouldReturnAllObsIfLocationFilteringIsDisabled() throws Exception {
+		DataFilterTestUtils.disableLocationFiltering();
+		reloginAs("dyorke", "test");
+		assertEquals(3, getObservations().size());
+	}
+	
 }

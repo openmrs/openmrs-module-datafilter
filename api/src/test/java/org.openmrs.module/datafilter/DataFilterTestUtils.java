@@ -25,6 +25,7 @@ public class DataFilterTestUtils {
 		as.setGlobalProperty(LOCATION_BASED_FILTER_NAME_VISIT + "_" + DataFilterConstants.DISABLED, "true");
 		as.setGlobalProperty(LOCATION_BASED_FILTER_NAME_ENCOUNTER + "_" + DataFilterConstants.DISABLED, "true");
 		as.setGlobalProperty(LOCATION_BASED_FILTER_NAME_OBS + "_" + DataFilterConstants.DISABLED, "true");
+		Context.flushSession();
 	}
 	
 }

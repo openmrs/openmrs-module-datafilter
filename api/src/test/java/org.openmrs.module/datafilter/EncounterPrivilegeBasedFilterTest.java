@@ -15,7 +15,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collection;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Encounter;
 import org.openmrs.api.EncounterService;
@@ -23,7 +22,6 @@ import org.openmrs.api.context.Context;
 import org.openmrs.test.TestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Ignore
 public class EncounterPrivilegeBasedFilterTest extends BasePrivilegeBasedFilterTest {
 	
 	@Autowired
@@ -32,6 +30,7 @@ public class EncounterPrivilegeBasedFilterTest extends BasePrivilegeBasedFilterT
 	@Before
 	public void before() {
 		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "encounters.xml");
+		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "privilegedEncounters.xml");
 	}
 	
 	@Test
@@ -54,7 +53,7 @@ public class EncounterPrivilegeBasedFilterTest extends BasePrivilegeBasedFilterT
 		assertTrue(TestUtil.containsId(encounters, 1000));
 		assertTrue(TestUtil.containsId(encounters, 1001));
 		
-		//AccessUtilTest.grantLocationAccessToUser(Context.getAuthenticatedUser().getUserId(), 4001, getConnection());
+		DataFilterTestUtils.addPrivilege(PRIV_MANAGE_CHEMO_PATIENTS);
 		expCount = 4;
 		assertEquals(expCount, encounterService.getCountOfEncounters(name, false).intValue());
 		encounters = encounterService.getEncounters(name, 0, Integer.MAX_VALUE, false);
@@ -62,7 +61,7 @@ public class EncounterPrivilegeBasedFilterTest extends BasePrivilegeBasedFilterT
 		assertTrue(TestUtil.containsId(encounters, 1000));
 		assertTrue(TestUtil.containsId(encounters, 1001));
 		assertTrue(TestUtil.containsId(encounters, 1002));
-		assertTrue(TestUtil.containsId(encounters, 1003));
+		assertTrue(TestUtil.containsId(encounters, 2001));
 	}
 	
 	@Test
@@ -76,7 +75,7 @@ public class EncounterPrivilegeBasedFilterTest extends BasePrivilegeBasedFilterT
 		assertTrue(TestUtil.containsId(encounters, 1000));
 		assertTrue(TestUtil.containsId(encounters, 1001));
 		assertTrue(TestUtil.containsId(encounters, 1002));
-		assertTrue(TestUtil.containsId(encounters, 1003));
+		assertTrue(TestUtil.containsId(encounters, 2001));
 	}
 	
 }

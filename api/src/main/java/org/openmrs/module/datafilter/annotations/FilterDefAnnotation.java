@@ -29,7 +29,7 @@ public class FilterDefAnnotation implements FilterDef {
 	private static final ParamDefAnnotation BASIS_IDS_PARAM_DEF = new ParamDefAnnotation(
 	        DataFilterConstants.PARAM_NAME_BASIS_IDS, StringType.INSTANCE.getName());
 	
-	private static final ParamDef[] PARAMETERS = new ParamDef[] { ATTRIB_TYPE_PARAM_DEF, BASIS_IDS_PARAM_DEF };
+	private ParamDef[] PARAMETERS = new ParamDef[] { ATTRIB_TYPE_PARAM_DEF, BASIS_IDS_PARAM_DEF };
 	
 	private String name;
 	
@@ -37,9 +37,13 @@ public class FilterDefAnnotation implements FilterDef {
 	 * Constructor
 	 *
 	 * @param name the name of the filter def
+	 * @param paramDefs the array of @{@link ParamDef}s to add.
 	 */
-	public FilterDefAnnotation(String name) {
+	public FilterDefAnnotation(String name, ParamDef[] paramDefs) {
 		this.name = name;
+		if (paramDefs != null) {
+			PARAMETERS = paramDefs;
+		}
 	}
 	
 	/**

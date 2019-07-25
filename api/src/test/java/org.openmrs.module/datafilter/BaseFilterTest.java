@@ -35,6 +35,8 @@ public abstract class BaseFilterTest extends BaseDataFilterTest {
 		Util.addAnnotationToClass(Encounter.class, new FiltersAnnotation());
 		Util.addAnnotationToClass(Obs.class, new FilterDefsAnnotation());
 		Util.addAnnotationToClass(Obs.class, new FiltersAnnotation());
+		Util.configureLocationBasedFiltering();
+		Util.configurePrivilegeBasedFiltering();
 		Context.addConfigProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, DataFilterSessionContext.class.getName());
 	}
 	

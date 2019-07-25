@@ -9,13 +9,13 @@
  */
 package org.openmrs.module.datafilter;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 
 public abstract class BaseLocationBasedFilterTest extends BaseFilterTest {
 	
-	@BeforeClass
-	public static void beforeBaseLocationBasedFilterClass() {
-		Util.configureLocationBasedFiltering();
+	@Before
+	public void beforeLocationBasedFilterMethod() {
+		//Disable location based filtering
 	}
 	
 }

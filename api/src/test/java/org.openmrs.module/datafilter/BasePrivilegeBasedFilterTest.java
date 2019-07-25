@@ -9,13 +9,15 @@
  */
 package org.openmrs.module.datafilter;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 
 public abstract class BasePrivilegeBasedFilterTest extends BaseFilterTest {
 	
-	@BeforeClass
-	public static void beforeBaseLocationBasedFilterClass() {
-		Util.configurePrivilegeBasedFiltering();
+	protected final static String PRIV_MANAGE_CHEMO_PATIENTS = "Manage Chemo Patients";
+	
+	@Before
+	public void beforePrivilegeBasedFilterMethod() {
+		DataFilterTestUtils.disableLocationFiltering();
 	}
 	
 }

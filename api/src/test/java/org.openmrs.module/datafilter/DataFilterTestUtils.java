@@ -14,8 +14,11 @@ import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_F
 import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT;
 import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT;
 
+import org.openmrs.Privilege;
+import org.openmrs.Role;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
+import org.openmrs.util.PrivilegeConstants;
 
 public class DataFilterTestUtils {
 	
@@ -26,6 +29,20 @@ public class DataFilterTestUtils {
 		as.setGlobalProperty(LOCATION_BASED_FILTER_NAME_ENCOUNTER + "_" + DataFilterConstants.DISABLED, "true");
 		as.setGlobalProperty(LOCATION_BASED_FILTER_NAME_OBS + "_" + DataFilterConstants.DISABLED, "true");
 		Context.flushSession();
+	}
+	
+	public static void addPrivilege(String privilege) {
+		Context.addProxyPrivilege(PrivilegeConstants.MANAGE_ROLES);
+		try {
+			Privilege p = Context.getUserService().getPrivilege(privilege);
+			Role role = Context.getAuthenticatedUser().getRoles().iterator().next();
+			role.addPrivilege(p);
+			Context.getUserService().saveRole(role);
+			Context.flushSession();
+		}
+		finally {
+			Context.removeProxyPrivilege(PrivilegeConstants.MANAGE_ROLES);
+		}
 	}
 	
 }

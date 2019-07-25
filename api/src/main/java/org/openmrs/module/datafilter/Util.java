@@ -19,7 +19,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.annotations.FilterDefs;
 import org.hibernate.annotations.Filters;
+import org.hibernate.annotations.ParamDef;
 import org.hibernate.search.annotations.FullTextFilterDefs;
+import org.hibernate.type.StringType;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -28,6 +30,7 @@ import org.openmrs.module.datafilter.annotations.AggregateAnnotation;
 import org.openmrs.module.datafilter.annotations.FilterAnnotation;
 import org.openmrs.module.datafilter.annotations.FilterDefAnnotation;
 import org.openmrs.module.datafilter.annotations.FullTextFilterDefAnnotation;
+import org.openmrs.module.datafilter.annotations.ParamDefAnnotation;
 
 public class Util {
 	
@@ -42,19 +45,20 @@ public class Util {
 			log.info("Setting up location based filtering");
 		}
 		
-		registerFilter(Visit.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT),
+		registerFilter(Visit.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT, null),
 		    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT,
 		            DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
 		
-		registerFilter(Encounter.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER),
+		registerFilter(Encounter.class,
+		    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER, null),
 		    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER,
 		            DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
 		
-		registerFilter(Obs.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS),
+		registerFilter(Obs.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS, null),
 		    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS,
 		            StringUtils.replaceOnce(DataFilterConstants.FILTER_CONDITION_PATIENT_ID, "patient_id", "person_id")));
 		
-		registerFilter(Patient.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT),
+		registerFilter(Patient.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT, null),
 		    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT,
 		            DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
 		
@@ -71,7 +75,21 @@ public class Util {
 	 * with JPA annotations that need to be filtered.
 	 */
 	protected static void configurePrivilegeBasedFiltering() {
+		if (log.isInfoEnabled()) {
+			log.info("Setting up privilege based filtering");
+		}
 		
+		ParamDefAnnotation paramDef = new ParamDefAnnotation(DataFilterConstants.PARAM_NAME_ROLES,
+		        StringType.INSTANCE.getName());
+		ParamDef[] paramDefs = new ParamDef[] { paramDef };
+		registerFilter(Encounter.class,
+		    new FilterDefAnnotation(DataFilterConstants.PRIV_BASED_FILTER_NAME_ENCOUNTER, paramDefs),
+		    new FilterAnnotation(DataFilterConstants.PRIV_BASED_FILTER_NAME_ENCOUNTER,
+		            DataFilterConstants.FILTER_CONDITION_ENCOUNTER_ID));
+		
+		if (log.isInfoEnabled()) {
+			log.info("Successfully set up privilege based filtering");
+		}
 	}
 	
 	/**

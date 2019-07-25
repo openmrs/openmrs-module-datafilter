@@ -13,10 +13,12 @@ import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_F
 import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS;
 import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT;
 import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT;
+import static org.openmrs.module.datafilter.DataFilterConstants.PRIV_BASED_FILTER_NAME_ENCOUNTER;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -116,7 +118,11 @@ public class DataFilterSessionContext extends SpringSessionContext {
 		}
 		
 		Collection<String> basisIds = new HashSet();
+		Collection<String> roles = new HashSet();
 		if (Context.isAuthenticated()) {
+			Collection<String> allRoles = Context.getAuthenticatedUser().getAllRoles().stream().map(r -> r.getName())
+			        .collect(Collectors.toSet());
+			roles.addAll(allRoles);
 			try {
 				tempSessionHolder.set(session);
 				basisIds.addAll(AccessUtil.getAssignedBasisIds(Location.class));
@@ -160,6 +166,13 @@ public class DataFilterSessionContext extends SpringSessionContext {
 			enableFilter(LOCATION_BASED_FILTER_NAME_OBS, attributeTypeId, basisIds, session);
 		}
 		
+		try {
+			enableEncounterTypeFilter(PRIV_BASED_FILTER_NAME_ENCOUNTER, roles, session);
+		}
+		catch (Exception e) {
+			throw new HibernateException(e);
+		}
+		
 		return session;
 	}
 	
@@ -171,6 +184,15 @@ public class DataFilterSessionContext extends SpringSessionContext {
 		
 		filter.setParameter(DataFilterConstants.PARAM_NAME_ATTRIB_TYPE_ID, attributeTypeId);
 		filter.setParameterList(DataFilterConstants.PARAM_NAME_BASIS_IDS, basisIds);
+	}
+	
+	private void enableEncounterTypeFilter(String filterName, Collection<String> roles, Session session) {
+		Filter filter = session.getEnabledFilter(filterName);
+		if (filter == null) {
+			filter = session.enableFilter(filterName);
+		}
+		
+		filter.setParameterList(DataFilterConstants.PARAM_NAME_ROLES, roles);
 	}
 	
 }

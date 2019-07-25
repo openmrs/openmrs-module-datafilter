@@ -14,7 +14,6 @@
 
 <dataset>
     <global_property property="datafilter.personAttributeTypeUuids" property_value="a3b6d540-a32e-44c7-91b3-292d97667519" uuid="af55827e-26fe-102b-80cb-0017a47871a3" />
-    <encounter_type encounter_type_id="5000" name="Chemotherapy" description="Chemotherapy Encounter" creator="1" date_created="2019-05-01 00:00:00.0" retired="0" uuid="a1ae86f4-6afe-4351-b6f8-cd4fc383cce1"/>
 
     <location location_id="4000" name="Trinidad" description="Trinidad Clinic" creator="1" date_created="2019-05-01 00:00:00.0" retired="false" uuid="1d6c993e-c2cc-11de-8d13-0010c6dffd0e" />
     <location location_id="4001" name="England" description="England Clinic" creator="1" date_created="2019-05-01 00:00:00.0" retired="false" uuid="2d6c993e-c2cc-11de-8d13-0010c6dffd0e" />
@@ -54,7 +53,6 @@
     <privilege privilege="Get Patients" description="Can View Patients" uuid="be80cb6d-c291-46c8-8d3a-96dc33d188fc" />
     <privilege privilege="Get Observations" description="Can View Observations" uuid="ce80cb6d-c291-46c8-8d3a-96dc33d188fc" />
     <privilege privilege="Get Visits" description="Can View Visits" uuid="de80cb6d-c291-46c8-8d3a-96dc33d188fc" />
-    <privilege privilege="Manage Chemo Patients" description="Can Manage Patients Enrolled in Chemotherapy Program" uuid="ee80cb6d-c291-46c8-8d3a-96dc33d188fc" />
 
     <role role="Physician" description="Physician" uuid="1280cb6d-c291-46c8-8d3a-96dc33d199fc" />
 
@@ -65,7 +63,7 @@
 
     <user_role user_id="3000" role="Physician" />
     <user_role user_id="3001" role="Physician" />
-
+    
     <datafilter_entity_basis_map entity_basis_map_id="1" entity_identifier="3000" entity_type="org.openmrs.User" basis_identifier="4000" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="ae41928c-3bca-56r4-a4dc-9198f6b2873c" />
     <datafilter_entity_basis_map entity_basis_map_id="2" entity_identifier="3000" entity_type="org.openmrs.User" basis_identifier="1" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="be41928c-3bca-56r4-a4dc-9198f6b2873c" />
     <datafilter_entity_basis_map entity_basis_map_id="3" entity_identifier="3000" entity_type="org.openmrs.User" basis_identifier="1" basis_type="org.openmrs.Program" creator="1" date_created="2019-05-01 00:00:00.0" uuid="ce41928c-3bca-56r4-a4dc-9198f6b2873c" />

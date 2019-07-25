@@ -28,7 +28,7 @@ public class UtilTest {
 		Class<?> clazz = Concept.class;
 		assertFalse(clazz.isAnnotationPresent(annotationClass));
 		
-		Util.addAnnotationToClass(clazz, new FilterDefAnnotation("some name"));
+		Util.addAnnotationToClass(clazz, new FilterDefAnnotation("some name", null));
 		
 		assertTrue(clazz.isAnnotationPresent(annotationClass));
 	}

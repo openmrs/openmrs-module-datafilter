@@ -50,5 +50,49 @@
         </description>
     </globalProperty>
 
+    <globalProperty>
+        <property>${project.parent.artifactId}_locationBasedVisitFilter.disabled</property>
+        <description>
+            When the value is set to true, then location based filtering for visits will be disabled
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>${project.parent.artifactId}_locationBasedEncounterFilter.disabled</property>
+        <description>
+            When the value is set to true, then location based filtering for  will be disabled
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>${project.parent.artifactId}_locationBasedObsFilter.disabled</property>
+        <description>
+            When the value is set to true, then location based filtering for observations will be disabled
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>${project.parent.artifactId}_locationBasedPatientFilter.disabled</property>
+        <description>
+            When the value is set to true, then location based filtering for patients will be disabled
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>${project.parent.artifactId}_encTypePrivBasedEncounterFilter.disabled</property>
+        <description>
+            When the value is set to true, then encounter type's view privilege based filtering
+            for encounters will be disabled
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>${project.parent.artifactId}_encTypePrivBasedObsFilter.disabled</property>
+        <description>
+            When the value is set to true, then encounter type's view privilege based filtering
+            for observations will be disabled
+        </description>
+    </globalProperty>
+
 </module>
 

@@ -27,7 +27,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.test.TestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class ObsLocationBasedFilterTest extends BaseLocationBasedFilterTest {
+public class ObsLocationBasedFilterTest extends BaseFilterTest {
 	
 	@Autowired
 	private ObsService obsService;

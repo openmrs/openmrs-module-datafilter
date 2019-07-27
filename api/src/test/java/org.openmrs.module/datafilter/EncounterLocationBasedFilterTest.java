@@ -22,7 +22,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.test.TestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class EncounterLocationBasedFilterTest extends BaseLocationBasedFilterTest {
+public class EncounterLocationBasedFilterTest extends BaseFilterTest {
 	
 	@Autowired
 	private EncounterService encounterService;

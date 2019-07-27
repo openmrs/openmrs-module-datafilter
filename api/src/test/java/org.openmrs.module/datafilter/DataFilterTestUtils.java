@@ -9,10 +9,10 @@
  */
 package org.openmrs.module.datafilter;
 
-import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER;
-import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS;
-import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT;
-import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT;
+import static org.openmrs.module.datafilter.DataFilterConstants.GP_LOCATION_BASED_FILTER_NAME_ENCOUNTER;
+import static org.openmrs.module.datafilter.DataFilterConstants.GP_LOCATION_BASED_FILTER_NAME_OBS;
+import static org.openmrs.module.datafilter.DataFilterConstants.GP_LOCATION_BASED_FILTER_NAME_PATIENT;
+import static org.openmrs.module.datafilter.DataFilterConstants.GP_LOCATION_BASED_FILTER_NAME_VISIT;
 
 import org.openmrs.Privilege;
 import org.openmrs.Role;
@@ -24,10 +24,10 @@ public class DataFilterTestUtils {
 	
 	public static void disableLocationFiltering() {
 		AdministrationService as = Context.getAdministrationService();
-		as.setGlobalProperty(LOCATION_BASED_FILTER_NAME_PATIENT + "_" + DataFilterConstants.DISABLED, "true");
-		as.setGlobalProperty(LOCATION_BASED_FILTER_NAME_VISIT + "_" + DataFilterConstants.DISABLED, "true");
-		as.setGlobalProperty(LOCATION_BASED_FILTER_NAME_ENCOUNTER + "_" + DataFilterConstants.DISABLED, "true");
-		as.setGlobalProperty(LOCATION_BASED_FILTER_NAME_OBS + "_" + DataFilterConstants.DISABLED, "true");
+		as.setGlobalProperty(GP_LOCATION_BASED_FILTER_NAME_PATIENT, "true");
+		as.setGlobalProperty(GP_LOCATION_BASED_FILTER_NAME_VISIT, "true");
+		as.setGlobalProperty(GP_LOCATION_BASED_FILTER_NAME_ENCOUNTER, "true");
+		as.setGlobalProperty(GP_LOCATION_BASED_FILTER_NAME_OBS, "true");
 		Context.flushSession();
 	}
 	

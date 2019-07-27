@@ -84,6 +84,9 @@ public class DataFilterSessionContext extends SpringSessionContext {
 			if (log.isTraceEnabled()) {
 				log.trace("Skipping enabling of filters on daemon thread");
 			}
+			
+			disableAllFilters(session);
+			
 			return session;
 		}
 		
@@ -92,9 +95,7 @@ public class DataFilterSessionContext extends SpringSessionContext {
 				log.trace("Disabling filters for super user");
 			}
 			
-			for (String filter : DataFilterConstants.FILTER_NAMES) {
-				session.disableFilter(filter);
-			}
+			disableAllFilters(session);
 			
 			return session;
 		}
@@ -196,6 +197,12 @@ public class DataFilterSessionContext extends SpringSessionContext {
 		}
 		
 		filter.setParameterList(DataFilterConstants.PARAM_NAME_ROLES, roles);
+	}
+	
+	private void disableAllFilters(Session session) {
+		for (String filter : DataFilterConstants.FILTER_NAMES) {
+			session.disableFilter(filter);
+		}
 	}
 	
 }

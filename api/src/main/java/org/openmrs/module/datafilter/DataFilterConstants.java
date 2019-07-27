@@ -25,11 +25,11 @@ public class DataFilterConstants {
 	
 	public static final String LOCATION_BASED_FILTER_NAME_PATIENT = MODULE_ID + "_locationBasedPatientFilter";
 	
-	public static final String PRIV_BASED_FILTER_NAME_ENCOUNTER = MODULE_ID + "_privBasedEncounterFilter";
+	public static final String ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER = MODULE_ID + "_encTypePrivBasedEncounterFilter";
 	
 	public static final Set<String> FILTER_NAMES = Stream
 	        .of(LOCATION_BASED_FILTER_NAME_PATIENT, LOCATION_BASED_FILTER_NAME_VISIT, LOCATION_BASED_FILTER_NAME_ENCOUNTER,
-	            LOCATION_BASED_FILTER_NAME_OBS, PRIV_BASED_FILTER_NAME_ENCOUNTER)
+	            LOCATION_BASED_FILTER_NAME_OBS, ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER)
 	        .collect(Collectors.toSet());
 	
 	public static final String LOCATION_BASED_FULL_TEXT_FILTER_NAME_PATIENT = MODULE_ID
@@ -56,9 +56,9 @@ public class DataFilterConstants {
 	        + "et.view_privilege IN (SELECT DISTINCT rp.privilege FROM role_privilege rp WHERE rp.role IN ("
 	        + PARAM_NAME_ROLES_PLACEHOLDER + "))";
 	
-	public static final String FILTER_CONDITION_PATIENT_ID = "patient_id in (" + PERSON_ID_QUERY + ")";
+	public static final String FILTER_CONDITION_PATIENT_ID = "patient_id IN (" + PERSON_ID_QUERY + ")";
 	
-	public static final String FILTER_CONDITION_ENCOUNTER_ID = "encounter_id in (" + ENCOUNTER_ID_SUBQUERY + ")";
+	public static final String FILTER_CONDITION_ENCOUNTER_ID = "encounter_id IN (" + ENCOUNTER_ID_SUBQUERY + ")";
 	
 	public static final String GP_PERSON_ATTRIBUTE_TYPE_UUIDS = MODULE_ID + ".personAttributeTypeUuids";
 	

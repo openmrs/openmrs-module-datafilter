@@ -83,8 +83,8 @@ public class Util {
 		        StringType.INSTANCE.getName());
 		ParamDef[] paramDefs = new ParamDef[] { paramDef };
 		registerFilter(Encounter.class,
-		    new FilterDefAnnotation(DataFilterConstants.PRIV_BASED_FILTER_NAME_ENCOUNTER, paramDefs),
-		    new FilterAnnotation(DataFilterConstants.PRIV_BASED_FILTER_NAME_ENCOUNTER,
+		    new FilterDefAnnotation(DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER, paramDefs),
+		    new FilterAnnotation(DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER,
 		            DataFilterConstants.FILTER_CONDITION_ENCOUNTER_ID));
 		
 		if (log.isInfoEnabled()) {

@@ -9,11 +9,11 @@
  */
 package org.openmrs.module.datafilter;
 
+import static org.openmrs.module.datafilter.DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER;
 import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER;
 import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS;
 import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT;
 import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT;
-import static org.openmrs.module.datafilter.DataFilterConstants.PRIV_BASED_FILTER_NAME_ENCOUNTER;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -166,8 +166,9 @@ public class DataFilterSessionContext extends SpringSessionContext {
 			enableFilter(LOCATION_BASED_FILTER_NAME_OBS, attributeTypeId, basisIds, session);
 		}
 		
+		//TODO Support disabling filter
 		try {
-			enableEncounterTypeFilter(PRIV_BASED_FILTER_NAME_ENCOUNTER, roles, session);
+			enableEncounterTypeFilter(ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER, roles, session);
 		}
 		catch (Exception e) {
 			throw new HibernateException(e);

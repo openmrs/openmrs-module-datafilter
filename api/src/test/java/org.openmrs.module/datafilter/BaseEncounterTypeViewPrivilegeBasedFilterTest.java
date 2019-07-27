@@ -11,7 +11,7 @@ package org.openmrs.module.datafilter;
 
 import org.junit.Before;
 
-public abstract class BasePrivilegeBasedFilterTest extends BaseFilterTest {
+public abstract class BaseEncounterTypeViewPrivilegeBasedFilterTest extends BaseFilterTest {
 	
 	protected final static String PRIV_MANAGE_CHEMO_PATIENTS = "Manage Chemo Patients";
 	

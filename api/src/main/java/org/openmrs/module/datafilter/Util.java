@@ -21,6 +21,7 @@ import org.hibernate.annotations.FilterDefs;
 import org.hibernate.annotations.Filters;
 import org.hibernate.annotations.ParamDef;
 import org.hibernate.search.annotations.FullTextFilterDefs;
+import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
@@ -36,6 +37,15 @@ public class Util {
 	
 	private static final Log log = LogFactory.getLog(Util.class);
 	
+	private static final ParamDefAnnotation LOCATION_ATTRIB_TYPE_PARAM_DEF = new ParamDefAnnotation(
+	        DataFilterConstants.PARAM_NAME_ATTRIB_TYPE_ID, IntegerType.INSTANCE.getName());
+	
+	private static final ParamDefAnnotation BASIS_IDS_PARAM_DEF = new ParamDefAnnotation(
+	        DataFilterConstants.PARAM_NAME_BASIS_IDS, StringType.INSTANCE.getName());
+	
+	private static final ParamDef[] LOCATION_FILTER_PARAMETERS = new ParamDef[] { LOCATION_ATTRIB_TYPE_PARAM_DEF,
+	        BASIS_IDS_PARAM_DEF };
+	
 	/**
 	 * Sets up location based filtering by adding the filter annotations to persistent classes mapped
 	 * with JPA annotations that need to be filtered.
@@ -45,20 +55,23 @@ public class Util {
 			log.info("Setting up location based filtering");
 		}
 		
-		registerFilter(Visit.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT, null),
+		registerFilter(Visit.class,
+		    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT, LOCATION_FILTER_PARAMETERS),
 		    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT,
 		            DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
 		
 		registerFilter(Encounter.class,
-		    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER, null),
+		    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER, LOCATION_FILTER_PARAMETERS),
 		    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER,
 		            DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
 		
-		registerFilter(Obs.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS, null),
+		registerFilter(Obs.class,
+		    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS, LOCATION_FILTER_PARAMETERS),
 		    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS,
 		            StringUtils.replaceOnce(DataFilterConstants.FILTER_CONDITION_PATIENT_ID, "patient_id", "person_id")));
 		
-		registerFilter(Patient.class, new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT, null),
+		registerFilter(Patient.class,
+		    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT, LOCATION_FILTER_PARAMETERS),
 		    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT,
 		            DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
 		

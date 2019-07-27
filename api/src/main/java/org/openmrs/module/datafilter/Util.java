@@ -43,8 +43,13 @@ public class Util {
 	private static final ParamDefAnnotation BASIS_IDS_PARAM_DEF = new ParamDefAnnotation(
 	        DataFilterConstants.PARAM_NAME_BASIS_IDS, StringType.INSTANCE.getName());
 	
-	private static final ParamDef[] LOCATION_FILTER_PARAMETERS = new ParamDef[] { LOCATION_ATTRIB_TYPE_PARAM_DEF,
+	private static final ParamDef[] LOCATION_FILTER_PARAMS = new ParamDef[] { LOCATION_ATTRIB_TYPE_PARAM_DEF,
 	        BASIS_IDS_PARAM_DEF };
+	
+	private static final ParamDefAnnotation ENC_TYPE_VIEW_PARAM_DEF = new ParamDefAnnotation(
+	        DataFilterConstants.PARAM_NAME_ROLES, StringType.INSTANCE.getName());
+	
+	private static final ParamDef[] ENC_TYPE_VIEW_PRIV_FILTER_PARAMS = new ParamDef[] { ENC_TYPE_VIEW_PARAM_DEF };
 	
 	/**
 	 * Sets up location based filtering by adding the filter annotations to persistent classes mapped
@@ -56,22 +61,22 @@ public class Util {
 		}
 		
 		registerFilter(Visit.class,
-		    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT, LOCATION_FILTER_PARAMETERS),
+		    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT, LOCATION_FILTER_PARAMS),
 		    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT,
 		            DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
 		
 		registerFilter(Encounter.class,
-		    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER, LOCATION_FILTER_PARAMETERS),
+		    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER, LOCATION_FILTER_PARAMS),
 		    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER,
 		            DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
 		
 		registerFilter(Obs.class,
-		    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS, LOCATION_FILTER_PARAMETERS),
+		    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS, LOCATION_FILTER_PARAMS),
 		    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS,
 		            StringUtils.replaceOnce(DataFilterConstants.FILTER_CONDITION_PATIENT_ID, "patient_id", "person_id")));
 		
 		registerFilter(Patient.class,
-		    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT, LOCATION_FILTER_PARAMETERS),
+		    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT, LOCATION_FILTER_PARAMS),
 		    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT,
 		            DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
 		
@@ -84,24 +89,28 @@ public class Util {
 	}
 	
 	/**
-	 * Sets up privilege based filtering by adding the filter annotations to persistent classes mapped
-	 * with JPA annotations that need to be filtered.
+	 * Sets up encounter type view privilege based filtering by adding the filter annotations to
+	 * persistent classes mapped with JPA annotations that need to be filtered.
 	 */
-	protected static void configurePrivilegeBasedFiltering() {
+	protected static void configureEncounterTypeViewPrivilegeBasedFiltering() {
 		if (log.isInfoEnabled()) {
-			log.info("Setting up privilege based filtering");
+			log.info("Setting up encounter type view privilege based filtering");
 		}
 		
-		ParamDefAnnotation paramDef = new ParamDefAnnotation(DataFilterConstants.PARAM_NAME_ROLES,
-		        StringType.INSTANCE.getName());
-		ParamDef[] paramDefs = new ParamDef[] { paramDef };
 		registerFilter(Encounter.class,
-		    new FilterDefAnnotation(DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER, paramDefs),
+		    new FilterDefAnnotation(DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER,
+		            ENC_TYPE_VIEW_PRIV_FILTER_PARAMS),
 		    new FilterAnnotation(DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER,
 		            DataFilterConstants.FILTER_CONDITION_ENCOUNTER_ID));
 		
+		registerFilter(Obs.class,
+		    new FilterDefAnnotation(DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS,
+		            ENC_TYPE_VIEW_PRIV_FILTER_PARAMS),
+		    new FilterAnnotation(DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS,
+		            DataFilterConstants.FILTER_CONDITION_ENCOUNTER_ID));
+		
 		if (log.isInfoEnabled()) {
-			log.info("Successfully set up privilege based filtering");
+			log.info("Successfully set up encounter type view privilege based filtering");
 		}
 	}
 	

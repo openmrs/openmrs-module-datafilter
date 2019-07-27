@@ -27,10 +27,11 @@ public class DataFilterConstants {
 	
 	public static final String ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER = MODULE_ID + "_encTypePrivBasedEncounterFilter";
 	
-	public static final Set<String> FILTER_NAMES = Stream
-	        .of(LOCATION_BASED_FILTER_NAME_PATIENT, LOCATION_BASED_FILTER_NAME_VISIT, LOCATION_BASED_FILTER_NAME_ENCOUNTER,
-	            LOCATION_BASED_FILTER_NAME_OBS, ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER)
-	        .collect(Collectors.toSet());
+	public static final String ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS = MODULE_ID + "_encTypePrivBasedObsFilter";
+	
+	public static final Set<String> FILTER_NAMES = Stream.of(LOCATION_BASED_FILTER_NAME_PATIENT,
+	    LOCATION_BASED_FILTER_NAME_VISIT, LOCATION_BASED_FILTER_NAME_ENCOUNTER, LOCATION_BASED_FILTER_NAME_OBS,
+	    ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER, ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS).collect(Collectors.toSet());
 	
 	public static final String LOCATION_BASED_FULL_TEXT_FILTER_NAME_PATIENT = MODULE_ID
 	        + "_locationBasedPatientFullTextFilter";

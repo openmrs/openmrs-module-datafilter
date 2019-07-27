@@ -22,7 +22,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.test.TestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class EncounterPrivilegeBasedFilterTest extends BaseEncounterTypeViewPrivilegeBasedFilterTest {
+public class EncounterEncTypeViewPrivilegeBasedFilterTest extends BaseEncTypeViewPrivilegeBasedFilterTest {
 	
 	@Autowired
 	private EncounterService encounterService;
@@ -52,6 +52,7 @@ public class EncounterPrivilegeBasedFilterTest extends BaseEncounterTypeViewPriv
 		assertEquals(expCount, encounters.size());
 		assertTrue(TestUtil.containsId(encounters, 1000));
 		assertTrue(TestUtil.containsId(encounters, 1001));
+		assertTrue(TestUtil.containsId(encounters, 1002));
 		
 		DataFilterTestUtils.addPrivilege(PRIV_MANAGE_CHEMO_PATIENTS);
 		expCount = 4;

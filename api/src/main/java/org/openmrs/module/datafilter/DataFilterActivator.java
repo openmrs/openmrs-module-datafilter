@@ -85,7 +85,7 @@ public class DataFilterActivator extends BaseModuleActivator {
 		if (log.isInfoEnabled()) {
 			log.info("Removing filter annotations");
 		}
-		//Remove Annotations
+		//TODO Remove Annotations
 	}
 	
 }

@@ -10,9 +10,6 @@
 package org.openmrs.module.datafilter;
 
 import java.io.Serializable;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,12 +18,8 @@ import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.type.Type;
-import org.openmrs.Encounter;
 import org.openmrs.Location;
-import org.openmrs.Obs;
-import org.openmrs.Patient;
 import org.openmrs.User;
-import org.openmrs.Visit;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
@@ -44,9 +37,6 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 	
 	private static final Log log = LogFactory.getLog(DataFilterInterceptor.class);
 	
-	public static final Set<Class<?>> filteredClasses = Stream.of(Patient.class, Visit.class, Encounter.class, Obs.class)
-	        .collect(Collectors.toSet());
-	
 	/**
 	 * @see EmptyInterceptor#onLoad(Object, Serializable, Object[], String[], Type[])
 	 */
@@ -56,7 +46,7 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 			if (log.isDebugEnabled()) {
 				log.trace("Skipping DataFilterInterceptor for daemon thread");
 			}
-		} else if (filteredClasses.contains(entity.getClass())) {
+		} else if (AccessUtil.getLocationBasedClassAndFiltersMap().keySet().contains(entity.getClass())) {
 			User user = Context.getAuthenticatedUser();
 			if (user != null && user.isSuperUser()) {
 				if (log.isDebugEnabled()) {

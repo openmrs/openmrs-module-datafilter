@@ -14,8 +14,10 @@ import static org.openmrs.module.datafilter.DataFilterConstants.GP_PERSON_ATTRIB
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -60,6 +62,8 @@ public class AccessUtil {
 	
 	private final static String ATTRIBUTE_TYPE_QUERY = "SELECT person_attribute_type_id, format FROM person_attribute_type WHERE uuid IN ("
 	        + UUIDS_PLACEHOLDER + ")";
+	
+	private static Map<Class<?>, Collection<String>> locationBasedClassFiltersMap = new HashMap();
 	
 	/**
 	 * Gets the collection of person ids for all the persons associated to the bases of the specified
@@ -238,6 +242,28 @@ public class AccessUtil {
 		}
 		
 		return "true".equalsIgnoreCase(rows.get(0).get(0).toString().trim());
+	}
+	
+	/**
+	 * Records the specified filterName as registered for the specified class
+	 * 
+	 * @param clazz the class object
+	 * @param filterName the name of the filter
+	 */
+	protected static void recordFilterRegistrationForClass(Class<?> clazz, String filterName) {
+		if (!locationBasedClassFiltersMap.containsKey(clazz)) {
+			locationBasedClassFiltersMap.put(clazz, new HashSet());
+		}
+		locationBasedClassFiltersMap.get(clazz).add(filterName);
+	}
+	
+	/**
+	 * Gets the collection of all the classes that are filtered by location
+	 * 
+	 * @return the collection of classes
+	 */
+	protected static Map<Class<?>, Collection<String>> getLocationBasedClassAndFiltersMap() {
+		return locationBasedClassFiltersMap;
 	}
 	
 }

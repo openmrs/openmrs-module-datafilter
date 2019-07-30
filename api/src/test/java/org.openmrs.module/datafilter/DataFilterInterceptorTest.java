@@ -18,6 +18,9 @@ import static org.powermock.api.mockito.PowerMockito.when;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,10 +31,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.openmrs.Encounter;
 import org.openmrs.Location;
+import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Role;
 import org.openmrs.User;
+import org.openmrs.Visit;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
@@ -50,8 +56,16 @@ public class DataFilterInterceptorTest {
 	
 	private AdministrationService adminService = null;
 	
+	private static Map<Class<?>, Collection<String>> locationBasedClassAndFiltersMap = new HashMap();
+	
+	public static final Set<Class<?>> LOCATION_BASED_FILTERED_CLASSES = Stream
+	        .of(Patient.class, Visit.class, Encounter.class, Obs.class).collect(Collectors.toSet());
+	
 	@Before
 	public void beforeEachMethod() {
+		for (Class<?> clazz : LOCATION_BASED_FILTERED_CLASSES) {
+			locationBasedClassAndFiltersMap.put(clazz, null);
+		}
 		mockStatic(Context.class);
 		mockStatic(AccessUtil.class);
 		adminService = mock(AdministrationService.class);
@@ -70,6 +84,7 @@ public class DataFilterInterceptorTest {
 		Collection<String> accessiblePatientIds = Stream.of("1", "4").collect(Collectors.toSet());
 		when(Context.getAuthenticatedUser()).thenReturn(new User(userId));
 		when(AccessUtil.getAccessiblePersonIds(eq(Location.class))).thenReturn(accessiblePatientIds);
+		when(AccessUtil.getLocationBasedClassAndFiltersMap()).thenReturn(locationBasedClassAndFiltersMap);
 		ee.expect(ContextAuthenticationException.class);
 		ee.expectMessage(equalTo(DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE));
 		

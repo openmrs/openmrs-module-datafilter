@@ -127,6 +127,7 @@ public class Util {
 		
 		addAnnotationToGroup(entityClass, FilterDefs.class, filterDefAnnotation);
 		addAnnotationToGroup(entityClass, Filters.class, filterAnnotation);
+		AccessUtil.recordFilterRegistrationForClass(entityClass, filterAnnotation.name());
 	}
 	
 	/**

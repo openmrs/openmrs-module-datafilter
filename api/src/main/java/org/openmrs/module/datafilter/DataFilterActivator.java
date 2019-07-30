@@ -72,6 +72,8 @@ public class DataFilterActivator extends BaseModuleActivator {
 		
 		Util.configureLocationBasedFiltering();
 		
+		Util.configureEncounterTypeViewPrivilegeBasedFiltering();
+		
 		Context.addConfigProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, DataFilterSessionContext.class.getName());
 	}
 	

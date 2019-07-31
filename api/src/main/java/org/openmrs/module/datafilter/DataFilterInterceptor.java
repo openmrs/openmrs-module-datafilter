@@ -10,6 +10,8 @@
 package org.openmrs.module.datafilter;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,32 +48,46 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 			if (log.isDebugEnabled()) {
 				log.trace("Skipping DataFilterInterceptor for daemon thread");
 			}
-		} else if (AccessUtil.getLocationBasedClassAndFiltersMap().keySet().contains(entity.getClass())) {
+		} else {
 			User user = Context.getAuthenticatedUser();
 			if (user != null && user.isSuperUser()) {
 				if (log.isDebugEnabled()) {
 					log.trace("Skipping DataFilterInterceptor for super user");
 				}
 			} else {
-				Session session = Context.getRegisteredComponents(SessionFactory.class).get(0).getCurrentSession();
-				//Hibernate will flush any changes in the current session before querying the DB when fetching
-				//the GP value below and we end up in this method again, therefore we need to disable auto flush
-				final FlushMode flushMode = session.getFlushMode();
-				session.setFlushMode(FlushMode.MANUAL);
-				try {
-					AdministrationService as = Context.getAdministrationService();
-					String strictModeStr = as.getGlobalProperty(DataFilterConstants.GP_RUN_IN_STRICT_MODE);
-					if ("false".equalsIgnoreCase(strictModeStr)) {
-						if (log.isDebugEnabled()) {
-							log.trace("Skipping DataFilterInterceptor because the module is not running in strict mode");
+				Map<Class<?>, Collection<String>> classFiltersMap = AccessUtil.getLocationBasedClassAndFiltersMap();
+				if (classFiltersMap.keySet().contains(entity.getClass())) {
+					Session session = Context.getRegisteredComponents(SessionFactory.class).get(0).getCurrentSession();
+					//Hibernate will flush any changes in the current session before querying the DB when fetching
+					//the GP value below and we end up in this method again, therefore we need to disable auto flush
+					final FlushMode flushMode = session.getFlushMode();
+					session.setFlushMode(FlushMode.MANUAL);
+					try {
+						AdministrationService as = Context.getAdministrationService();
+						String strictModeStr = as.getGlobalProperty(DataFilterConstants.GP_RUN_IN_STRICT_MODE);
+						if ("false".equalsIgnoreCase(strictModeStr)) {
+							if (log.isDebugEnabled()) {
+								log.trace("Skipping DataFilterInterceptor because the module is not running in strict mode");
+							}
+						} else {
+							boolean check = true;
+							for (String filterName : classFiltersMap.get(entity.getClass())) {
+								check = !AccessUtil.isFilterDisabled(filterName);
+								if (check) {
+									break;
+								}
+							}
+							
+							if (check && (user == null
+							        || !AccessUtil.getAccessiblePersonIds(Location.class).contains(id.toString()))) {
+								throw new ContextAuthenticationException(DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE);
+							}
 						}
-					} else if (user == null || !AccessUtil.getAccessiblePersonIds(Location.class).contains(id.toString())) {
-						throw new ContextAuthenticationException(DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE);
 					}
-				}
-				finally {
-					//reset
-					session.setFlushMode(flushMode);
+					finally {
+						//reset
+						session.setFlushMode(flushMode);
+					}
 				}
 			}
 		}

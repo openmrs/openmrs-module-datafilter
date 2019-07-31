@@ -11,6 +11,7 @@ package org.openmrs.module.datafilter;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
@@ -64,7 +65,7 @@ public class DataFilterInterceptorTest {
 	@Before
 	public void beforeEachMethod() {
 		for (Class<?> clazz : LOCATION_BASED_FILTERED_CLASSES) {
-			locationBasedClassAndFiltersMap.put(clazz, null);
+			locationBasedClassAndFiltersMap.put(clazz, DataFilterConstants.FILTER_NAMES);
 		}
 		mockStatic(Context.class);
 		mockStatic(AccessUtil.class);
@@ -73,6 +74,7 @@ public class DataFilterInterceptorTest {
 		SessionFactory sf = mock(SessionFactory.class);
 		when(sf.getCurrentSession()).thenReturn(mock(Session.class));
 		when(Context.getRegisteredComponents(eq(SessionFactory.class))).thenReturn(Collections.singletonList(sf));
+		when(AccessUtil.isFilterDisabled(anyString())).thenReturn(false);
 		when(adminService.getGlobalPropertyValue(eq(DataFilterConstants.GP_RUN_IN_STRICT_MODE), anyBoolean()))
 		        .thenReturn(true);
 	}
@@ -128,6 +130,15 @@ public class DataFilterInterceptorTest {
 	@Test
 	public void onLoad_shouldPassForAnEntityThatIsNotFiltered() {
 		interceptor.onLoad(new Role(), null, null, null, null);
+	}
+	
+	@Test
+	public void onLoad_shouldPassForAllFilteredTypesIfAllLocationBasedFiltersAreDisabled() {
+		User user = mock(User.class);
+		when(AccessUtil.getLocationBasedClassAndFiltersMap()).thenReturn(locationBasedClassAndFiltersMap);
+		when(AccessUtil.isFilterDisabled(anyString())).thenReturn(true);
+		when(Context.getAuthenticatedUser()).thenReturn(user);
+		interceptor.onLoad(new Patient(), null, null, null, null);
 	}
 	
 }

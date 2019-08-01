@@ -9,6 +9,7 @@
  */
 package org.openmrs.module.datafilter;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,9 +30,20 @@ public class DataFilterConstants {
 	
 	public static final String ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS = MODULE_ID + "_encTypePrivBasedObsFilter";
 	
-	public static final Set<String> FILTER_NAMES = Stream.of(LOCATION_BASED_FILTER_NAME_PATIENT,
-	    LOCATION_BASED_FILTER_NAME_VISIT, LOCATION_BASED_FILTER_NAME_ENCOUNTER, LOCATION_BASED_FILTER_NAME_OBS,
-	    ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER, ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS).collect(Collectors.toSet());
+	public static final Set<String> LOCATION_BASED_FILTER_NAMES = Stream.of(LOCATION_BASED_FILTER_NAME_PATIENT,
+	    LOCATION_BASED_FILTER_NAME_VISIT, LOCATION_BASED_FILTER_NAME_ENCOUNTER, LOCATION_BASED_FILTER_NAME_OBS)
+	        .collect(Collectors.toSet());
+	
+	public static final Set<String> ENC_TYPE_VIEW_PRIV_FILTER_NAMES = Stream
+	        .of(ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER, ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS).collect(Collectors.toSet());
+	
+	public static final Set<String> FILTER_NAMES;
+	
+	static {
+		FILTER_NAMES = new HashSet();
+		FILTER_NAMES.addAll(LOCATION_BASED_FILTER_NAMES);
+		FILTER_NAMES.addAll(ENC_TYPE_VIEW_PRIV_FILTER_NAMES);
+	}
 	
 	public static final String LOCATION_BASED_FULL_TEXT_FILTER_NAME_PATIENT = MODULE_ID
 	        + "_locationBasedPatientFullTextFilter";

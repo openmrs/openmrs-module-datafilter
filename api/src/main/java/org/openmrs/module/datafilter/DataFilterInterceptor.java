@@ -20,7 +20,10 @@ import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.type.Type;
+import org.openmrs.Encounter;
 import org.openmrs.Location;
+import org.openmrs.Obs;
+import org.openmrs.Privilege;
 import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
@@ -55,8 +58,14 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 					log.trace("Skipping DataFilterInterceptor for super user");
 				}
 			} else {
-				Map<Class<?>, Collection<String>> classFiltersMap = AccessUtil.getLocationBasedClassAndFiltersMap();
-				if (classFiltersMap.keySet().contains(entity.getClass())) {
+				Map<Class<?>, Collection<String>> locationBasedClassAndFiltersMap = AccessUtil
+				        .getLocationBasedClassAndFiltersMap();
+				Map<Class<?>, Collection<String>> encTypeBasedClassAndFiltersMap = AccessUtil
+				        .getEncounterTypeViewPrivilegeBasedClassAndFiltersMap();
+				boolean filteredByLoc = locationBasedClassAndFiltersMap.keySet().contains(entity.getClass());
+				boolean filteredByEnc = encTypeBasedClassAndFiltersMap.keySet().contains(entity.getClass());
+				
+				if (filteredByLoc || filteredByEnc) {
 					Session session = Context.getRegisteredComponents(SessionFactory.class).get(0).getCurrentSession();
 					//Hibernate will flush any changes in the current session before querying the DB when fetching
 					//the GP value below and we end up in this method again, therefore we need to disable auto flush
@@ -70,17 +79,51 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 								log.trace("Skipping DataFilterInterceptor because the module is not running in strict mode");
 							}
 						} else {
-							boolean check = true;
-							for (String filterName : classFiltersMap.get(entity.getClass())) {
-								check = !AccessUtil.isFilterDisabled(filterName);
+							if (filteredByLoc) {
+								boolean check = true;
+								for (String filterName : locationBasedClassAndFiltersMap.get(entity.getClass())) {
+									check = !AccessUtil.isFilterDisabled(filterName);
+									if (check) {
+										break;
+									}
+								}
+								
 								if (check) {
-									break;
+									if (user == null
+									        || !AccessUtil.getAccessiblePersonIds(Location.class).contains(id.toString())) {
+										throw new ContextAuthenticationException(
+										        DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE);
+									}
 								}
 							}
 							
-							if (check && (user == null
-							        || !AccessUtil.getAccessiblePersonIds(Location.class).contains(id.toString()))) {
-								throw new ContextAuthenticationException(DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE);
+							if (filteredByEnc) {
+								boolean check = true;
+								for (String filterName : encTypeBasedClassAndFiltersMap.get(entity.getClass())) {
+									check = !AccessUtil.isFilterDisabled(filterName);
+									if (check) {
+										break;
+									}
+								}
+								
+								if (check) {
+									Encounter encounter;
+									if (entity instanceof Encounter) {
+										encounter = ((Encounter) entity);
+									} else {
+										encounter = ((Obs) entity).getEncounter();
+									}
+									
+									if (encounter != null) {
+										Privilege requiredPrivilege = encounter.getEncounterType().getViewPrivilege();
+										if (requiredPrivilege != null) {
+											if (user == null || !user.hasPrivilege(requiredPrivilege.getPrivilege())) {
+												throw new ContextAuthenticationException(
+												        DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE);
+											}
+										}
+									}
+								}
 							}
 						}
 					}

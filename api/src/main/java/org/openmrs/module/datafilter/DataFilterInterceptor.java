@@ -64,7 +64,9 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 				        .getEncounterTypeViewPrivilegeBasedClassAndFiltersMap();
 				boolean filteredByLoc = locationBasedClassAndFiltersMap.keySet().contains(entity.getClass());
 				boolean filteredByEnc = encTypeBasedClassAndFiltersMap.keySet().contains(entity.getClass());
-				
+				//TODO We should allow filter registrations to actually provide the logic of what the interceptor
+				//should reject vs accept when loading a filtered type, some sort of callback and pass them the
+				//entity and state.
 				if (filteredByLoc || filteredByEnc) {
 					Session session = Context.getRegisteredComponents(SessionFactory.class).get(0).getCurrentSession();
 					//Hibernate will flush any changes in the current session before querying the DB when fetching

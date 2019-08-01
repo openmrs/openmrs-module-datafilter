@@ -13,7 +13,10 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.mock;
+import static org.openmrs.module.datafilter.DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX;
+import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_PREFIX;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -32,7 +35,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
@@ -158,7 +160,7 @@ public class DataFilterInterceptorTest {
 		final Integer userId = 1;
 		final Integer encounterId = 101;
 		when(Context.getAuthenticatedUser()).thenReturn(new User(userId));
-		when(AccessUtil.isFilterDisabled(Matchers.contains("locationBased"))).thenReturn(true);
+		when(AccessUtil.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
 		ee.expect(ContextAuthenticationException.class);
 		ee.expectMessage(equalTo(DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE));
 		EncounterType encType = new EncounterType();
@@ -171,8 +173,8 @@ public class DataFilterInterceptorTest {
 	@Test
 	public void onLoad_shouldPassIfAllEncounterTypeViewPrivilegeBasedFiltersAreDisabled() throws Exception {
 		User user = mock(User.class);
-		when(AccessUtil.isFilterDisabled(Matchers.contains("locationBased"))).thenReturn(true);
-		when(AccessUtil.isFilterDisabled(Matchers.contains("encTypePrivBased"))).thenReturn(true);
+		when(AccessUtil.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
+		when(AccessUtil.isFilterDisabled(startsWith(ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
 		when(Context.getAuthenticatedUser()).thenReturn(user);
 		for (Class<?> clazz : ENC_TYPE_BASED_FILTERED_CLASSES) {
 			interceptor.onLoad(clazz.newInstance(), null, null, null, null);
@@ -182,7 +184,7 @@ public class DataFilterInterceptorTest {
 	@Test
 	public void onLoad_shouldPassIfTheEncounterTypeForTheEncounterHasNoViewPrivilege() {
 		User user = mock(User.class);
-		when(AccessUtil.isFilterDisabled(Matchers.contains("locationBased"))).thenReturn(true);
+		when(AccessUtil.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
 		when(Context.getAuthenticatedUser()).thenReturn(user);
 		Encounter encounter = new Encounter();
 		encounter.setEncounterType(new EncounterType());
@@ -194,7 +196,7 @@ public class DataFilterInterceptorTest {
 		final Integer userId = 1;
 		final Integer encounterId = 101;
 		when(Context.getAuthenticatedUser()).thenReturn(new User(userId));
-		when(AccessUtil.isFilterDisabled(Matchers.contains("locationBased"))).thenReturn(true);
+		when(AccessUtil.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
 		ee.expect(ContextAuthenticationException.class);
 		ee.expectMessage(equalTo(DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE));
 		EncounterType encType = new EncounterType();
@@ -208,14 +210,14 @@ public class DataFilterInterceptorTest {
 	
 	@Test
 	public void onLoad_shouldPassIfTheTheObsBelongsToNoEncounter() {
-		when(AccessUtil.isFilterDisabled(Matchers.contains("locationBased"))).thenReturn(true);
+		when(AccessUtil.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
 		interceptor.onLoad(new Obs(), null, null, null, null);
 	}
 	
 	@Test
 	public void onLoad_shouldPassIfTheAssociatedEncounterTypeForTheObsEncounterHasNoViewPrivilege() {
 		User user = mock(User.class);
-		when(AccessUtil.isFilterDisabled(Matchers.contains("locationBased"))).thenReturn(true);
+		when(AccessUtil.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
 		when(Context.getAuthenticatedUser()).thenReturn(user);
 		Encounter encounter = new Encounter();
 		encounter.setEncounterType(new EncounterType());

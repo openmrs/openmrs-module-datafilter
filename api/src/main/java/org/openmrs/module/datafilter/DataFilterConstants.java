@@ -18,17 +18,22 @@ public class DataFilterConstants {
 	
 	public static final String MODULE_ID = "datafilter";
 	
-	public static final String LOCATION_BASED_FILTER_NAME_ENCOUNTER = MODULE_ID + "_locationBasedEncounterFilter";
+	public static final String LOCATION_BASED_FILTER_NAME_PREFIX = MODULE_ID + "_locationBased";
 	
-	public static final String LOCATION_BASED_FILTER_NAME_VISIT = MODULE_ID + "_locationBasedVisitFilter";
+	public static final String ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX = MODULE_ID + "_encTypePrivBased";
 	
-	public static final String LOCATION_BASED_FILTER_NAME_OBS = MODULE_ID + "_locationBasedObsFilter";
+	public static final String LOCATION_BASED_FILTER_NAME_ENCOUNTER = LOCATION_BASED_FILTER_NAME_PREFIX + "EncounterFilter";
 	
-	public static final String LOCATION_BASED_FILTER_NAME_PATIENT = MODULE_ID + "_locationBasedPatientFilter";
+	public static final String LOCATION_BASED_FILTER_NAME_VISIT = LOCATION_BASED_FILTER_NAME_PREFIX + "VisitFilter";
 	
-	public static final String ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER = MODULE_ID + "_encTypePrivBasedEncounterFilter";
+	public static final String LOCATION_BASED_FILTER_NAME_OBS = LOCATION_BASED_FILTER_NAME_PREFIX + "ObsFilter";
 	
-	public static final String ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS = MODULE_ID + "_encTypePrivBasedObsFilter";
+	public static final String LOCATION_BASED_FILTER_NAME_PATIENT = LOCATION_BASED_FILTER_NAME_PREFIX + "PatientFilter";
+	
+	public static final String ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER = ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX
+	        + "EncounterFilter";
+	
+	public static final String ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS = ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX + "ObsFilter";
 	
 	public static final Set<String> LOCATION_BASED_FILTER_NAMES = Stream.of(LOCATION_BASED_FILTER_NAME_PATIENT,
 	    LOCATION_BASED_FILTER_NAME_VISIT, LOCATION_BASED_FILTER_NAME_ENCOUNTER, LOCATION_BASED_FILTER_NAME_OBS)

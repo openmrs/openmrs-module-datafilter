@@ -252,7 +252,7 @@ public class AccessUtil {
 	 * @param clazz the class object
 	 * @param filterName the name of the filter
 	 */
-	protected static void recordFilterRegistrationForClass(Class<?> clazz, String filterName) {
+	protected static void recordLocationFilterRegistrationForClass(Class<?> clazz, String filterName) {
 		if (!locationBasedClassAndFiltersMap.containsKey(clazz)) {
 			locationBasedClassAndFiltersMap.put(clazz, new HashSet());
 		}

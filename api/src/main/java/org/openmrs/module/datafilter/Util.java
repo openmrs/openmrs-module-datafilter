@@ -127,7 +127,11 @@ public class Util {
 		
 		addAnnotationToGroup(entityClass, FilterDefs.class, filterDefAnnotation);
 		addAnnotationToGroup(entityClass, Filters.class, filterAnnotation);
-		AccessUtil.recordFilterRegistrationForClass(entityClass, filterAnnotation.name());
+		if (filterAnnotation.name().startsWith(DataFilterConstants.LOCATION_BASED_FILTER_NAME_PREFIX)) {
+			AccessUtil.recordLocationFilterRegistrationForClass(entityClass, filterAnnotation.name());
+		} else if (filterAnnotation.name().startsWith(DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX)) {
+			AccessUtil.recordEncounterTypeViewPrivilegeFilterRegistrationForClass(entityClass, filterAnnotation.name());
+		}
 	}
 	
 	/**

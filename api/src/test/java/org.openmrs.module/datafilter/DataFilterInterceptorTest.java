@@ -30,11 +30,14 @@ import java.util.stream.Stream;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.type.ManyToOneType;
+import org.hibernate.type.Type;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
@@ -159,15 +162,22 @@ public class DataFilterInterceptorTest {
 	public void onLoad_shouldFailWithAnExceptionIfTheAuthenticatedUserIsNotAllowedToViewThePrivilegedEncounterGettingLoaded() {
 		final Integer userId = 1;
 		final Integer encounterId = 101;
-		when(Context.getAuthenticatedUser()).thenReturn(new User(userId));
+		User user = mock(User.class);
+		user.setId(userId);
+		when(Context.getAuthenticatedUser()).thenReturn(user);
 		when(AccessUtil.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
+		final String privilege = "Some Privilege";
+		final Integer encounterTypeId = 5000;
+		when(AccessUtil.getViewPrivilege(Matchers.eq(encounterTypeId))).thenReturn(privilege);
+		when(user.hasPrivilege(Matchers.eq(privilege))).thenReturn(false);
 		ee.expect(ContextAuthenticationException.class);
 		ee.expectMessage(equalTo(DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE));
 		EncounterType encType = new EncounterType();
 		encType.setViewPrivilege(new Privilege("Some Privilege"));
 		Encounter encounter = new Encounter();
-		encounter.setEncounterType(encType);
-		interceptor.onLoad(encounter, encounterId, null, null, null);
+		//encounter.setEncounterType(encType);
+		interceptor.onLoad(encounter, encounterId, new Object[] { encType }, new String[] { "encounterType" },
+		    new Type[] { new ManyToOneType(null, null) });
 	}
 	
 	@Test
@@ -195,16 +205,22 @@ public class DataFilterInterceptorTest {
 	public void onLoad_shouldFailWithAnExceptionIfTheAuthenticatedUserIsNotAllowedToViewThePrivilegedObsGettingLoaded() {
 		final Integer userId = 1;
 		final Integer encounterId = 101;
-		when(Context.getAuthenticatedUser()).thenReturn(new User(userId));
+		User user = mock(User.class);
+		user.setId(userId);
+		when(Context.getAuthenticatedUser()).thenReturn(user);
 		when(AccessUtil.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
+		final String privilege = "Some Privilege";
+		final Integer encounterTypeId = 5000;
+		when(AccessUtil.getViewPrivilege(Matchers.eq(encounterTypeId))).thenReturn(privilege);
+		when(user.hasPrivilege(Matchers.eq(privilege))).thenReturn(false);
 		ee.expect(ContextAuthenticationException.class);
 		ee.expectMessage(equalTo(DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE));
-		EncounterType encType = new EncounterType();
-		encType.setViewPrivilege(new Privilege("Some Privilege"));
+		EncounterType encType = new EncounterType(encounterTypeId);
+		encType.setViewPrivilege(new Privilege(privilege));
 		Encounter encounter = new Encounter();
 		encounter.setEncounterType(encType);
 		Obs obs = new Obs();
-		obs.setEncounter(encounter);
+		//obs.setEncounter(encounter);
 		interceptor.onLoad(obs, encounterId, null, null, null);
 	}
 	

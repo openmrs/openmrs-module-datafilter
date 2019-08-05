@@ -23,7 +23,6 @@ import org.hibernate.type.Type;
 import org.openmrs.Encounter;
 import org.openmrs.Location;
 import org.openmrs.Obs;
-import org.openmrs.Privilege;
 import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
@@ -117,9 +116,10 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 									}
 									
 									if (encounter != null) {
-										Privilege requiredPrivilege = encounter.getEncounterType().getViewPrivilege();
+										//TODO get the encounter type id
+										String requiredPrivilege = AccessUtil.getViewPrivilege(null);
 										if (requiredPrivilege != null) {
-											if (user == null || !user.hasPrivilege(requiredPrivilege.getPrivilege())) {
+											if (user == null || !user.hasPrivilege(requiredPrivilege)) {
 												throw new ContextAuthenticationException(
 												        DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE);
 											}

@@ -291,4 +291,18 @@ public class AccessUtil {
 		return encTypeViewPrivilegeBasedClassAndFiltersMap;
 	}
 	
+	/**
+	 * Gets the view privilege for the encounter type matching the specified encounter type id
+	 * 
+	 * @param encounterTypeId the encounter type to match
+	 * @return the view privilege for the matched encounter type otherwise null
+	 */
+	public static String getViewPrivilege(Integer encounterTypeId) {
+		final String query = "SELECT view_privilege FROM encounter_type WHERE encounter_type_id = " + encounterTypeId;
+		List<List<Object>> rows = runQueryWithElevatedPrivileges(query);
+		if (rows.isEmpty() || rows.get(0).isEmpty() || rows.get(0).get(0) == null) {
+			return null;
+		}
+		return rows.get(0).get(0).toString();
+	}
 }

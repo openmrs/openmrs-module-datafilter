@@ -103,4 +103,10 @@ public class AccessUtilTest extends BaseFilterTest {
 		assertTrue(patientIds.contains("1003"));
 	}
 	
+	@Test
+	public void getViewPrivilege_shouldReturnTheTheEncounterViewPrivilege() {
+		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "privilegedEncounters.xml");
+		assertEquals("Manage Chemo Patients", AccessUtil.getViewPrivilege(5000));
+	}
+	
 }

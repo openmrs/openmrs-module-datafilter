@@ -43,7 +43,6 @@ import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
-import org.openmrs.Privilege;
 import org.openmrs.Role;
 import org.openmrs.User;
 import org.openmrs.Visit;
@@ -107,7 +106,6 @@ public class DataFilterInterceptorTest {
 		when(AccessUtil.getAccessiblePersonIds(eq(Location.class))).thenReturn(accessiblePatientIds);
 		ee.expect(ContextAuthenticationException.class);
 		ee.expectMessage(equalTo(DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE));
-		
 		interceptor.onLoad(new Patient(), patientId, null, null, null);
 	}
 	
@@ -118,7 +116,6 @@ public class DataFilterInterceptorTest {
 		Collection<String> accessiblePatientIds = Stream.of(patientId.toString()).collect(Collectors.toSet());
 		when(Context.getAuthenticatedUser()).thenReturn(new User(userId));
 		when(AccessUtil.getAccessiblePersonIds(eq(Location.class))).thenReturn(accessiblePatientIds);
-		
 		interceptor.onLoad(new Patient(), patientId, null, null, null);
 	}
 	
@@ -126,7 +123,6 @@ public class DataFilterInterceptorTest {
 	public void onLoad_shouldPassForTheDaemonThread() {
 		mockStatic(Daemon.class);
 		when(Daemon.isDaemonThread()).thenReturn(true);
-		
 		interceptor.onLoad(null, null, null, null, null);
 	}
 	
@@ -135,7 +131,6 @@ public class DataFilterInterceptorTest {
 		User superUser = mock(User.class);
 		when(superUser.isSuperUser()).thenReturn(true);
 		when(Context.getAuthenticatedUser()).thenReturn(superUser);
-		
 		interceptor.onLoad(new Patient(), null, null, null, null);
 	}
 	
@@ -173,10 +168,8 @@ public class DataFilterInterceptorTest {
 		ee.expect(ContextAuthenticationException.class);
 		ee.expectMessage(equalTo(DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE));
 		EncounterType encType = new EncounterType();
-		encType.setViewPrivilege(new Privilege("Some Privilege"));
-		Encounter encounter = new Encounter();
-		//encounter.setEncounterType(encType);
-		interceptor.onLoad(encounter, encounterId, new Object[] { encType }, new String[] { "encounterType" },
+		encType.setId(encounterTypeId);
+		interceptor.onLoad(new Encounter(), encounterId, new Object[] { encType }, new String[] { "encounterType" },
 		    new Type[] { new ManyToOneType(null, null) });
 	}
 	
@@ -196,15 +189,17 @@ public class DataFilterInterceptorTest {
 		User user = mock(User.class);
 		when(AccessUtil.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
 		when(Context.getAuthenticatedUser()).thenReturn(user);
-		Encounter encounter = new Encounter();
-		encounter.setEncounterType(new EncounterType());
-		interceptor.onLoad(encounter, null, null, null, null);
+		final Integer encounterTypeId = 1;
+		when(AccessUtil.getViewPrivilege(Matchers.eq(encounterTypeId))).thenReturn(null);
+		interceptor.onLoad(new Encounter(), null, new Object[] { new EncounterType(encounterTypeId) },
+		    new String[] { "encounterType" }, null);
 	}
 	
 	@Test
 	public void onLoad_shouldFailWithAnExceptionIfTheAuthenticatedUserIsNotAllowedToViewThePrivilegedObsGettingLoaded() {
 		final Integer userId = 1;
-		final Integer encounterId = 101;
+		final Integer obsId = 101;
+		final Integer encounterId = 1000;
 		User user = mock(User.class);
 		user.setId(userId);
 		when(Context.getAuthenticatedUser()).thenReturn(user);
@@ -215,19 +210,15 @@ public class DataFilterInterceptorTest {
 		when(user.hasPrivilege(Matchers.eq(privilege))).thenReturn(false);
 		ee.expect(ContextAuthenticationException.class);
 		ee.expectMessage(equalTo(DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE));
-		EncounterType encType = new EncounterType(encounterTypeId);
-		encType.setViewPrivilege(new Privilege(privilege));
-		Encounter encounter = new Encounter();
-		encounter.setEncounterType(encType);
-		Obs obs = new Obs();
-		//obs.setEncounter(encounter);
-		interceptor.onLoad(obs, encounterId, null, null, null);
+		when(AccessUtil.getEncounterTypeId(Matchers.eq(encounterId))).thenReturn(encounterTypeId);
+		interceptor.onLoad(new Obs(), obsId, new Object[] { new Encounter(encounterId) }, new String[] { "encounter" },
+		    new Type[] { new ManyToOneType(null, null) });
 	}
 	
 	@Test
 	public void onLoad_shouldPassIfTheTheObsBelongsToNoEncounter() {
 		when(AccessUtil.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
-		interceptor.onLoad(new Obs(), null, null, null, null);
+		interceptor.onLoad(new Obs(), null, new Object[] { null }, new String[] { "encounter" }, null);
 	}
 	
 	@Test
@@ -235,11 +226,8 @@ public class DataFilterInterceptorTest {
 		User user = mock(User.class);
 		when(AccessUtil.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
 		when(Context.getAuthenticatedUser()).thenReturn(user);
-		Encounter encounter = new Encounter();
-		encounter.setEncounterType(new EncounterType());
-		Obs obs = new Obs();
-		obs.setEncounter(encounter);
-		interceptor.onLoad(obs, null, null, null, null);
+		final Integer encounterId = 101;
+		interceptor.onLoad(new Obs(), null, new Object[] { new Encounter(encounterId) }, new String[] { "encounter" }, null);
 	}
 	
 }

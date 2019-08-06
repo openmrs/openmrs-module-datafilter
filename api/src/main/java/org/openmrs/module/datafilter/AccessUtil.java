@@ -74,7 +74,7 @@ public class AccessUtil {
 	 * @param basisType the type to base on
 	 * @return a set of patient ids
 	 */
-	public static Collection<String> getAccessiblePersonIds(Class<? extends BaseOpenmrsObject> basisType) {
+	protected static Collection<String> getAccessiblePersonIds(Class<? extends BaseOpenmrsObject> basisType) {
 		if (log.isDebugEnabled()) {
 			log.debug("Looking up accessible persons for user with Id: " + Context.getAuthenticatedUser().getId());
 		}
@@ -116,7 +116,7 @@ public class AccessUtil {
 	 * @param basisType the type to base on
 	 * @return a collection of basis ids
 	 */
-	public static Collection<String> getAssignedBasisIds(Class<? extends BaseOpenmrsObject> basisType) {
+	protected static Collection<String> getAssignedBasisIds(Class<? extends BaseOpenmrsObject> basisType) {
 		if (log.isDebugEnabled()) {
 			log.debug("Looking up assigned bases for the authenticated user");
 		}
@@ -170,7 +170,7 @@ public class AccessUtil {
 	 * @param basisType the basis type to match
 	 * @return the if of the person attribute type
 	 */
-	public static Integer getPersonAttributeTypeId(Class<?> basisType) {
+	protected static Integer getPersonAttributeTypeId(Class<?> basisType) {
 		//TODO This method should be moved to a GlobalPropertyListener so that we can cache the ids
 		List<List<Object>> rows = runQueryWithElevatedPrivileges(GP_QUERY);
 		String attribTypeUuids = null;
@@ -235,7 +235,7 @@ public class AccessUtil {
 	 * @param filterName the name of the filter to match
 	 * @return true if the filter is disabled otherwise false
 	 */
-	public static boolean isFilterDisabled(String filterName) {
+	protected static boolean isFilterDisabled(String filterName) {
 		List<List<Object>> rows = runQueryWithElevatedPrivileges(
 		    "SELECT property_value FROM global_property WHERE property = '" + filterName + DataFilterConstants.DISABLED
 		            + "'");
@@ -294,10 +294,13 @@ public class AccessUtil {
 	/**
 	 * Gets the view privilege for the encounter type matching the specified encounter type id
 	 * 
-	 * @param encounterTypeId the encounter type to match
+	 * @param encounterTypeId the encounter type id to match
 	 * @return the view privilege for the matched encounter type otherwise null
 	 */
-	public static String getViewPrivilege(Integer encounterTypeId) {
+	protected static String getViewPrivilege(Integer encounterTypeId) {
+		if (encounterTypeId == null) {
+			throw new APIException("Encounter type id is required");
+		}
 		final String query = "SELECT view_privilege FROM encounter_type WHERE encounter_type_id = " + encounterTypeId;
 		List<List<Object>> rows = runQueryWithElevatedPrivileges(query);
 		if (rows.isEmpty() || rows.get(0).isEmpty() || rows.get(0).get(0) == null) {
@@ -305,4 +308,19 @@ public class AccessUtil {
 		}
 		return rows.get(0).get(0).toString();
 	}
+	
+	/**
+	 * Gets encounter type id for the encounter matching the specified encounter id
+	 *
+	 * @param encounterId encounter id to match
+	 * @return the encounter type id for the matched encounter
+	 */
+	protected static Integer getEncounterTypeId(Integer encounterId) {
+		if (encounterId == null) {
+			throw new APIException("Encounter id is required");
+		}
+		final String query = "SELECT encounter_type FROM encounter WHERE encounter_id = " + encounterId;
+		return Integer.valueOf(runQueryWithElevatedPrivileges(query).get(0).get(0).toString());
+	}
+	
 }

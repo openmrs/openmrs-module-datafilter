@@ -10,6 +10,7 @@
 package org.openmrs.module.datafilter;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
@@ -21,8 +22,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.type.Type;
 import org.openmrs.Encounter;
+import org.openmrs.EncounterType;
 import org.openmrs.Location;
-import org.openmrs.Obs;
 import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
@@ -108,16 +109,30 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 								}
 								
 								if (check) {
-									Encounter encounter;
+									Integer encounterTypeId = null;
+									boolean isEncounterLessObs = false;
 									if (entity instanceof Encounter) {
-										encounter = ((Encounter) entity);
+										int encounterTypeIndex = Arrays.binarySearch(propertyNames, "encounterType");
+										encounterTypeId = ((EncounterType) state[encounterTypeIndex]).getEncounterTypeId();
 									} else {
-										encounter = ((Obs) entity).getEncounter();
+										//This is an Obs
+										int encounterIndex = Arrays.binarySearch(propertyNames, "encounter");
+										Encounter encounter = (Encounter) state[encounterIndex];
+										if (encounter == null) {
+											isEncounterLessObs = true;
+										} else {
+											if (encounter.getEncounterType() != null) {
+												encounterTypeId = encounter.getEncounterType().getEncounterTypeId();
+											} else {
+												//If it's an obs that's getting loaded, encounter.encounterType could be
+												//null so fetch the encounter type id from the database
+												encounterTypeId = AccessUtil.getEncounterTypeId(encounter.getEncounterId());
+											}
+										}
 									}
 									
-									if (encounter != null) {
-										//TODO get the encounter type id
-										String requiredPrivilege = AccessUtil.getViewPrivilege(null);
+									if (!isEncounterLessObs) {
+										String requiredPrivilege = AccessUtil.getViewPrivilege(encounterTypeId);
 										if (requiredPrivilege != null) {
 											if (user == null || !user.hasPrivilege(requiredPrivilege)) {
 												throw new ContextAuthenticationException(

@@ -196,7 +196,7 @@ public class DataFilterInterceptorTest {
 	}
 	
 	@Test
-	public void onLoad_shouldFailWithAnExceptionIfTheAuthenticatedUserIsNotAllowedToViewThePrivilegedObsGettingLoaded() {
+	public void onLoad_shouldFailIfTheAuthUserIsNotAllowedToViewThePrivilegedObsGettingLoadedAndTheEncTypeIsNotYetLoaded() {
 		final Integer userId = 1;
 		final Integer obsId = 101;
 		final Integer encounterId = 1000;
@@ -216,8 +216,29 @@ public class DataFilterInterceptorTest {
 	}
 	
 	@Test
+	public void onLoad_shouldFailIfTheAuthUserIsNotAllowedToViewThePrivilegedObsGettingLoadedAndTheEncTypeIsLoaded() {
+		final Integer userId = 1;
+		final Integer obsId = 101;
+		User user = mock(User.class);
+		user.setId(userId);
+		when(Context.getAuthenticatedUser()).thenReturn(user);
+		when(AccessUtil.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
+		final String privilege = "Some Privilege";
+		final Integer encounterTypeId = 5000;
+		when(AccessUtil.getViewPrivilege(Matchers.eq(encounterTypeId))).thenReturn(privilege);
+		when(user.hasPrivilege(Matchers.eq(privilege))).thenReturn(false);
+		ee.expect(ContextAuthenticationException.class);
+		ee.expectMessage(equalTo(DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE));
+		Encounter e = new Encounter();
+		e.setEncounterType(new EncounterType(encounterTypeId));
+		interceptor.onLoad(new Obs(), obsId, new Object[] { e }, new String[] { "encounter" },
+		    new Type[] { new ManyToOneType(null, null) });
+	}
+	
+	@Test
 	public void onLoad_shouldPassIfTheTheObsBelongsToNoEncounter() {
 		when(AccessUtil.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
+		when(AccessUtil.getViewPrivilege(Matchers.any())).thenReturn("Some Privilege");
 		interceptor.onLoad(new Obs(), null, new Object[] { null }, new String[] { "encounter" }, null);
 	}
 	

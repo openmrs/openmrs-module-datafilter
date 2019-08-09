@@ -22,7 +22,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.test.TestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class EncounterLocationBasedFilterTest extends BaseFilterTest {
+public class EncounterAllFiltersTest extends BaseFilterTest {
 	
 	@Autowired
 	private EncounterService encounterService;
@@ -30,10 +30,11 @@ public class EncounterLocationBasedFilterTest extends BaseFilterTest {
 	@Before
 	public void before() {
 		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "encounters.xml");
+		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "privilegedEncounters.xml");
 	}
 	
 	@Test
-	public void getEncounters_shouldReturnNoEncountersIfTheUserIsNotGrantedAccessToAnyBasis() {
+	public void getEncounters_shouldReturnNoEncountersIfTheUserIsNotGrantedAnyAccess() {
 		reloginAs("dBeckham", "test");
 		final String name = "Navuga";
 		final int expCount = 0;
@@ -53,36 +54,41 @@ public class EncounterLocationBasedFilterTest extends BaseFilterTest {
 		assertTrue(TestUtil.containsId(encounters, 1001));
 		
 		AccessUtilTest.grantLocationAccessToUser(Context.getAuthenticatedUser().getUserId(), 4001, getConnection());
-		expCount = 3;
+		DataFilterTestUtils.addPrivilege(BaseEncTypeViewPrivilegeBasedFilterTest.PRIV_MANAGE_CHEMO_PATIENTS);
+		//TODO Update test data to include another Enc that requires a different privilege
+		expCount = 4;
 		assertEquals(expCount, encounterService.getCountOfEncounters(name, false).intValue());
 		encounters = encounterService.getEncounters(name, 0, Integer.MAX_VALUE, false);
 		assertEquals(expCount, encounters.size());
 		assertTrue(TestUtil.containsId(encounters, 1000));
 		assertTrue(TestUtil.containsId(encounters, 1001));
 		assertTrue(TestUtil.containsId(encounters, 1002));
+		assertTrue(TestUtil.containsId(encounters, 2001));
 	}
 	
 	@Test
 	public void getEncounters_shouldReturnAllEncountersIfTheAuthenticatedUserIsASuperUser() {
 		assertTrue(Context.getAuthenticatedUser().isSuperUser());
 		final String name = "Navuga";
-		final int expCount = 3;
+		final int expCount = 4;
 		assertEquals(expCount, encounterService.getCountOfEncounters(name, false).intValue());
 		Collection<Encounter> encounters = encounterService.getEncounters(name, 0, Integer.MAX_VALUE, false);
 		assertEquals(expCount, encounters.size());
 		assertTrue(TestUtil.containsId(encounters, 1000));
 		assertTrue(TestUtil.containsId(encounters, 1001));
 		assertTrue(TestUtil.containsId(encounters, 1002));
+		assertTrue(TestUtil.containsId(encounters, 2001));
 	}
 	
 	@Test
-	public void getEncounters_shouldReturnAllEncountersIfLocationFilteringIsDisabled() {
+	public void getEncounters_shouldReturnAllEncountersIfAllFiltersAreDisabled() {
 		DataFilterTestUtils.disableLocationFiltering();
+		DataFilterTestUtils.disableEncTypeViewPrivilegeFiltering();
 		reloginAs("dyorke", "test");
-		final int expCount = 3;
 		final String name = "Navuga";
-		assertEquals(expCount, encounterService.getCountOfEncounters(name, false).intValue());
-		assertEquals(expCount, encounterService.getEncounters(name, 0, Integer.MAX_VALUE, false).size());
+		assertEquals(4, encounterService.getCountOfEncounters(name, false).intValue());
+		//In core this method already filters encounters by privilege
+		assertEquals(3, encounterService.getEncounters(name, 0, Integer.MAX_VALUE, false).size());
 	}
 	
 }

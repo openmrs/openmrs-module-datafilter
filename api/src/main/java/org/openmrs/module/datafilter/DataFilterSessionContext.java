@@ -141,37 +141,60 @@ public class DataFilterSessionContext extends SpringSessionContext {
 		}
 		
 		tempSessionHolder.set(session);
-		boolean isLocFilterDisabled;
-		boolean isVisitFilterDisabled;
-		boolean isEncFilterDisabled;
-		boolean isObsFilterDisabled;
+		boolean isLocPatientFilterDisabled;
+		boolean isLocVisitFilterDisabled;
+		boolean isLocEncFilterDisabled;
+		boolean isLocObsFilterDisabled;
+		boolean isEncTypeViewPrivEncFilterDisabled;
+		boolean isEncTypeViewPrivObsFilterDisabled;
 		try {
-			isLocFilterDisabled = AccessUtil.isFilterDisabled(LOCATION_BASED_FILTER_NAME_PATIENT);
-			isVisitFilterDisabled = AccessUtil.isFilterDisabled(LOCATION_BASED_FILTER_NAME_VISIT);
-			isEncFilterDisabled = AccessUtil.isFilterDisabled(LOCATION_BASED_FILTER_NAME_ENCOUNTER);
-			isObsFilterDisabled = AccessUtil.isFilterDisabled(LOCATION_BASED_FILTER_NAME_OBS);
+			isLocPatientFilterDisabled = AccessUtil.isFilterDisabled(LOCATION_BASED_FILTER_NAME_PATIENT);
+			isLocVisitFilterDisabled = AccessUtil.isFilterDisabled(LOCATION_BASED_FILTER_NAME_VISIT);
+			isLocEncFilterDisabled = AccessUtil.isFilterDisabled(LOCATION_BASED_FILTER_NAME_ENCOUNTER);
+			isLocObsFilterDisabled = AccessUtil.isFilterDisabled(LOCATION_BASED_FILTER_NAME_OBS);
+			isEncTypeViewPrivEncFilterDisabled = AccessUtil.isFilterDisabled(ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER);
+			isEncTypeViewPrivObsFilterDisabled = AccessUtil.isFilterDisabled(ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS);
 		}
 		finally {
 			tempSessionHolder.remove();
 		}
 		
-		if (!isLocFilterDisabled) {
+		if (!isLocPatientFilterDisabled) {
 			enableFilter(LOCATION_BASED_FILTER_NAME_PATIENT, attributeTypeId, basisIds, session);
-		}
-		if (!isVisitFilterDisabled) {
-			enableFilter(LOCATION_BASED_FILTER_NAME_VISIT, attributeTypeId, basisIds, session);
-		}
-		if (!isEncFilterDisabled) {
-			enableFilter(LOCATION_BASED_FILTER_NAME_ENCOUNTER, attributeTypeId, basisIds, session);
-		}
-		if (!isObsFilterDisabled) {
-			enableFilter(LOCATION_BASED_FILTER_NAME_OBS, attributeTypeId, basisIds, session);
+		} else {
+			session.disableFilter(LOCATION_BASED_FILTER_NAME_PATIENT);
 		}
 		
-		//TODO Support disabling filter
+		if (!isLocVisitFilterDisabled) {
+			enableFilter(LOCATION_BASED_FILTER_NAME_VISIT, attributeTypeId, basisIds, session);
+		} else {
+			session.disableFilter(LOCATION_BASED_FILTER_NAME_VISIT);
+		}
+		
+		if (!isLocEncFilterDisabled) {
+			enableFilter(LOCATION_BASED_FILTER_NAME_ENCOUNTER, attributeTypeId, basisIds, session);
+		} else {
+			session.disableFilter(LOCATION_BASED_FILTER_NAME_ENCOUNTER);
+		}
+		
+		if (!isLocObsFilterDisabled) {
+			enableFilter(LOCATION_BASED_FILTER_NAME_OBS, attributeTypeId, basisIds, session);
+		} else {
+			session.disableFilter(LOCATION_BASED_FILTER_NAME_OBS);
+		}
+		
 		try {
-			enableEncounterTypeFilter(ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER, roles, session);
-			enableEncounterTypeFilter(ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS, roles, session);
+			if (!isEncTypeViewPrivEncFilterDisabled) {
+				enableEncTypeViewPrivFilter(ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER, roles, session);
+			} else {
+				session.disableFilter(ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER);
+			}
+			
+			if (!isEncTypeViewPrivObsFilterDisabled) {
+				enableEncTypeViewPrivFilter(ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS, roles, session);
+			} else {
+				session.disableFilter(ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS);
+			}
 		}
 		catch (Exception e) {
 			throw new HibernateException(e);
@@ -190,7 +213,7 @@ public class DataFilterSessionContext extends SpringSessionContext {
 		filter.setParameterList(DataFilterConstants.PARAM_NAME_BASIS_IDS, basisIds);
 	}
 	
-	private void enableEncounterTypeFilter(String filterName, Collection<String> roles, Session session) {
+	private void enableEncTypeViewPrivFilter(String filterName, Collection<String> roles, Session session) {
 		Filter filter = session.getEnabledFilter(filterName);
 		if (filter == null) {
 			filter = session.enableFilter(filterName);

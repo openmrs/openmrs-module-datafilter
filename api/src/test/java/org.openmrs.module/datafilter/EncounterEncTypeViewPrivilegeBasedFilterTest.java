@@ -79,4 +79,18 @@ public class EncounterEncTypeViewPrivilegeBasedFilterTest extends BaseEncTypeVie
 		assertTrue(TestUtil.containsId(encounters, 2001));
 	}
 	
+	@Test
+	public void getEncounters_shouldReturnAllEncountersIfEncTypeViewPrivFilteringIsDisabled() throws Exception {
+		DataFilterTestUtils.disableEncTypeViewPrivilegeFiltering();
+		reloginAs("dyorke", "test");
+		final String name = "Navuga";
+		assertEquals(4, encounterService.getCountOfEncounters(name, false).intValue());
+		Collection<Encounter> encounters = encounterService.getEncounters(name, 0, Integer.MAX_VALUE, false);
+		//In core this method already filters encounters by privilege
+		assertEquals(3, encounters.size());
+		assertTrue(TestUtil.containsId(encounters, 1000));
+		assertTrue(TestUtil.containsId(encounters, 1001));
+		assertTrue(TestUtil.containsId(encounters, 1002));
+	}
+	
 }

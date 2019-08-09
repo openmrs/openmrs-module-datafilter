@@ -9,6 +9,8 @@
  */
 package org.openmrs.module.datafilter;
 
+import static org.openmrs.module.datafilter.DataFilterConstants.GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER;
+import static org.openmrs.module.datafilter.DataFilterConstants.GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS;
 import static org.openmrs.module.datafilter.DataFilterConstants.GP_LOCATION_BASED_FILTER_NAME_ENCOUNTER;
 import static org.openmrs.module.datafilter.DataFilterConstants.GP_LOCATION_BASED_FILTER_NAME_OBS;
 import static org.openmrs.module.datafilter.DataFilterConstants.GP_LOCATION_BASED_FILTER_NAME_PATIENT;
@@ -28,6 +30,13 @@ public class DataFilterTestUtils {
 		as.setGlobalProperty(GP_LOCATION_BASED_FILTER_NAME_VISIT, "true");
 		as.setGlobalProperty(GP_LOCATION_BASED_FILTER_NAME_ENCOUNTER, "true");
 		as.setGlobalProperty(GP_LOCATION_BASED_FILTER_NAME_OBS, "true");
+		Context.flushSession();
+	}
+	
+	public static void disableEncTypeViewPrivilegeFiltering() {
+		AdministrationService as = Context.getAdministrationService();
+		as.setGlobalProperty(GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS, "true");
+		as.setGlobalProperty(GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER, "true");
 		Context.flushSession();
 	}
 	

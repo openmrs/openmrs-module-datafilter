@@ -20,7 +20,7 @@
 	<version>1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Data Filter Module</name>
-	<description>Provider a mechanism for filtering persistent data as a way to limit access to restricted data</description>
+	<description>Provides a mechanism for filtering persistent data as a way to limit access to restricted data</description>
 	<url>https://wiki.openmrs.org/x/6QBiDQ</url>
 	
 	<developers>

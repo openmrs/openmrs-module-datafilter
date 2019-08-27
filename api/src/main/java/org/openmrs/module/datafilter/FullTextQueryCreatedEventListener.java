@@ -15,8 +15,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.search.FullTextQuery;
 import org.hibernate.search.filter.FullTextFilter;
 import org.openmrs.Location;
@@ -26,6 +24,8 @@ import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.db.FullTextQueryAndEntityClass;
 import org.openmrs.api.db.FullTextQueryCreatedEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 @Component("dataFilterFullTextQueryCreatedEventListener")
 public class FullTextQueryCreatedEventListener implements ApplicationListener<FullTextQueryCreatedEvent> {
 	
-	private static final Log log = LogFactory.getLog(FullTextQueryCreatedEventListener.class);
+	private static final Logger log = LoggerFactory.getLogger(FullTextQueryCreatedEventListener.class);
 	
 	private static final HashMap<Class<?>, String> CLASS_FIELD_MAP;
 	

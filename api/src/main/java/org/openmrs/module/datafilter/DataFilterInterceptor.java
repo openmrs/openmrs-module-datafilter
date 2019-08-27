@@ -14,8 +14,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
@@ -29,6 +27,8 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.api.context.Daemon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -40,7 +40,7 @@ import org.springframework.stereotype.Component;
 @Component("dataFilterInterceptor")
 public class DataFilterInterceptor extends EmptyInterceptor {
 	
-	private static final Log log = LogFactory.getLog(DataFilterInterceptor.class);
+	private static final Logger log = LoggerFactory.getLogger(DataFilterInterceptor.class);
 	
 	/**
 	 * @see EmptyInterceptor#onLoad(Object, Serializable, Object[], String[], Type[])

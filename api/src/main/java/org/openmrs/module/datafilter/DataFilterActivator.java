@@ -9,8 +9,6 @@
  */
 package org.openmrs.module.datafilter;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.cfg.Environment;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
@@ -22,10 +20,12 @@ import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.datafilter.annotations.FilterDefsAnnotation;
 import org.openmrs.module.datafilter.annotations.FiltersAnnotation;
 import org.openmrs.module.datafilter.annotations.FullTextFilterDefsAnnotation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DataFilterActivator extends BaseModuleActivator {
 	
-	private static final Log log = LogFactory.getLog(DataFilterActivator.class);
+	private static final Logger log = LoggerFactory.getLogger(DataFilterActivator.class);
 	
 	/**
 	 * @see BaseModuleActivator#started()

@@ -21,8 +21,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.Filter;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -30,7 +28,11 @@ import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.openmrs.Location;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.Daemon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate4.SpringSessionContext;
+
+;
 
 /**
  * Custom hibernate CurrentSessionContext that will enable filters on the current Session object,
@@ -58,7 +60,7 @@ import org.springframework.orm.hibernate4.SpringSessionContext;
 
 public class DataFilterSessionContext extends SpringSessionContext {
 	
-	private static final Log log = LogFactory.getLog(DataFilterSessionContext.class);
+	private static final Logger log = LoggerFactory.getLogger(DataFilterSessionContext.class);
 	
 	private ThreadLocal<Session> tempSessionHolder = new ThreadLocal<>();
 	

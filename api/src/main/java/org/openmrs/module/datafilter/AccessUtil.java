@@ -21,14 +21,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.BaseOpenmrsObject;
 import org.openmrs.Location;
 import org.openmrs.User;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.util.PrivilegeConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class provides a facade for determining the list of person ids that the authenticated user
@@ -43,7 +43,7 @@ import org.openmrs.util.PrivilegeConstants;
  */
 public class AccessUtil {
 	
-	private static final Log log = LogFactory.getLog(AccessUtil.class);
+	private static final Logger log = LoggerFactory.getLogger(AccessUtil.class);
 	
 	private final static String ENTITY_ID_PLACEHOLDER = "@id";
 	

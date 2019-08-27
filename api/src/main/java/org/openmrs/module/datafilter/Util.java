@@ -15,8 +15,6 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.annotations.FilterDefs;
 import org.hibernate.annotations.Filters;
 import org.hibernate.annotations.ParamDef;
@@ -32,10 +30,12 @@ import org.openmrs.module.datafilter.annotations.FilterAnnotation;
 import org.openmrs.module.datafilter.annotations.FilterDefAnnotation;
 import org.openmrs.module.datafilter.annotations.FullTextFilterDefAnnotation;
 import org.openmrs.module.datafilter.annotations.ParamDefAnnotation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Util {
 	
-	private static final Log log = LogFactory.getLog(Util.class);
+	private static final Logger log = LoggerFactory.getLogger(Util.class);
 	
 	private static final ParamDefAnnotation LOCATION_ATTRIB_TYPE_PARAM_DEF = new ParamDefAnnotation(
 	        DataFilterConstants.PARAM_NAME_ATTRIB_TYPE_ID, IntegerType.INSTANCE.getName());

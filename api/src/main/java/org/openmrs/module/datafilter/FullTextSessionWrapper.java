@@ -16,8 +16,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.search.Query;
 import org.hibernate.engine.spi.SessionDelegatorBaseImpl;
 import org.hibernate.engine.spi.SessionImplementor;
@@ -33,6 +31,8 @@ import org.openmrs.PersonAttribute;
 import org.openmrs.PersonName;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Custom implementation of the {@link FullTextSession} interface that acts a wrapper around a
@@ -42,7 +42,7 @@ import org.openmrs.api.context.Context;
  */
 final class FullTextSessionWrapper extends SessionDelegatorBaseImpl implements FullTextSession {
 	
-	private static final Log log = LogFactory.getLog(FullTextSessionWrapper.class);
+	private static final Logger log = LoggerFactory.getLogger(FullTextSessionWrapper.class);
 	
 	private static final HashMap<Class<?>, String> CLASS_FIELD_MAP;
 	

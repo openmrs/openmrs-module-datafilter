@@ -183,21 +183,16 @@ public class DataFilterSessionContext extends SpringSessionContext {
 			session.disableFilter(LOCATION_BASED_FILTER_NAME_OBS);
 		}
 		
-		try {
-			if (!isEncTypeViewPrivEncFilterDisabled) {
-				enableEncTypeViewPrivFilter(ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER, roles, session);
-			} else {
-				session.disableFilter(ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER);
-			}
-			
-			if (!isEncTypeViewPrivObsFilterDisabled) {
-				enableEncTypeViewPrivFilter(ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS, roles, session);
-			} else {
-				session.disableFilter(ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS);
-			}
+		if (!isEncTypeViewPrivEncFilterDisabled) {
+			enableEncTypeViewPrivFilter(ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER, roles, session);
+		} else {
+			session.disableFilter(ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER);
 		}
-		catch (Exception e) {
-			throw new HibernateException(e);
+		
+		if (!isEncTypeViewPrivObsFilterDisabled) {
+			enableEncTypeViewPrivFilter(ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS, roles, session);
+		} else {
+			session.disableFilter(ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS);
 		}
 		
 		return session;

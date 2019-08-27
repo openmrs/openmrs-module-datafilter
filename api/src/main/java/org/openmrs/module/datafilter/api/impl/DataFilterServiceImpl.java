@@ -116,7 +116,7 @@ public class DataFilterServiceImpl extends BaseOpenmrsService implements DataFil
 		}
 		
 		if (StringUtils.isBlank(entityId)) {
-			throw new APIException("Failed to determine for Object: " + openmrsObject);
+			throw new APIException("Failed to determine id for Object: " + openmrsObject);
 		}
 		
 		return entityId;

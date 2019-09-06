@@ -10,10 +10,10 @@
 package org.openmrs.module.datafilter;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
@@ -111,14 +111,12 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 								if (check) {
 									Integer encounterTypeId = null;
 									boolean isEncounterLessObs = false;
-									String[] sortedPropNames = Arrays.copyOf(propertyNames, propertyNames.length);
-									Arrays.sort(sortedPropNames);
 									if (entity instanceof Encounter) {
-										int encounterTypeIndex = Arrays.binarySearch(sortedPropNames, "encounterType");
+										int encounterTypeIndex = ArrayUtils.indexOf(propertyNames, "encounterType");
 										encounterTypeId = ((EncounterType) state[encounterTypeIndex]).getEncounterTypeId();
 									} else {
 										//This is an Obs
-										int encounterIndex = Arrays.binarySearch(sortedPropNames, "encounter");
+										int encounterIndex = ArrayUtils.indexOf(propertyNames, "encounter");
 										Encounter encounter = (Encounter) state[encounterIndex];
 										if (encounter == null) {
 											isEncounterLessObs = true;

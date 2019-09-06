@@ -111,12 +111,14 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 								if (check) {
 									Integer encounterTypeId = null;
 									boolean isEncounterLessObs = false;
+									String[] sortedPropNames = Arrays.copyOf(propertyNames, propertyNames.length);
+									Arrays.sort(sortedPropNames);
 									if (entity instanceof Encounter) {
-										int encounterTypeIndex = Arrays.binarySearch(propertyNames, "encounterType");
+										int encounterTypeIndex = Arrays.binarySearch(sortedPropNames, "encounterType");
 										encounterTypeId = ((EncounterType) state[encounterTypeIndex]).getEncounterTypeId();
 									} else {
 										//This is an Obs
-										int encounterIndex = Arrays.binarySearch(propertyNames, "encounter");
+										int encounterIndex = Arrays.binarySearch(sortedPropNames, "encounter");
 										Encounter encounter = (Encounter) state[encounterIndex];
 										if (encounter == null) {
 											isEncounterLessObs = true;

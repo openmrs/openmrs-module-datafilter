@@ -110,8 +110,8 @@ public class AccessUtil {
 	}
 	
 	/**
-	 * Gets the collection of basis ids in single quotes for all the bases the authenticated user is
-	 * granted access to that match the specified basis type.
+	 * Gets the collection of basis ids for all the bases the authenticated user is granted access to
+	 * that match the specified basis type.
 	 *
 	 * @param basisType the type to base on
 	 * @return a collection of basis ids

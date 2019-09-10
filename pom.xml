@@ -49,6 +49,7 @@
         <javaCompilerVersion>1.8</javaCompilerVersion>
 		<openMRSVersion>2.3.0-SNAPSHOT</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <appframeworkVersion>2.14.0-SNAPSHOT</appframeworkVersion>
 	</properties>
 
 	<dependencyManagement>
@@ -59,6 +60,12 @@
 				<version>${openMRSVersion}</version>
 				<scope>provided</scope>
 			</dependency>
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>appframework-api</artifactId>
+                <version>${appframeworkVersion}</version>
+                <scope>provided</scope>
+            </dependency>
 
             <!-- Test dependencies -->
 			<dependency>

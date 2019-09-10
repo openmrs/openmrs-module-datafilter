@@ -9,18 +9,26 @@
  */
 package org.openmrs.module.datafilter;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Location;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.LoginLocationFilter;
 import org.springframework.stereotype.Component;
 
 @Component(DataFilterConstants.MODULE_ID + "LoginLocationFilter")
 public class DataFilterLoginLocationFilter implements LoginLocationFilter {
 	
+	public static final String GP_LOGIN_LOCATION_USER_PROPERTY = "referenceapplication.locationUserPropertyName";
+	
 	/**
 	 * @see LoginLocationFilter#accept(Location)
 	 */
 	@Override
 	public boolean accept(Location location) {
+		if (StringUtils.isBlank(Context.getAdministrationService().getGlobalProperty(GP_LOGIN_LOCATION_USER_PROPERTY))) {
+			return true;
+		}
+		
 		return AccessUtil.getAssignedBasisIds(Location.class).contains(location.getId().toString());
 	}
 	

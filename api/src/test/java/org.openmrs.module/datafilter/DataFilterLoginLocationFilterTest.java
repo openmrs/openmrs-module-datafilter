@@ -12,6 +12,7 @@ package org.openmrs.module.datafilter;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -22,23 +23,31 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openmrs.Location;
+import org.openmrs.api.AdministrationService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.LoginLocationFilter;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ AccessUtil.class })
+@PrepareForTest({ AccessUtil.class, Context.class })
 public class DataFilterLoginLocationFilterTest {
 	
 	private LoginLocationFilter filter = new DataFilterLoginLocationFilter();
 	
 	private static final Integer LOCATION_ID = 2;
 	
+	private AdministrationService as = mock(AdministrationService.class);
+	
 	@Before
 	public void before() {
 		mockStatic(AccessUtil.class);
+		mockStatic(Context.class);
 		when(AccessUtil.getAssignedBasisIds(eq(Location.class)))
 		        .thenReturn(Stream.of("1", LOCATION_ID.toString()).collect(Collectors.toSet()));
+		when(Context.getAdministrationService()).thenReturn(as);
+		when(as.getGlobalProperty(eq(DataFilterLoginLocationFilter.GP_LOGIN_LOCATION_USER_PROPERTY)))
+		        .thenReturn("some value");
 	}
 	
 	@Test
@@ -49,6 +58,12 @@ public class DataFilterLoginLocationFilterTest {
 	@Test
 	public void accept_shouldReturnTrueIfTheUserIsAssignedTheSpecifiedLocation() {
 		assertTrue(filter.accept(new Location(LOCATION_ID)));
+	}
+	
+	@Test
+	public void accept_shouldReturnTrueIfTheUserLoginLocationPropertyIsNotSet() {
+		when(as.getGlobalProperty(eq(DataFilterLoginLocationFilter.GP_LOGIN_LOCATION_USER_PROPERTY))).thenReturn(null);
+		assertTrue(filter.accept(new Location(3)));
 	}
 	
 }

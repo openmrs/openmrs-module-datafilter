@@ -12,6 +12,7 @@ package org.openmrs.module.datafilter;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Location;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.context.Daemon;
 import org.openmrs.module.appframework.LoginLocationFilter;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +26,19 @@ public class DataFilterLoginLocationFilter implements LoginLocationFilter {
 	 */
 	@Override
 	public boolean accept(Location location) {
+		if (Daemon.isDaemonThread()) {
+			return true;
+		}
+		
 		if (StringUtils.isBlank(Context.getAdministrationService().getGlobalProperty(GP_LOGIN_LOCATION_USER_PROPERTY))) {
+			return true;
+		}
+		
+		if (!Context.isAuthenticated() || Context.getAuthenticatedUser() == null) {
+			return false;
+		}
+		
+		if (Context.getAuthenticatedUser().isSuperUser()) {
 			return true;
 		}
 		

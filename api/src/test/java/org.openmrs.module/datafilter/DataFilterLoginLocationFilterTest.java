@@ -23,14 +23,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openmrs.Location;
+import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.context.Daemon;
 import org.openmrs.module.appframework.LoginLocationFilter;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ AccessUtil.class, Context.class })
+@PrepareForTest({ AccessUtil.class, Context.class, Daemon.class })
 public class DataFilterLoginLocationFilterTest {
 	
 	private LoginLocationFilter filter = new DataFilterLoginLocationFilter();
@@ -56,13 +58,45 @@ public class DataFilterLoginLocationFilterTest {
 	}
 	
 	@Test
+	public void accept_shouldReturnFalseIfThereIsNoAuthenticatedUser() {
+		when(Context.getAuthenticatedUser()).thenReturn(null);
+		when(Context.isAuthenticated()).thenReturn(true);
+		assertFalse(filter.accept(new Location(3)));
+	}
+	
+	@Test
+	public void accept_shouldReturnFalseIfContextIsNotAuthenticated() {
+		when(Context.getAuthenticatedUser()).thenReturn(new User());
+		when(Context.isAuthenticated()).thenReturn(false);
+		assertFalse(filter.accept(new Location(3)));
+	}
+	
+	@Test
 	public void accept_shouldReturnTrueIfTheUserIsAssignedTheSpecifiedLocation() {
+		when(Context.getAuthenticatedUser()).thenReturn(new User());
+		when(Context.isAuthenticated()).thenReturn(true);
 		assertTrue(filter.accept(new Location(LOCATION_ID)));
 	}
 	
 	@Test
 	public void accept_shouldReturnTrueIfTheUserLoginLocationPropertyIsNotSet() {
 		when(as.getGlobalProperty(eq(DataFilterLoginLocationFilter.GP_LOGIN_LOCATION_USER_PROPERTY))).thenReturn(null);
+		assertTrue(filter.accept(new Location(3)));
+	}
+	
+	@Test
+	public void accept_shouldAlwaysReturnTrueForDaemonThread() {
+		mockStatic(Daemon.class);
+		when(Daemon.isDaemonThread()).thenReturn(true);
+		assertTrue(filter.accept(new Location(3)));
+	}
+	
+	@Test
+	public void accept_shouldAlwaysReturnTrueForSuperUser() {
+		User mockUser = mock(User.class);
+		when(mockUser.isSuperUser()).thenReturn(true);
+		when(Context.isAuthenticated()).thenReturn(true);
+		when(Context.getAuthenticatedUser()).thenReturn(mockUser);
 		assertTrue(filter.accept(new Location(3)));
 	}
 	

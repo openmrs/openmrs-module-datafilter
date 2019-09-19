@@ -13,9 +13,6 @@ import org.hibernate.cfg.Environment;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
-import org.openmrs.PatientIdentifier;
-import org.openmrs.PersonAttribute;
-import org.openmrs.PersonName;
 import org.openmrs.Visit;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
@@ -38,10 +35,6 @@ public class DataFilterActivator extends BaseModuleActivator {
 		if (log.isInfoEnabled()) {
 			log.info("Data Filter Module started");
 		}
-		
-		Context.updateSearchIndexForType(PersonName.class);
-		Context.updateSearchIndexForType(PatientIdentifier.class);
-		Context.updateSearchIndexForType(PersonAttribute.class);
 	}
 	
 	/**

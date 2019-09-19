@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.BaseOpenmrsObject;
@@ -26,6 +27,8 @@ import org.openmrs.Location;
 import org.openmrs.User;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.context.Daemon;
+import org.openmrs.module.DaemonToken;
 import org.openmrs.util.PrivilegeConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,6 +70,8 @@ public class AccessUtil {
 	
 	private static Map<Class<?>, Collection<String>> encTypeViewPrivilegeBasedClassAndFiltersMap = new HashMap();
 	
+	protected static DaemonToken daemonToken = null;
+	
 	/**
 	 * Gets the collection of person ids for all the persons associated to the bases of the specified
 	 * type, the basis could be something like Location, Program etc.
@@ -99,7 +104,7 @@ public class AccessUtil {
 			String personQuery = DataFilterConstants.PERSON_ID_QUERY
 			        .replace(DataFilterConstants.ATTRIB_TYPE_ID_PLACEHOLDER, attributeTypeId.toString())
 			        .replace(DataFilterConstants.BASIS_IDS_PLACEHOLDER, String.join(",", accessibleBasisIds));
-			List<List<Object>> personRows = runQueryWithElevatedPrivileges(personQuery);
+			List<List<Object>> personRows = runQueryInDaemonThread(personQuery);
 			Set<String> personIds = new HashSet();
 			personRows.forEach((List<Object> personRow) -> personIds.add(personRow.get(0).toString()));
 			
@@ -126,7 +131,7 @@ public class AccessUtil {
 		query = query.replace(ENTITY_TYPE_PLACEHOLDER, User.class.getName());
 		query = query.replace(BASIS_TYPE_PLACEHOLDER, basisType.getName());
 		
-		List<List<Object>> rows = runQueryWithElevatedPrivileges(query);
+		List<List<Object>> rows = runQueryInDaemonThread(query);
 		Set<String> basisIds = new HashSet();
 		rows.forEach((List<Object> row) -> basisIds.add(row.get(0).toString()));
 		
@@ -143,24 +148,18 @@ public class AccessUtil {
 	}
 	
 	/**
-	 * Runs the specified query with PrivilegeConstants.SQL_LEVEL_ACCESS enabled.
-	 * 
-	 * <pre>
-	 * TODO Use Daemon.runInDaemonThread instead, probably when this class is reimplemented
-	 * </pre>
-	 * 
+	 * Runs the specified query in a DaemonThread.
+	 *
 	 * @param query the query to execute
 	 * @return A list of matching rows
 	 */
-	private static List<List<Object>> runQueryWithElevatedPrivileges(String query) {
-		try {
-			//TODO Use Daemon.runInDaemonThread instead, probably when this class is reimplemented
-			Context.addProxyPrivilege(PrivilegeConstants.SQL_LEVEL_ACCESS);
-			return Context.getAdministrationService().executeSQL(query, true);
-		}
-		finally {
-			Context.removeProxyPrivilege(PrivilegeConstants.SQL_LEVEL_ACCESS);
-		}
+	private static List<List<Object>> runQueryInDaemonThread(String query) {
+		AtomicReference<List<List<Object>>> atomicReference = new AtomicReference();
+		Daemon.runInDaemonThreadAndWait(() -> {
+			atomicReference.set(Context.getAdministrationService().executeSQL(query, true));
+		}, daemonToken);
+		
+		return atomicReference.get();
 	}
 	
 	/**
@@ -172,7 +171,7 @@ public class AccessUtil {
 	 */
 	protected static Integer getPersonAttributeTypeId(Class<?> basisType) {
 		//TODO This method should be moved to a GlobalPropertyListener so that we can cache the ids
-		List<List<Object>> rows = runQueryWithElevatedPrivileges(GP_QUERY);
+		List<List<Object>> rows = runQueryInDaemonThread(GP_QUERY);
 		String attribTypeUuids = null;
 		if (!rows.isEmpty()) {
 			if (rows.get(0).get(0) == null) {
@@ -190,7 +189,7 @@ public class AccessUtil {
 				}
 			}
 			String attributeQuery = ATTRIBUTE_TYPE_QUERY.replace(UUIDS_PLACEHOLDER, String.join(",", quotedUuids));
-			List<List<Object>> attributeRows = runQueryWithElevatedPrivileges(attributeQuery);
+			List<List<Object>> attributeRows = runQueryInDaemonThread(attributeQuery);
 			for (List<Object> row : attributeRows) {
 				if (basisType.getName().equals(row.get(1))) {
 					return Integer.valueOf(row.get(0).toString());
@@ -236,9 +235,8 @@ public class AccessUtil {
 	 * @return true if the filter is disabled otherwise false
 	 */
 	protected static boolean isFilterDisabled(String filterName) {
-		List<List<Object>> rows = runQueryWithElevatedPrivileges(
-		    "SELECT property_value FROM global_property WHERE property = '" + filterName + DataFilterConstants.DISABLED
-		            + "'");
+		List<List<Object>> rows = runQueryInDaemonThread("SELECT property_value FROM global_property WHERE property = '"
+		        + filterName + DataFilterConstants.DISABLED + "'");
 		if (rows.isEmpty() || rows.get(0).isEmpty() || rows.get(0).get(0) == null) {
 			return false;
 		}
@@ -302,7 +300,7 @@ public class AccessUtil {
 			throw new APIException("Encounter type id is required");
 		}
 		final String query = "SELECT view_privilege FROM encounter_type WHERE encounter_type_id = " + encounterTypeId;
-		List<List<Object>> rows = runQueryWithElevatedPrivileges(query);
+		List<List<Object>> rows = runQueryInDaemonThread(query);
 		if (rows.isEmpty() || rows.get(0).isEmpty() || rows.get(0).get(0) == null) {
 			return null;
 		}
@@ -320,7 +318,7 @@ public class AccessUtil {
 			throw new APIException("Encounter id is required");
 		}
 		final String query = "SELECT encounter_type FROM encounter WHERE encounter_id = " + encounterId;
-		return Integer.valueOf(runQueryWithElevatedPrivileges(query).get(0).get(0).toString());
+		return Integer.valueOf(runQueryInDaemonThread(query).get(0).get(0).toString());
 	}
 	
 }

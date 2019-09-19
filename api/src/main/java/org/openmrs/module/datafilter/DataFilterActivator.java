@@ -17,15 +17,25 @@ import org.openmrs.Visit;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
+import org.openmrs.module.DaemonToken;
+import org.openmrs.module.DaemonTokenAware;
 import org.openmrs.module.datafilter.annotations.FilterDefsAnnotation;
 import org.openmrs.module.datafilter.annotations.FiltersAnnotation;
 import org.openmrs.module.datafilter.annotations.FullTextFilterDefsAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DataFilterActivator extends BaseModuleActivator {
+public class DataFilterActivator extends BaseModuleActivator implements DaemonTokenAware {
 	
 	private static final Logger log = LoggerFactory.getLogger(DataFilterActivator.class);
+	
+	/**
+	 * @see DaemonTokenAware#setDaemonToken(DaemonToken)
+	 */
+	@Override
+	public void setDaemonToken(DaemonToken daemonToken) {
+		AccessUtil.daemonToken = daemonToken;
+	}
 	
 	/**
 	 * @see BaseModuleActivator#started()

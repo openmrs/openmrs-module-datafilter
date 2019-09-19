@@ -26,6 +26,7 @@ import org.openmrs.Location;
 import org.openmrs.User;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.db.AdministrationDAO;
 import org.openmrs.util.PrivilegeConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,7 +100,7 @@ public class AccessUtil {
 			String personQuery = DataFilterConstants.PERSON_ID_QUERY
 			        .replace(DataFilterConstants.ATTRIB_TYPE_ID_PLACEHOLDER, attributeTypeId.toString())
 			        .replace(DataFilterConstants.BASIS_IDS_PLACEHOLDER, String.join(",", accessibleBasisIds));
-			List<List<Object>> personRows = runQueryWithElevatedPrivileges(personQuery);
+			List<List<Object>> personRows = executeQuery(personQuery);
 			Set<String> personIds = new HashSet();
 			personRows.forEach((List<Object> personRow) -> personIds.add(personRow.get(0).toString()));
 			
@@ -126,7 +127,7 @@ public class AccessUtil {
 		query = query.replace(ENTITY_TYPE_PLACEHOLDER, User.class.getName());
 		query = query.replace(BASIS_TYPE_PLACEHOLDER, basisType.getName());
 		
-		List<List<Object>> rows = runQueryWithElevatedPrivileges(query);
+		List<List<Object>> rows = executeQuery(query);
 		Set<String> basisIds = new HashSet();
 		rows.forEach((List<Object> row) -> basisIds.add(row.get(0).toString()));
 		
@@ -143,24 +144,14 @@ public class AccessUtil {
 	}
 	
 	/**
-	 * Runs the specified query with PrivilegeConstants.SQL_LEVEL_ACCESS enabled.
-	 * 
-	 * <pre>
-	 * TODO Use Daemon.runInDaemonThread instead, probably when this class is reimplemented
-	 * </pre>
+	 * Runs the specified query
 	 * 
 	 * @param query the query to execute
 	 * @return A list of matching rows
 	 */
-	private static List<List<Object>> runQueryWithElevatedPrivileges(String query) {
-		try {
-			//TODO Use Daemon.runInDaemonThread instead, probably when this class is reimplemented
-			Context.addProxyPrivilege(PrivilegeConstants.SQL_LEVEL_ACCESS);
-			return Context.getAdministrationService().executeSQL(query, true);
-		}
-		finally {
-			Context.removeProxyPrivilege(PrivilegeConstants.SQL_LEVEL_ACCESS);
-		}
+	private static List<List<Object>> executeQuery(String query) {
+		AdministrationDAO adminDAO = Context.getRegisteredComponent("adminDAO", AdministrationDAO.class);
+		return adminDAO.executeSQL(query, true);
 	}
 	
 	/**
@@ -172,7 +163,7 @@ public class AccessUtil {
 	 */
 	protected static Integer getPersonAttributeTypeId(Class<?> basisType) {
 		//TODO This method should be moved to a GlobalPropertyListener so that we can cache the ids
-		List<List<Object>> rows = runQueryWithElevatedPrivileges(GP_QUERY);
+		List<List<Object>> rows = executeQuery(GP_QUERY);
 		String attribTypeUuids = null;
 		if (!rows.isEmpty()) {
 			if (rows.get(0).get(0) == null) {
@@ -190,7 +181,7 @@ public class AccessUtil {
 				}
 			}
 			String attributeQuery = ATTRIBUTE_TYPE_QUERY.replace(UUIDS_PLACEHOLDER, String.join(",", quotedUuids));
-			List<List<Object>> attributeRows = runQueryWithElevatedPrivileges(attributeQuery);
+			List<List<Object>> attributeRows = executeQuery(attributeQuery);
 			for (List<Object> row : attributeRows) {
 				if (basisType.getName().equals(row.get(1))) {
 					return Integer.valueOf(row.get(0).toString());
@@ -236,9 +227,8 @@ public class AccessUtil {
 	 * @return true if the filter is disabled otherwise false
 	 */
 	protected static boolean isFilterDisabled(String filterName) {
-		List<List<Object>> rows = runQueryWithElevatedPrivileges(
-		    "SELECT property_value FROM global_property WHERE property = '" + filterName + DataFilterConstants.DISABLED
-		            + "'");
+		List<List<Object>> rows = executeQuery("SELECT property_value FROM global_property WHERE property = '" + filterName
+		        + DataFilterConstants.DISABLED + "'");
 		if (rows.isEmpty() || rows.get(0).isEmpty() || rows.get(0).get(0) == null) {
 			return false;
 		}
@@ -302,7 +292,7 @@ public class AccessUtil {
 			throw new APIException("Encounter type id is required");
 		}
 		final String query = "SELECT view_privilege FROM encounter_type WHERE encounter_type_id = " + encounterTypeId;
-		List<List<Object>> rows = runQueryWithElevatedPrivileges(query);
+		List<List<Object>> rows = executeQuery(query);
 		if (rows.isEmpty() || rows.get(0).isEmpty() || rows.get(0).get(0) == null) {
 			return null;
 		}
@@ -320,7 +310,7 @@ public class AccessUtil {
 			throw new APIException("Encounter id is required");
 		}
 		final String query = "SELECT encounter_type FROM encounter WHERE encounter_id = " + encounterId;
-		return Integer.valueOf(runQueryWithElevatedPrivileges(query).get(0).get(0).toString());
+		return Integer.valueOf(executeQuery(query).get(0).get(0).toString());
 	}
 	
 }

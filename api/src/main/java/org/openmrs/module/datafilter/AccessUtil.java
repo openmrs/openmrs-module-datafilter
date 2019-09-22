@@ -27,7 +27,7 @@ import org.openmrs.User;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.db.AdministrationDAO;
-import org.openmrs.util.PrivilegeConstants;
+import org.openmrs.api.db.LocationDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -201,16 +201,8 @@ public class AccessUtil {
 	 */
 	private static Set<String> getAllDescendantLocationIds(String locationId) {
 		Set<String> ids = new HashSet();
-		Location location;
-		try {
-			//TODO Use Daemon.runInDaemonThread instead, probably when this class is reimplemented
-			Context.addProxyPrivilege(PrivilegeConstants.GET_LOCATIONS);
-			location = Context.getLocationService().getLocation(Integer.valueOf(locationId));
-		}
-		finally {
-			Context.removeProxyPrivilege(PrivilegeConstants.GET_LOCATIONS);
-		}
-		
+		LocationDAO dao = Context.getRegisteredComponent("locationDAO", LocationDAO.class);
+		Location location = dao.getLocation(Integer.valueOf(locationId));
 		for (Location l : location.getDescendantLocations(true)) {
 			ids.add(l.getId().toString());
 		}

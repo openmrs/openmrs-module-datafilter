@@ -251,4 +251,33 @@ public class DataFilterInterceptorTest {
 		interceptor.onLoad(new Obs(), null, new Object[] { new Encounter(encounterId) }, new String[] { "encounter" }, null);
 	}
 	
+	@Test
+	public void onLoad_shouldPassIfTheAuthenticatedUserIsAllowedToViewThePatientVisitGettingLoaded() {
+		final Integer patientId = 101;
+		Collection<String> accessiblePatientIds = Stream.of(patientId.toString()).collect(Collectors.toSet());
+		when(Context.getAuthenticatedUser()).thenReturn(new User());
+		when(AccessUtil.getAccessiblePersonIds(eq(Location.class))).thenReturn(accessiblePatientIds);
+		interceptor.onLoad(new Visit(), null, new Object[] { new Patient(patientId) }, new String[] { "patient" }, null);
+	}
+	
+	@Test
+	public void onLoad_shouldPassIfTheAuthenticatedUserIsAllowedToViewThePatientEncounterGettingLoaded() {
+		final Integer patientId = 101;
+		Collection<String> accessiblePatientIds = Stream.of(patientId.toString()).collect(Collectors.toSet());
+		when(AccessUtil.isFilterDisabled(startsWith(ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
+		when(Context.getAuthenticatedUser()).thenReturn(new User());
+		when(AccessUtil.getAccessiblePersonIds(eq(Location.class))).thenReturn(accessiblePatientIds);
+		interceptor.onLoad(new Encounter(), null, new Object[] { new Patient(101) }, new String[] { "patient" }, null);
+	}
+	
+	@Test
+	public void onLoad_shouldPassIfTheAuthenticatedUserIsAllowedToViewTheObsGettingLoaded() {
+		final Integer patientId = 101;
+		Collection<String> accessiblePatientIds = Stream.of(patientId.toString()).collect(Collectors.toSet());
+		when(AccessUtil.isFilterDisabled(startsWith(ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
+		when(Context.getAuthenticatedUser()).thenReturn(new User());
+		when(AccessUtil.getAccessiblePersonIds(eq(Location.class))).thenReturn(accessiblePatientIds);
+		interceptor.onLoad(new Obs(), null, new Object[] { new Patient(patientId) }, new String[] { "person" }, null);
+	}
+	
 }

@@ -22,7 +22,10 @@ import org.hibernate.type.Type;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
+import org.openmrs.Obs;
+import org.openmrs.Person;
 import org.openmrs.User;
+import org.openmrs.Visit;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
@@ -82,7 +85,8 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 							}
 						} else {
 							if (filteredByLoc) {
-								checkIfHasLocationBasedAccess(entity, id, user, locationBasedClassAndFiltersMap);
+								checkIfHasLocationBasedAccess(entity, id, state, propertyNames, user,
+								    locationBasedClassAndFiltersMap);
 							}
 							
 							if (filteredByEnc) {
@@ -102,8 +106,8 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 		return super.onLoad(entity, id, state, propertyNames, types);
 	}
 	
-	private void checkIfHasLocationBasedAccess(Object entity, Serializable id, User user,
-	                                           Map<Class<?>, Collection<String>> filtersMap) {
+	private void checkIfHasLocationBasedAccess(Object entity, Serializable id, Object[] state, String[] propertyNames,
+	                                           User user, Map<Class<?>, Collection<String>> filtersMap) {
 		
 		boolean check = true;
 		for (String filterName : filtersMap.get(entity.getClass())) {
@@ -114,7 +118,14 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 		}
 		
 		if (check) {
-			if (user == null || !AccessUtil.getAccessiblePersonIds(Location.class).contains(id.toString())) {
+			Object personId = id;
+			if (entity instanceof Visit || entity instanceof Encounter || entity instanceof Obs) {
+				final String personPropertyName = entity instanceof Obs ? "person" : "patient";
+				int patientIndex = ArrayUtils.indexOf(propertyNames, personPropertyName);
+				personId = ((Person) state[patientIndex]).getPersonId();
+			}
+			
+			if (user == null || !AccessUtil.getAccessiblePersonIds(Location.class).contains(personId.toString())) {
 				throw new ContextAuthenticationException(DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE);
 			}
 		}

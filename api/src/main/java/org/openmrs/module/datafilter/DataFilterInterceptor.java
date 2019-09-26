@@ -82,65 +82,12 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 							}
 						} else {
 							if (filteredByLoc) {
-								boolean check = true;
-								for (String filterName : locationBasedClassAndFiltersMap.get(entity.getClass())) {
-									check = !AccessUtil.isFilterDisabled(filterName);
-									if (check) {
-										break;
-									}
-								}
-								
-								if (check) {
-									if (user == null
-									        || !AccessUtil.getAccessiblePersonIds(Location.class).contains(id.toString())) {
-										throw new ContextAuthenticationException(
-										        DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE);
-									}
-								}
+								checkIfHasLocationBasedAccess(entity, id, user, locationBasedClassAndFiltersMap);
 							}
 							
 							if (filteredByEnc) {
-								boolean check = true;
-								for (String filterName : encTypeBasedClassAndFiltersMap.get(entity.getClass())) {
-									check = !AccessUtil.isFilterDisabled(filterName);
-									if (check) {
-										break;
-									}
-								}
-								
-								if (check) {
-									Integer encounterTypeId = null;
-									boolean isEncounterLessObs = false;
-									if (entity instanceof Encounter) {
-										int encounterTypeIndex = ArrayUtils.indexOf(propertyNames, "encounterType");
-										encounterTypeId = ((EncounterType) state[encounterTypeIndex]).getEncounterTypeId();
-									} else {
-										//This is an Obs
-										int encounterIndex = ArrayUtils.indexOf(propertyNames, "encounter");
-										Encounter encounter = (Encounter) state[encounterIndex];
-										if (encounter == null) {
-											isEncounterLessObs = true;
-										} else {
-											if (encounter.getEncounterType() != null) {
-												encounterTypeId = encounter.getEncounterType().getEncounterTypeId();
-											} else {
-												//If it's an obs that's getting loaded, encounter.encounterType could be
-												//null so fetch the encounter type id from the database
-												encounterTypeId = AccessUtil.getEncounterTypeId(encounter.getEncounterId());
-											}
-										}
-									}
-									
-									if (!isEncounterLessObs) {
-										String requiredPrivilege = AccessUtil.getViewPrivilege(encounterTypeId);
-										if (requiredPrivilege != null) {
-											if (user == null || !user.hasPrivilege(requiredPrivilege)) {
-												throw new ContextAuthenticationException(
-												        DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE);
-											}
-										}
-									}
-								}
+								checkIfHasEncounterTypeBasedAccess(entity, state, propertyNames, user,
+								    encTypeBasedClassAndFiltersMap);
 							}
 						}
 					}
@@ -153,6 +100,69 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 		}
 		
 		return super.onLoad(entity, id, state, propertyNames, types);
+	}
+	
+	private void checkIfHasLocationBasedAccess(Object entity, Serializable id, User user,
+	                                           Map<Class<?>, Collection<String>> filtersMap) {
+		
+		boolean check = true;
+		for (String filterName : filtersMap.get(entity.getClass())) {
+			check = !AccessUtil.isFilterDisabled(filterName);
+			if (check) {
+				break;
+			}
+		}
+		
+		if (check) {
+			if (user == null || !AccessUtil.getAccessiblePersonIds(Location.class).contains(id.toString())) {
+				throw new ContextAuthenticationException(DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE);
+			}
+		}
+	}
+	
+	private void checkIfHasEncounterTypeBasedAccess(Object entity, Object[] state, String[] propertyNames, User user,
+	                                                Map<Class<?>, Collection<String>> filtersMap) {
+		
+		boolean check = true;
+		for (String filterName : filtersMap.get(entity.getClass())) {
+			check = !AccessUtil.isFilterDisabled(filterName);
+			if (check) {
+				break;
+			}
+		}
+		
+		if (check) {
+			Integer encounterTypeId = null;
+			boolean isEncounterLessObs = false;
+			if (entity instanceof Encounter) {
+				int encounterTypeIndex = ArrayUtils.indexOf(propertyNames, "encounterType");
+				encounterTypeId = ((EncounterType) state[encounterTypeIndex]).getEncounterTypeId();
+			} else {
+				//This is an Obs
+				int encounterIndex = ArrayUtils.indexOf(propertyNames, "encounter");
+				Encounter encounter = (Encounter) state[encounterIndex];
+				if (encounter == null) {
+					isEncounterLessObs = true;
+				} else {
+					if (encounter.getEncounterType() != null) {
+						encounterTypeId = encounter.getEncounterType().getEncounterTypeId();
+					} else {
+						//If it's an obs that's getting loaded, encounter.encounterType could be
+						//null so fetch the encounter type id from the database
+						encounterTypeId = AccessUtil.getEncounterTypeId(encounter.getEncounterId());
+					}
+				}
+			}
+			
+			if (!isEncounterLessObs) {
+				String requiredPrivilege = AccessUtil.getViewPrivilege(encounterTypeId);
+				if (requiredPrivilege != null) {
+					if (user == null || !user.hasPrivilege(requiredPrivilege)) {
+						throw new ContextAuthenticationException(DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE);
+					}
+				}
+			}
+		}
 	}
 	
 }

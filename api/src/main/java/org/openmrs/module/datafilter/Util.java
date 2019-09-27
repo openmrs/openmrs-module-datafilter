@@ -10,6 +10,7 @@
 package org.openmrs.module.datafilter;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -25,6 +26,7 @@ import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
+import org.openmrs.api.APIException;
 import org.openmrs.module.datafilter.annotations.AggregateAnnotation;
 import org.openmrs.module.datafilter.annotations.FilterAnnotation;
 import org.openmrs.module.datafilter.annotations.FilterDefAnnotation;
@@ -108,6 +110,15 @@ public class Util {
 		            ENC_TYPE_VIEW_PRIV_FILTER_PARAMS),
 		    new FilterAnnotation(DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS,
 		            DataFilterConstants.FILTER_CONDITION_ENCOUNTER_ID));
+		
+		try {
+			addAnnotationToField("encounters", Visit.class,
+			    new FilterAnnotation(DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER,
+			            DataFilterConstants.FILTER_CONDITION_ENCOUNTER_ID));
+		}
+		catch (ReflectiveOperationException e) {
+			throw new APIException(e);
+		}
 		
 		if (log.isInfoEnabled()) {
 			log.info("Successfully set up encounter type view privilege based filtering");
@@ -197,6 +208,50 @@ public class Util {
 			method.setAccessible(accessible);
 		}
 		
+	}
+	
+	/**
+	 * Adds an annotation to the field with a matching name in the specified class
+	 * 
+	 * @param fieldName the name of the field
+	 * @param clazz the class to add the annotation
+	 * @param annotation the annotation to add
+	 */
+	private static void addAnnotationToField(String fieldName, Class<?> clazz, Annotation annotation)
+	    throws ReflectiveOperationException {
+		
+		final String annotationName = annotation.annotationType().getName();
+		if (log.isDebugEnabled()) {
+			log.debug("Adding " + annotationName + " annotation to " + clazz + "." + fieldName);
+		}
+		
+		Field field = clazz.getDeclaredField(fieldName);
+		boolean fieldAccessible = field.isAccessible();
+		field.setAccessible(true);
+		Method method = Field.class.getDeclaredMethod("declaredAnnotations");
+		boolean methodAccessible = method.isAccessible();
+		method.setAccessible(true);
+		try {
+			Map<Class<? extends Annotation>, Annotation> map = (Map<Class<? extends Annotation>, Annotation>) method
+			        .invoke(field);
+			
+			//TODO handle the case where the annotation is already present in case of module restart
+			//TODO We also need to take care of Filters annotations if present
+			map.put(annotation.annotationType(), annotation);
+			
+			if (log.isDebugEnabled()) {
+				log.debug("Successfully added " + annotationName + " annotation to " + clazz);
+			}
+		}
+		catch (InvocationTargetException | IllegalAccessException e) {
+			log.error("Failed to add " + annotationName + " annotation to " + clazz + "." + annotationName, e);
+			throw e;
+		}
+		finally {
+			//Always reset
+			field.setAccessible(fieldAccessible);
+			method.setAccessible(methodAccessible);
+		}
 	}
 	
 }

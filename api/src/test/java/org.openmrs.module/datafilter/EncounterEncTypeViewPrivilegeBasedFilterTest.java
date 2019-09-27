@@ -13,12 +13,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Encounter;
 import org.openmrs.api.EncounterService;
+import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.datafilter.api.DataFilterService;
 import org.openmrs.test.TestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -26,6 +29,12 @@ public class EncounterEncTypeViewPrivilegeBasedFilterTest extends BaseEncTypeVie
 	
 	@Autowired
 	private EncounterService encounterService;
+	
+	@Autowired
+	private VisitService visitService;
+	
+	@Autowired
+	private DataFilterService service;
 	
 	@Before
 	public void before() {
@@ -80,7 +89,7 @@ public class EncounterEncTypeViewPrivilegeBasedFilterTest extends BaseEncTypeVie
 	}
 	
 	@Test
-	public void getEncounters_shouldReturnAllEncountersIfEncTypeViewPrivFilteringIsDisabled() throws Exception {
+	public void getEncounters_shouldReturnAllEncountersIfEncTypeViewPrivFilteringIsDisabled() {
 		DataFilterTestUtils.disableEncTypeViewPrivilegeFiltering();
 		reloginAs("dyorke", "test");
 		final String name = "Navuga";
@@ -91,6 +100,24 @@ public class EncounterEncTypeViewPrivilegeBasedFilterTest extends BaseEncTypeVie
 		assertTrue(TestUtil.containsId(encounters, 1000));
 		assertTrue(TestUtil.containsId(encounters, 1001));
 		assertTrue(TestUtil.containsId(encounters, 1002));
+	}
+	
+	@Test
+	public void getVisits_shouldExcludePrivilegedEncountersOfTheVisitIfTheUserHasNoRequiredPrivilege() {
+		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "visitWithEncounters.xml");
+		reloginAs("dBeckham", "test");
+		Set<Encounter> encounters = visitService.getVisit(10001).getEncounters();
+		assertEquals(2, encounters.size());
+		assertTrue(TestUtil.containsId(encounters, 20001));
+		assertTrue(TestUtil.containsId(encounters, 20002));
+	}
+	
+	@Test
+	public void getVisits_shouldIncludePrivilegedEncountersOfTheVisitIfTheUserHasTheRequiredPrivilege() {
+		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "visitWithEncounters.xml");
+		reloginAs("dBeckham", "test");
+		DataFilterTestUtils.addPrivilege(PRIV_MANAGE_CHEMO_PATIENTS);
+		assertEquals(4, visitService.getVisit(10001).getEncounters().size());
 	}
 	
 }

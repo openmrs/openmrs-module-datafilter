@@ -9,10 +9,13 @@
  */
 package org.openmrs.module.datafilter;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +37,11 @@ import org.openmrs.module.datafilter.annotations.FullTextFilterDefAnnotation;
 import org.openmrs.module.datafilter.annotations.ParamDefAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Util {
 	
@@ -252,6 +260,19 @@ public class Util {
 			field.setAccessible(fieldAccessible);
 			method.setAccessible(methodAccessible);
 		}
+	}
+	
+	protected static List<FilterRegistration> loadFilterRegistrations() throws IOException {
+		PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
+		ObjectMapper mapper = new ObjectMapper();
+		Resource[] resources = resourceResolver.getResources("classpath*:/*_filters.json");
+		List<FilterRegistration> registrations = new ArrayList();
+		for (Resource resource : resources) {
+			JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, FilterRegistration.class);
+			registrations.addAll(mapper.readValue(resource.getInputStream(), type));
+		}
+		
+		return registrations;
 	}
 	
 }

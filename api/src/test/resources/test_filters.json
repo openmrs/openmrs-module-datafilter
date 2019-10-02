@@ -1,0 +1,30 @@
+[
+  {
+     "name": "encounterFilter",
+     "condition": "encounterType = :encType and location in (:locationIds)",
+     "parameters": [
+        {
+           "name": "encType",
+           "type": "org.hibernate.type.IntegerType"
+        },
+        {
+           "name": "locationIds",
+           "type": "org.hibernate.type.StringType"
+        }
+     ]
+  },
+  {
+     "name": "obsFilter",
+     "condition": "location in (:locationIds)",
+     "parameters": [
+        {
+           "name": "locationIds",
+           "type": "org.hibernate.type.StringType"
+        }
+    ]
+  },
+  {
+     "name": "obsFilter",
+     "condition": "location = 2"
+  }
+]

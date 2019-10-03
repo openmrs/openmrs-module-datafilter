@@ -1,20 +1,20 @@
 [
-  {
-     "name": "encounterFilter",
-     "condition": "encounterType = :encType and location in (:locationIds)",
-     "parameters": [
-        {
-           "name": "encType",
-           "type": "integer"
-        },
-        {
-           "name": "locationIds",
-           "type": "string"
-        }
-     ]
-  },
-  {
-     "name": "obsFilter",
-     "condition": "location = 2"
-  }
+    {
+        "name": "encounterFilter",
+        "condition": "encounterType = :encType and location in (:locationIds)",
+        "parameters": [
+            {
+                "name": "encType",
+                "type": "integer"
+            },
+            {
+                "name": "locationIds",
+                "type": "string"
+            }
+        ]
+    },
+    {
+        "name": "obsFilter",
+        "condition": "location = 2"
+    }
 ]

@@ -15,6 +15,8 @@ public class FilterRegistration {
 	
 	private String name;
 	
+	private Class<?> targetClass;
+	
 	private String condition;
 	
 	private List<FilterParameter> parameters;
@@ -35,6 +37,24 @@ public class FilterRegistration {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	/**
+	 * Gets the targetClass
+	 *
+	 * @return the targetClass
+	 */
+	public Class<?> getTargetClass() {
+		return targetClass;
+	}
+	
+	/**
+	 * Sets the targetClass
+	 *
+	 * @param targetClass the targetClass to set
+	 */
+	public void setTargetClass(Class<?> targetClass) {
+		this.targetClass = targetClass;
 	}
 	
 	/**

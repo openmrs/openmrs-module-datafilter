@@ -14,7 +14,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.annotation.Annotation;
-import java.util.List;
 
 import org.hibernate.annotations.FilterDef;
 import org.junit.Test;
@@ -37,8 +36,7 @@ public class UtilTest {
 	
 	@Test
 	public void loadFilterRegistrations_shouldLoadAllFilterRegistrations() throws Exception {
-		List<FilterRegistration> registrations = Util.loadFilterRegistrations();
-		assertEquals(3, registrations.size());
+		assertEquals(3, Util.loadFilterRegistrations().size());
 	}
 	
 }

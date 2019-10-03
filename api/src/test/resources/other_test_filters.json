@@ -1,0 +1,12 @@
+[
+  {
+     "name": "visitFilter",
+     "condition": "location in (:locationIds)",
+     "parameters": [
+        {
+           "name": "locationIds",
+           "type": "string"
+        }
+    ]
+  }
+]

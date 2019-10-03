@@ -5,23 +5,13 @@
      "parameters": [
         {
            "name": "encType",
-           "type": "org.hibernate.type.IntegerType"
+           "type": "integer"
         },
         {
            "name": "locationIds",
-           "type": "org.hibernate.type.StringType"
+           "type": "string"
         }
      ]
-  },
-  {
-     "name": "obsFilter",
-     "condition": "location in (:locationIds)",
-     "parameters": [
-        {
-           "name": "locationIds",
-           "type": "org.hibernate.type.StringType"
-        }
-    ]
   },
   {
      "name": "obsFilter",

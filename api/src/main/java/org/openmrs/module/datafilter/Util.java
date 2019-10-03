@@ -18,15 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.FilterDefs;
 import org.hibernate.annotations.Filters;
 import org.hibernate.annotations.ParamDef;
 import org.hibernate.search.annotations.FullTextFilterDefs;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.StringType;
-import org.openmrs.Encounter;
-import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.api.APIException;
@@ -35,6 +31,8 @@ import org.openmrs.module.datafilter.annotations.FilterAnnotation;
 import org.openmrs.module.datafilter.annotations.FilterDefAnnotation;
 import org.openmrs.module.datafilter.annotations.FullTextFilterDefAnnotation;
 import org.openmrs.module.datafilter.annotations.ParamDefAnnotation;
+import org.openmrs.module.datafilter.registration.FilterParameter;
+import org.openmrs.module.datafilter.registration.FilterRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -47,77 +45,44 @@ public class Util {
 	
 	private static final Logger log = LoggerFactory.getLogger(Util.class);
 	
-	private static final ParamDefAnnotation LOCATION_ATTRIB_TYPE_PARAM_DEF = new ParamDefAnnotation(
-	        DataFilterConstants.PARAM_NAME_ATTRIB_TYPE_ID, IntegerType.INSTANCE.getName());
+	private static List<FilterRegistration> filterRegistrations;
 	
-	private static final ParamDefAnnotation BASIS_IDS_PARAM_DEF = new ParamDefAnnotation(
-	        DataFilterConstants.PARAM_NAME_BASIS_IDS, StringType.INSTANCE.getName());
-	
-	private static final ParamDef[] LOCATION_FILTER_PARAMS = new ParamDef[] { LOCATION_ATTRIB_TYPE_PARAM_DEF,
-	        BASIS_IDS_PARAM_DEF };
-	
-	private static final ParamDefAnnotation ENC_TYPE_VIEW_PARAM_DEF = new ParamDefAnnotation(
-	        DataFilterConstants.PARAM_NAME_ROLES, StringType.INSTANCE.getName());
-	
-	private static final ParamDef[] ENC_TYPE_VIEW_PRIV_FILTER_PARAMS = new ParamDef[] { ENC_TYPE_VIEW_PARAM_DEF };
+	private static List<FilterRegistration> getFilterRegistrations() {
+		if (filterRegistrations == null) {
+			filterRegistrations = loadFilterRegistrations();
+		}
+		
+		return filterRegistrations;
+	}
 	
 	/**
 	 * Sets up location based filtering by adding the filter annotations to persistent classes mapped
 	 * with JPA annotations that need to be filtered.
 	 */
-	protected static void configureLocationBasedFiltering() {
+	protected static void setupFilters() {
 		if (log.isInfoEnabled()) {
-			log.info("Setting up location based filtering");
+			log.info("Registering filters");
 		}
 		
-		registerFilter(Visit.class,
-		    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT, LOCATION_FILTER_PARAMS),
-		    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT,
-		            DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
-		
-		registerFilter(Encounter.class,
-		    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER, LOCATION_FILTER_PARAMS),
-		    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER,
-		            DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
-		
-		registerFilter(Obs.class,
-		    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS, LOCATION_FILTER_PARAMS),
-		    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS,
-		            StringUtils.replaceOnce(DataFilterConstants.FILTER_CONDITION_PATIENT_ID, "patient_id", "person_id")));
-		
-		registerFilter(Patient.class,
-		    new FilterDefAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT, LOCATION_FILTER_PARAMS),
-		    new FilterAnnotation(DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT,
-		            DataFilterConstants.FILTER_CONDITION_PATIENT_ID));
+		for (FilterRegistration registration : getFilterRegistrations()) {
+			ParamDef[] paramDefs;
+			if (CollectionUtils.isEmpty(registration.getParameters())) {
+				paramDefs = new ParamDef[] {};
+			} else {
+				paramDefs = new ParamDef[registration.getParameters().size()];
+				int index = 0;
+				for (FilterParameter parameter : registration.getParameters()) {
+					paramDefs[index] = new ParamDefAnnotation(parameter.getName(), parameter.getType());
+					index++;
+				}
+			}
+			
+			registerFilter(registration.getTargetClass(), new FilterDefAnnotation(registration.getName(), paramDefs),
+			    new FilterAnnotation(registration.getName(), registration.getCondition()));
+		}
 		
 		registerFullTextFilter(Patient.class, new FullTextFilterDefAnnotation(
 		        DataFilterConstants.LOCATION_BASED_FULL_TEXT_FILTER_NAME_PATIENT, PatientIdFullTextFilter.class));
-		
-		if (log.isInfoEnabled()) {
-			log.info("Successfully set up location based filtering");
-		}
-	}
-	
-	/**
-	 * Sets up encounter type view privilege based filtering by adding the filter annotations to
-	 * persistent classes mapped with JPA annotations that need to be filtered.
-	 */
-	protected static void configureEncounterTypeViewPrivilegeBasedFiltering() {
-		if (log.isInfoEnabled()) {
-			log.info("Setting up encounter type view privilege based filtering");
-		}
-		
-		registerFilter(Encounter.class,
-		    new FilterDefAnnotation(DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER,
-		            ENC_TYPE_VIEW_PRIV_FILTER_PARAMS),
-		    new FilterAnnotation(DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER,
-		            DataFilterConstants.FILTER_CONDITION_ENCOUNTER_ID));
-		
-		registerFilter(Obs.class,
-		    new FilterDefAnnotation(DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS,
-		            ENC_TYPE_VIEW_PRIV_FILTER_PARAMS),
-		    new FilterAnnotation(DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS,
-		            DataFilterConstants.FILTER_CONDITION_ENCOUNTER_ID));
 		
 		try {
 			addAnnotationToField("encounters", Visit.class,
@@ -129,7 +94,7 @@ public class Util {
 		}
 		
 		if (log.isInfoEnabled()) {
-			log.info("Successfully set up encounter type view privilege based filtering");
+			log.info("Successfully registered filters");
 		}
 	}
 	
@@ -262,17 +227,22 @@ public class Util {
 		}
 	}
 	
-	protected static List<FilterRegistration> loadFilterRegistrations() throws IOException {
+	protected static List<FilterRegistration> loadFilterRegistrations() {
 		PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
 		ObjectMapper mapper = new ObjectMapper();
-		Resource[] resources = resourceResolver.getResources("classpath*:/*_filters.json");
 		List<FilterRegistration> registrations = new ArrayList();
-		for (Resource resource : resources) {
-			JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, FilterRegistration.class);
-			registrations.addAll(mapper.readValue(resource.getInputStream(), type));
+		try {
+			Resource[] resources = resourceResolver.getResources("classpath*:/filters/*filters.json");
+			for (Resource resource : resources) {
+				JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, FilterRegistration.class);
+				registrations.addAll(mapper.readValue(resource.getInputStream(), type));
+			}
+			
+			return registrations;
 		}
-		
-		return registrations;
+		catch (IOException e) {
+			throw new APIException("Failed to load some filter registrations", e);
+		}
 	}
 	
 }

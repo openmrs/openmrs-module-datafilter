@@ -74,8 +74,6 @@ public class DataFilterConstants {
 	        + "et.view_privilege IN (SELECT DISTINCT rp.privilege FROM role_privilege rp WHERE rp.role IN ("
 	        + PARAM_NAME_ROLES_PLACEHOLDER + "))";
 	
-	public static final String FILTER_CONDITION_PATIENT_ID = "patient_id IN (" + PERSON_ID_QUERY + ")";
-	
 	public static final String FILTER_CONDITION_ENCOUNTER_ID = "encounter_id IN (" + ENCOUNTER_ID_SUBQUERY + ")";
 	
 	public static final String GP_PERSON_ATTRIBUTE_TYPE_UUIDS = MODULE_ID + ".personAttributeTypeUuids";

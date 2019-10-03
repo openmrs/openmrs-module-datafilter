@@ -36,7 +36,7 @@ public class UtilTest {
 	
 	@Test
 	public void loadFilterRegistrations_shouldLoadAllFilterRegistrations() throws Exception {
-		assertEquals(3, Util.loadFilterRegistrations().size());
+		assertEquals(6, Util.loadFilterRegistrations().size());
 	}
 	
 }

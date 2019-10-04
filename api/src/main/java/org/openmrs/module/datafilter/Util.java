@@ -56,8 +56,8 @@ public class Util {
 	}
 	
 	/**
-	 * Sets up location based filtering by adding the filter annotations to persistent classes mapped
-	 * with JPA annotations that need to be filtered.
+	 * Adds the defined filter annotations to persistent classes mapped with JPA annotations that need
+	 * to be filtered.
 	 */
 	protected static void setupFilters() {
 		if (log.isInfoEnabled()) {
@@ -65,10 +65,8 @@ public class Util {
 		}
 		
 		for (FilterRegistration registration : getFilterRegistrations()) {
-			ParamDef[] paramDefs;
-			if (CollectionUtils.isEmpty(registration.getParameters())) {
-				paramDefs = new ParamDef[] {};
-			} else {
+			ParamDef[] paramDefs = null;
+			if (CollectionUtils.isNotEmpty(registration.getParameters())) {
 				paramDefs = new ParamDef[registration.getParameters().size()];
 				int index = 0;
 				for (FilterParameter parameter : registration.getParameters()) {
@@ -77,7 +75,8 @@ public class Util {
 				}
 			}
 			
-			registerFilter(registration.getTargetClass(), new FilterDefAnnotation(registration.getName(), paramDefs),
+			registerFilter(registration.getTargetClass(),
+			    new FilterDefAnnotation(registration.getName(), registration.getDefaultCondition(), paramDefs),
 			    new FilterAnnotation(registration.getName(), registration.getCondition()));
 		}
 		

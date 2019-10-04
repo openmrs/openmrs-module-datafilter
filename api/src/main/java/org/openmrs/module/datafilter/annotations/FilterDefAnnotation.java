@@ -11,6 +11,7 @@ package org.openmrs.module.datafilter.annotations;
 
 import java.lang.annotation.Annotation;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 
@@ -22,17 +23,21 @@ public class FilterDefAnnotation implements FilterDef {
 	
 	private String name;
 	
+	private String defaultCondition;
+	
 	private ParamDef[] paramDefs;
 	
 	/**
 	 * Constructor
 	 *
 	 * @param name the name of the filter def
+	 * @param defaultCondition the default condition for the filter def
 	 * @param paramDefs the array of @{@link ParamDef}s to add.
 	 */
-	public FilterDefAnnotation(String name, ParamDef[] paramDefs) {
+	public FilterDefAnnotation(String name, String defaultCondition, ParamDef[] paramDefs) {
 		this.name = name;
-		this.paramDefs = paramDefs;
+		this.defaultCondition = StringUtils.isNotBlank(defaultCondition) ? defaultCondition : "";
+		this.paramDefs = paramDefs != null ? paramDefs : new ParamDef[] {};
 	}
 	
 	/**
@@ -56,7 +61,7 @@ public class FilterDefAnnotation implements FilterDef {
 	 */
 	@Override
 	public String defaultCondition() {
-		return null;
+		return defaultCondition;
 	}
 	
 	/**

@@ -29,7 +29,7 @@ public class UtilTest {
 		Class<?> clazz = Concept.class;
 		assertFalse(clazz.isAnnotationPresent(annotationClass));
 		
-		Util.addAnnotationToClass(clazz, new FilterDefAnnotation("some name", null));
+		Util.addAnnotationToClass(clazz, new FilterDefAnnotation("some name", null, null));
 		
 		assertTrue(clazz.isAnnotationPresent(annotationClass));
 	}

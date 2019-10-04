@@ -17,6 +17,8 @@ public class FilterRegistration {
 	
 	private Class<?> targetClass;
 	
+	private String defaultCondition;
+	
 	private String condition;
 	
 	private List<FilterParameter> parameters;
@@ -55,6 +57,24 @@ public class FilterRegistration {
 	 */
 	public void setTargetClass(Class<?> targetClass) {
 		this.targetClass = targetClass;
+	}
+	
+	/**
+	 * Gets the defaultCondition
+	 *
+	 * @return the defaultCondition
+	 */
+	public String getDefaultCondition() {
+		return defaultCondition;
+	}
+	
+	/**
+	 * Sets the defaultCondition
+	 *
+	 * @param defaultCondition the defaultCondition to set
+	 */
+	public void setDefaultCondition(String defaultCondition) {
+		this.defaultCondition = defaultCondition;
 	}
 	
 	/**

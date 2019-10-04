@@ -24,7 +24,6 @@ import org.hibernate.annotations.Filters;
 import org.hibernate.annotations.ParamDef;
 import org.hibernate.search.annotations.FullTextFilterDefs;
 import org.openmrs.Patient;
-import org.openmrs.Visit;
 import org.openmrs.api.APIException;
 import org.openmrs.module.datafilter.annotations.AggregateAnnotation;
 import org.openmrs.module.datafilter.annotations.FilterAnnotation;
@@ -79,20 +78,19 @@ public class Util {
 				registerFilter(registration.getTargetClass(),
 				    new FilterDefAnnotation(registration.getName(), registration.getDefaultCondition(), paramDefs),
 				    new FilterAnnotation(registration.getName(), registration.getCondition()));
+			} else {
+				try {
+					addAnnotationToField(registration.getProperty(), registration.getTargetClass(),
+					    new FilterAnnotation(registration.getName(), registration.getCondition()));
+				}
+				catch (ReflectiveOperationException e) {
+					throw new APIException(e);
+				}
 			}
 		}
 		
 		registerFullTextFilter(Patient.class, new FullTextFilterDefAnnotation(
 		        DataFilterConstants.LOCATION_BASED_FULL_TEXT_FILTER_NAME_PATIENT, PatientIdFullTextFilter.class));
-		
-		try {
-			addAnnotationToField("encounters", Visit.class,
-			    new FilterAnnotation(DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER,
-			            DataFilterConstants.FILTER_CONDITION_ENCOUNTER_ID));
-		}
-		catch (ReflectiveOperationException e) {
-			throw new APIException(e);
-		}
 		
 		if (log.isInfoEnabled()) {
 			log.info("Successfully registered filters");

@@ -31,7 +31,7 @@ import org.openmrs.module.datafilter.annotations.FilterDefAnnotation;
 import org.openmrs.module.datafilter.annotations.FullTextFilterDefAnnotation;
 import org.openmrs.module.datafilter.annotations.ParamDefAnnotation;
 import org.openmrs.module.datafilter.registration.FilterParameter;
-import org.openmrs.module.datafilter.registration.FilterRegistration;
+import org.openmrs.module.datafilter.registration.HibernateFilterRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -44,9 +44,9 @@ public class Util {
 	
 	private static final Logger log = LoggerFactory.getLogger(Util.class);
 	
-	private static List<FilterRegistration> filterRegistrations;
+	private static List<HibernateFilterRegistration> filterRegistrations;
 	
-	private static List<FilterRegistration> getFilterRegistrations() {
+	private static List<HibernateFilterRegistration> getFilterRegistrations() {
 		if (filterRegistrations == null) {
 			filterRegistrations = loadFilterRegistrations();
 		}
@@ -63,7 +63,7 @@ public class Util {
 			log.info("Registering filters");
 		}
 		
-		for (FilterRegistration registration : getFilterRegistrations()) {
+		for (HibernateFilterRegistration registration : getFilterRegistrations()) {
 			ParamDef[] paramDefs = null;
 			if (registration.getProperty() == null) {
 				if (CollectionUtils.isNotEmpty(registration.getParameters())) {
@@ -79,6 +79,7 @@ public class Util {
 				    new FilterDefAnnotation(registration.getName(), registration.getDefaultCondition(), paramDefs),
 				    new FilterAnnotation(registration.getName(), registration.getCondition()));
 			} else {
+				//This is a filter to be applied to a property
 				try {
 					addAnnotationToField(registration.getProperty(), registration.getTargetClass(),
 					    new FilterAnnotation(registration.getName(), registration.getCondition()));
@@ -226,14 +227,14 @@ public class Util {
 		}
 	}
 	
-	protected static List<FilterRegistration> loadFilterRegistrations() {
+	protected static List<HibernateFilterRegistration> loadFilterRegistrations() {
 		PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
 		ObjectMapper mapper = new ObjectMapper();
-		List<FilterRegistration> registrations = new ArrayList();
+		List<HibernateFilterRegistration> registrations = new ArrayList();
 		try {
 			Resource[] resources = resourceResolver.getResources("classpath*:/filters/*filters.json");
 			for (Resource resource : resources) {
-				JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, FilterRegistration.class);
+				JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, HibernateFilterRegistration.class);
 				registrations.addAll(mapper.readValue(resource.getInputStream(), type));
 			}
 			

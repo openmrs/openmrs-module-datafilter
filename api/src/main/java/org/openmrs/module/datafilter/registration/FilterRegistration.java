@@ -9,19 +9,26 @@
  */
 package org.openmrs.module.datafilter.registration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FilterRegistration {
 	
 	private String name;
 	
-	private Class<?> targetClass;
+	private Class targetClass;
 	
-	private String defaultCondition;
+	private String property;
 	
-	private String condition;
+	private String defaultCondition = "";
 	
-	private List<FilterParameter> parameters;
+	private String condition = defaultCondition;
+	
+	private List<FilterParameter> parameters = new ArrayList();
+	
+	private boolean deduceAliasInjectionPoints = true;
+	
+	private List<FilterAlias> aliases = new ArrayList();
 	
 	/**
 	 * Gets the name
@@ -46,8 +53,26 @@ public class FilterRegistration {
 	 *
 	 * @return the targetClass
 	 */
-	public Class<?> getTargetClass() {
+	public Class getTargetClass() {
 		return targetClass;
+	}
+	
+	/**
+	 * Gets the property
+	 *
+	 * @return the property
+	 */
+	public String getProperty() {
+		return property;
+	}
+	
+	/**
+	 * Sets the property
+	 *
+	 * @param property the property to set
+	 */
+	public void setProperty(String property) {
+		this.property = property;
 	}
 	
 	/**
@@ -55,7 +80,7 @@ public class FilterRegistration {
 	 *
 	 * @param targetClass the targetClass to set
 	 */
-	public void setTargetClass(Class<?> targetClass) {
+	public void setTargetClass(Class targetClass) {
 		this.targetClass = targetClass;
 	}
 	
@@ -111,6 +136,42 @@ public class FilterRegistration {
 	 */
 	public void setParameters(List<FilterParameter> parameters) {
 		this.parameters = parameters;
+	}
+	
+	/**
+	 * Gets the deduceAliasInjectionPoints
+	 *
+	 * @return the deduceAliasInjectionPoints
+	 */
+	public boolean isDeduceAliasInjectionPoints() {
+		return deduceAliasInjectionPoints;
+	}
+	
+	/**
+	 * Sets the deduceAliasInjectionPoints
+	 *
+	 * @param deduceAliasInjectionPoints the deduceAliasInjectionPoints to set
+	 */
+	public void setDeduceAliasInjectionPoints(boolean deduceAliasInjectionPoints) {
+		this.deduceAliasInjectionPoints = deduceAliasInjectionPoints;
+	}
+	
+	/**
+	 * Gets the aliases
+	 *
+	 * @return the aliases
+	 */
+	public List<FilterAlias> getAliases() {
+		return aliases;
+	}
+	
+	/**
+	 * Sets the aliases
+	 *
+	 * @param aliases the aliases to set
+	 */
+	public void setAliases(List<FilterAlias> aliases) {
+		this.aliases = aliases;
 	}
 	
 }

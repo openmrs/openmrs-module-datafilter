@@ -66,18 +66,20 @@ public class Util {
 		
 		for (FilterRegistration registration : getFilterRegistrations()) {
 			ParamDef[] paramDefs = null;
-			if (CollectionUtils.isNotEmpty(registration.getParameters())) {
-				paramDefs = new ParamDef[registration.getParameters().size()];
-				int index = 0;
-				for (FilterParameter parameter : registration.getParameters()) {
-					paramDefs[index] = new ParamDefAnnotation(parameter.getName(), parameter.getType());
-					index++;
+			if (registration.getProperty() == null) {
+				if (CollectionUtils.isNotEmpty(registration.getParameters())) {
+					paramDefs = new ParamDef[registration.getParameters().size()];
+					int index = 0;
+					for (FilterParameter parameter : registration.getParameters()) {
+						paramDefs[index] = new ParamDefAnnotation(parameter.getName(), parameter.getType());
+						index++;
+					}
 				}
+				
+				registerFilter(registration.getTargetClass(),
+				    new FilterDefAnnotation(registration.getName(), registration.getDefaultCondition(), paramDefs),
+				    new FilterAnnotation(registration.getName(), registration.getCondition()));
 			}
-			
-			registerFilter(registration.getTargetClass(),
-			    new FilterDefAnnotation(registration.getName(), registration.getDefaultCondition(), paramDefs),
-			    new FilterAnnotation(registration.getName(), registration.getCondition()));
 		}
 		
 		registerFullTextFilter(Patient.class, new FullTextFilterDefAnnotation(

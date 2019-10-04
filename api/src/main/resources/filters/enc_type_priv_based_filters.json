@@ -20,5 +20,10 @@
                 "type": "string"
             }
         ]
+    },
+    {
+        "name": "datafilter_encTypePrivBasedEncounterFilter",
+        "targetClass": "org.openmrs.Visit",
+        "property": "encounters"
     }
 ]

@@ -23,7 +23,6 @@ import org.hibernate.annotations.FilterDefs;
 import org.hibernate.annotations.Filters;
 import org.hibernate.annotations.ParamDef;
 import org.hibernate.search.annotations.FullTextFilterDefs;
-import org.openmrs.Patient;
 import org.openmrs.api.APIException;
 import org.openmrs.module.datafilter.annotations.AggregateAnnotation;
 import org.openmrs.module.datafilter.annotations.FilterAnnotation;
@@ -31,6 +30,7 @@ import org.openmrs.module.datafilter.annotations.FilterDefAnnotation;
 import org.openmrs.module.datafilter.annotations.FullTextFilterDefAnnotation;
 import org.openmrs.module.datafilter.annotations.ParamDefAnnotation;
 import org.openmrs.module.datafilter.registration.FilterParameter;
+import org.openmrs.module.datafilter.registration.FullTextFilterRegistration;
 import org.openmrs.module.datafilter.registration.HibernateFilterRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,14 +44,28 @@ public class Util {
 	
 	private static final Logger log = LoggerFactory.getLogger(Util.class);
 	
-	private static List<HibernateFilterRegistration> filterRegistrations;
+	private static final String FILTER_PATH_PREFIX = "classpath*:/filters/";
 	
-	private static List<HibernateFilterRegistration> getFilterRegistrations() {
-		if (filterRegistrations == null) {
-			filterRegistrations = loadFilterRegistrations();
+	private static final String FILTER_PATH_SUFFIX = "/*.json";
+	
+	private static List<HibernateFilterRegistration> hibernateFilterRegistrations;
+	
+	private static List<FullTextFilterRegistration> fullTextFilterRegistrations;
+	
+	protected static List<HibernateFilterRegistration> getHibernateFilterRegistrations() {
+		if (hibernateFilterRegistrations == null) {
+			loadFilterRegistrations(true);
 		}
 		
-		return filterRegistrations;
+		return hibernateFilterRegistrations;
+	}
+	
+	protected static List<FullTextFilterRegistration> getFullTextFilterRegistrations() {
+		if (fullTextFilterRegistrations == null) {
+			loadFilterRegistrations(false);
+		}
+		
+		return fullTextFilterRegistrations;
 	}
 	
 	/**
@@ -63,7 +77,7 @@ public class Util {
 			log.info("Registering filters");
 		}
 		
-		for (HibernateFilterRegistration registration : getFilterRegistrations()) {
+		for (HibernateFilterRegistration registration : getHibernateFilterRegistrations()) {
 			ParamDef[] paramDefs = null;
 			if (registration.getProperty() == null) {
 				if (CollectionUtils.isNotEmpty(registration.getParameters())) {
@@ -90,8 +104,10 @@ public class Util {
 			}
 		}
 		
-		registerFullTextFilter(Patient.class, new FullTextFilterDefAnnotation(
-		        DataFilterConstants.LOCATION_BASED_FULL_TEXT_FILTER_NAME_PATIENT, PatientIdFullTextFilter.class));
+		for (FullTextFilterRegistration registration : getFullTextFilterRegistrations()) {
+			registerFullTextFilter(registration.getTargetClass(), new FullTextFilterDefAnnotation(registration.getName(),
+			        registration.getImplClass(), registration.getCacheMode()));
+		}
 		
 		if (log.isInfoEnabled()) {
 			log.info("Successfully registered filters");
@@ -227,18 +243,27 @@ public class Util {
 		}
 	}
 	
-	protected static List<HibernateFilterRegistration> loadFilterRegistrations() {
+	private static void loadFilterRegistrations(boolean isHibernate) {
 		PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
 		ObjectMapper mapper = new ObjectMapper();
-		List<HibernateFilterRegistration> registrations = new ArrayList();
+		final String pathPattern = FILTER_PATH_PREFIX + (isHibernate ? "hibernate" : "fulltext") + FILTER_PATH_SUFFIX;
+		if (isHibernate) {
+			hibernateFilterRegistrations = new ArrayList();
+		} else {
+			fullTextFilterRegistrations = new ArrayList();
+		}
+		
 		try {
-			Resource[] resources = resourceResolver.getResources("classpath*:/filters/*filters.json");
+			Resource[] resources = resourceResolver.getResources(pathPattern);
 			for (Resource resource : resources) {
-				JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, HibernateFilterRegistration.class);
-				registrations.addAll(mapper.readValue(resource.getInputStream(), type));
+				Class clazz = isHibernate ? HibernateFilterRegistration.class : FullTextFilterRegistration.class;
+				JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, clazz);
+				if (isHibernate) {
+					hibernateFilterRegistrations.addAll(mapper.readValue(resource.getInputStream(), type));
+				} else {
+					fullTextFilterRegistrations.addAll(mapper.readValue(resource.getInputStream(), type));
+				}
 			}
-			
-			return registrations;
 		}
 		catch (IOException e) {
 			throw new APIException("Failed to load some filter registrations", e);

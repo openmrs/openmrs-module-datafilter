@@ -24,9 +24,14 @@ public class FullTextFilterDefAnnotation implements FullTextFilterDef {
 	
 	private Class<?> implClass;
 	
-	public FullTextFilterDefAnnotation(String name, Class<?> implClass) {
+	private FilterCacheModeType cacheModeType = FilterCacheModeType.INSTANCE_AND_DOCIDSETRESULTS;
+	
+	public FullTextFilterDefAnnotation(String name, Class<?> implClass, String cacheModeType) {
 		this.name = name;
 		this.implClass = implClass;
+		if (cacheModeType != null) {
+			this.cacheModeType = FilterCacheModeType.valueOf(cacheModeType);
+		}
 	}
 	
 	/**
@@ -50,7 +55,7 @@ public class FullTextFilterDefAnnotation implements FullTextFilterDef {
 	 */
 	@Override
 	public FilterCacheModeType cache() {
-		return FilterCacheModeType.INSTANCE_AND_DOCIDSETRESULTS;
+		return cacheModeType;
 	}
 	
 	/**

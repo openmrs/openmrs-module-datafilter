@@ -1,0 +1,8 @@
+[
+    {
+        "name": "datafilter_locationBasedPatientFullTextFilter",
+        "targetClass": "org.openmrs.Patient",
+        "implClass": "org.openmrs.module.datafilter.PatientIdFullTextFilter",
+        "cacheMode": "NONE"
+    }
+]

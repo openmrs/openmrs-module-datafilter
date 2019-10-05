@@ -35,8 +35,13 @@ public class UtilTest {
 	}
 	
 	@Test
-	public void loadFilterRegistrations_shouldLoadAllFilterRegistrations() throws Exception {
-		assertEquals(7, Util.loadFilterRegistrations().size());
+	public void loadHibernateFilterRegistrations_shouldLoadAllHibernateFilterRegistrations() {
+		assertEquals(7, Util.getHibernateFilterRegistrations().size());
+	}
+	
+	@Test
+	public void loadFullTextFilterRegistrations_shouldLoadAllFullTextFilterRegistrations() {
+		assertEquals(1, Util.getFullTextFilterRegistrations().size());
 	}
 	
 }

@@ -9,7 +9,6 @@
  */
 package org.openmrs.module.datafilter.registration;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class FilterRegistration<T extends FilterParameter> {
@@ -18,7 +17,7 @@ public abstract class FilterRegistration<T extends FilterParameter> {
 	
 	private Class targetClass;
 	
-	private List<T> parameters = new ArrayList();
+	private List<T> parameters;
 	
 	/**
 	 * Gets the name

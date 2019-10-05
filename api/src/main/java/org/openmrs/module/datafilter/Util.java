@@ -78,8 +78,8 @@ public class Util {
 		}
 		
 		for (HibernateFilterRegistration registration : getHibernateFilterRegistrations()) {
-			ParamDef[] paramDefs = null;
 			if (registration.getProperty() == null) {
+				ParamDef[] paramDefs = null;
 				if (CollectionUtils.isNotEmpty(registration.getParameters())) {
 					paramDefs = new ParamDef[registration.getParameters().size()];
 					int index = 0;

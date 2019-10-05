@@ -9,20 +9,19 @@
  */
 package org.openmrs.module.datafilter.registration;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class HibernateFilterRegistration extends FilterRegistration<HibernateFilterParameter> {
 	
 	private String property;
 	
-	private String defaultCondition = "";
+	private String defaultCondition;
 	
-	private String condition = defaultCondition;
+	private String condition;
 	
-	private boolean deduceAliasInjectionPoints = true;
+	private boolean deduceAliasInjectionPoints;
 	
-	private List<FilterAlias> aliases = new ArrayList();
+	private List<FilterAlias> aliases;
 	
 	/**
 	 * Gets the property

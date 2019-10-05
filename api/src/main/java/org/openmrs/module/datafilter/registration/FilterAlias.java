@@ -13,9 +13,9 @@ public class FilterAlias {
 	
 	private String alias;
 	
-	private String table = "";
+	private String table;
 	
-	private Class entityClass = void.class;
+	private Class entityClass;
 	
 	/**
 	 * Gets the alias

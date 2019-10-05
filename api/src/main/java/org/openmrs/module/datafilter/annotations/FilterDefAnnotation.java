@@ -23,9 +23,9 @@ public class FilterDefAnnotation implements FilterDef {
 	
 	private String name;
 	
-	private String defaultCondition;
+	private String defaultCondition = "";
 	
-	private ParamDef[] paramDefs;
+	private ParamDef[] paramDefs = new ParamDef[] {};
 	
 	/**
 	 * Constructor
@@ -36,8 +36,12 @@ public class FilterDefAnnotation implements FilterDef {
 	 */
 	public FilterDefAnnotation(String name, String defaultCondition, ParamDef[] paramDefs) {
 		this.name = name;
-		this.defaultCondition = StringUtils.isNotBlank(defaultCondition) ? defaultCondition : "";
-		this.paramDefs = paramDefs != null ? paramDefs : new ParamDef[] {};
+		if (StringUtils.isNotBlank(defaultCondition)) {
+			this.defaultCondition = defaultCondition;
+		}
+		if (paramDefs != null) {
+			this.paramDefs = paramDefs;
+		}
 	}
 	
 	/**

@@ -3,6 +3,14 @@
         "name": "datafilter_locationBasedPatientFullTextFilter",
         "targetClass": "org.openmrs.Patient",
         "implClass": "org.openmrs.module.datafilter.PatientIdFullTextFilter",
-        "cacheMode": "NONE"
+        "cacheMode": "NONE",
+        "parameters": [
+            {
+                "name": "field"
+            },
+            {
+                "name": "patientIds"
+            }
+        ]
     }
 ]

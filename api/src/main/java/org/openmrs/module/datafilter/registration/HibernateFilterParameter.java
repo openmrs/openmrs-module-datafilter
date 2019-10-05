@@ -9,26 +9,26 @@
  */
 package org.openmrs.module.datafilter.registration;
 
-public class FilterParameter {
+public class HibernateFilterParameter extends FilterParameter {
 	
-	private String name;
+	private String type;
 	
 	/**
-	 * Gets the name
+	 * Gets the type
 	 *
-	 * @return the name
+	 * @return the type
 	 */
-	public String getName() {
-		return name;
+	public String getType() {
+		return type;
 	}
 	
 	/**
-	 * Sets the name
+	 * Sets the type
 	 *
-	 * @param name the name to set
+	 * @param type the type to set
 	 */
-	public void setName(String name) {
-		this.name = name;
+	public void setType(String type) {
+		this.type = type;
 	}
 	
 }

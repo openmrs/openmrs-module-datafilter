@@ -12,15 +12,13 @@ package org.openmrs.module.datafilter.registration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HibernateFilterRegistration extends FilterRegistration {
+public class HibernateFilterRegistration extends FilterRegistration<HibernateFilterParameter> {
 	
 	private String property;
 	
 	private String defaultCondition = "";
 	
 	private String condition = defaultCondition;
-	
-	private List<FilterParameter> parameters = new ArrayList();
 	
 	private boolean deduceAliasInjectionPoints = true;
 	
@@ -78,24 +76,6 @@ public class HibernateFilterRegistration extends FilterRegistration {
 	 */
 	public void setCondition(String condition) {
 		this.condition = condition;
-	}
-	
-	/**
-	 * Gets the parameters
-	 *
-	 * @return the parameters
-	 */
-	public List<FilterParameter> getParameters() {
-		return parameters;
-	}
-	
-	/**
-	 * Sets the parameters
-	 *
-	 * @param parameters the parameters to set
-	 */
-	public void setParameters(List<FilterParameter> parameters) {
-		this.parameters = parameters;
 	}
 	
 	/**

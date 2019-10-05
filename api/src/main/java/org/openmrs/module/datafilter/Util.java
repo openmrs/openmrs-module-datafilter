@@ -29,8 +29,8 @@ import org.openmrs.module.datafilter.annotations.FilterAnnotation;
 import org.openmrs.module.datafilter.annotations.FilterDefAnnotation;
 import org.openmrs.module.datafilter.annotations.FullTextFilterDefAnnotation;
 import org.openmrs.module.datafilter.annotations.ParamDefAnnotation;
-import org.openmrs.module.datafilter.registration.FilterParameter;
 import org.openmrs.module.datafilter.registration.FullTextFilterRegistration;
+import org.openmrs.module.datafilter.registration.HibernateFilterParameter;
 import org.openmrs.module.datafilter.registration.HibernateFilterRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +83,7 @@ public class Util {
 				if (CollectionUtils.isNotEmpty(registration.getParameters())) {
 					paramDefs = new ParamDef[registration.getParameters().size()];
 					int index = 0;
-					for (FilterParameter parameter : registration.getParameters()) {
+					for (HibernateFilterParameter parameter : registration.getParameters()) {
 						paramDefs[index] = new ParamDefAnnotation(parameter.getName(), parameter.getType());
 						index++;
 					}

@@ -94,7 +94,7 @@ public class DataFilterSessionContext extends SpringSessionContext {
 		
 		if (Context.isAuthenticated() && Context.getAuthenticatedUser().isSuperUser()) {
 			if (log.isTraceEnabled()) {
-				log.trace("Disabling filters for super user");
+				log.trace("Skipping enabling of filters for super user");
 			}
 			
 			disableAllFilters(session);
@@ -103,7 +103,7 @@ public class DataFilterSessionContext extends SpringSessionContext {
 		}
 		
 		if (log.isDebugEnabled()) {
-			log.debug("Enabling filter on the current session");
+			log.debug("Enabling filters on the current session");
 		}
 		
 		Integer attributeTypeId;

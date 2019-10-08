@@ -63,18 +63,9 @@ public class DataFilterConstants {
 	
 	public static final String PARAM_NAME_ROLES = "roles";
 	
-	public static final String PARAM_NAME_ROLES_PLACEHOLDER = ":" + PARAM_NAME_ROLES;
-	
 	public static final String PERSON_ID_QUERY = "SELECT DISTINCT pa.person_id FROM person_attribute pa WHERE "
 	        + "pa.person_attribute_type_id = " + ATTRIB_TYPE_ID_PLACEHOLDER + " AND pa.value IN (" + BASIS_IDS_PLACEHOLDER
 	        + ") AND pa.voided = 0";
-	
-	public static final String ENCOUNTER_ID_SUBQUERY = "SELECT DISTINCT e.encounter_id FROM encounter e INNER JOIN "
-	        + "encounter_type et ON e.encounter_type = et.encounter_type_id WHERE et.view_privilege IS NULL OR "
-	        + "et.view_privilege IN (SELECT DISTINCT rp.privilege FROM role_privilege rp WHERE rp.role IN ("
-	        + PARAM_NAME_ROLES_PLACEHOLDER + "))";
-	
-	public static final String FILTER_CONDITION_ENCOUNTER_ID = "encounter_id IN (" + ENCOUNTER_ID_SUBQUERY + ")";
 	
 	public static final String GP_PERSON_ATTRIBUTE_TYPE_UUIDS = MODULE_ID + ".personAttributeTypeUuids";
 	

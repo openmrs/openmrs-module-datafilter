@@ -243,15 +243,27 @@ public class Util {
 		}
 	}
 	
-	private static void loadFilterRegistrations(boolean isHibernate) {
+	/**
+	 * Loads the registered filters in the json files
+	 * 
+	 * @param isHibernate specifies whether hibernate or full text filters are the ones to load
+	 */
+	private static synchronized void loadFilterRegistrations(boolean isHibernate) {
+		if (isHibernate) {
+			if (hibernateFilterRegistrations != null) {
+				return;
+			}
+			hibernateFilterRegistrations = new ArrayList();
+		} else {
+			if (fullTextFilterRegistrations != null) {
+				return;
+			}
+			fullTextFilterRegistrations = new ArrayList();
+		}
+		
 		PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
 		ObjectMapper mapper = new ObjectMapper();
 		final String pathPattern = FILTER_PATH_PREFIX + (isHibernate ? "hibernate" : "fulltext") + FILTER_PATH_SUFFIX;
-		if (isHibernate) {
-			hibernateFilterRegistrations = new ArrayList();
-		} else {
-			fullTextFilterRegistrations = new ArrayList();
-		}
 		
 		try {
 			Resource[] resources = resourceResolver.getResources(pathPattern);

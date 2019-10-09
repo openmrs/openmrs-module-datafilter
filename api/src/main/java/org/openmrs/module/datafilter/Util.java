@@ -29,7 +29,6 @@ import org.openmrs.module.datafilter.annotations.FilterAnnotation;
 import org.openmrs.module.datafilter.annotations.FilterDefAnnotation;
 import org.openmrs.module.datafilter.annotations.FullTextFilterDefAnnotation;
 import org.openmrs.module.datafilter.annotations.ParamDefAnnotation;
-import org.openmrs.module.datafilter.location.AccessUtil;
 import org.openmrs.module.datafilter.registration.FullTextFilterRegistration;
 import org.openmrs.module.datafilter.registration.HibernateFilterParameter;
 import org.openmrs.module.datafilter.registration.HibernateFilterRegistration;
@@ -128,11 +127,6 @@ public class Util {
 		
 		addAnnotationToGroup(entityClass, FilterDefs.class, filterDefAnnotation);
 		addAnnotationToGroup(entityClass, Filters.class, filterAnnotation);
-		if (filterAnnotation.name().startsWith(DataFilterConstants.LOCATION_BASED_FILTER_NAME_PREFIX)) {
-			AccessUtil.recordLocationFilterRegistrationForClass(entityClass, filterAnnotation.name());
-		} else if (filterAnnotation.name().startsWith(DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX)) {
-			AccessUtil.recordEncounterTypeViewPrivilegeFilterRegistrationForClass(entityClass, filterAnnotation.name());
-		}
 	}
 	
 	/**

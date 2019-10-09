@@ -15,15 +15,13 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.mock;
-import static org.openmrs.module.datafilter.DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX;
-import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_PREFIX;
+import static org.openmrs.module.datafilter.location.LocationBasedAccessConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX;
+import static org.openmrs.module.datafilter.location.LocationBasedAccessConstants.LOCATION_BASED_FILTER_NAME_PREFIX;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -65,24 +63,11 @@ public class DataFilterInterceptorTest {
 	
 	private AdministrationService adminService = null;
 	
-	private static Map<Class<?>, Collection<String>> locationBasedClassAndFiltersMap = new HashMap();
-	
-	private static Map<Class<?>, Collection<String>> encTypeViewPrivilegeBasedClassAndFiltersMap = new HashMap();
-	
-	public static final Set<Class<?>> LOCATION_BASED_FILTERED_CLASSES = Stream
-	        .of(Patient.class, Visit.class, Encounter.class, Obs.class).collect(Collectors.toSet());
-	
 	public static final Set<Class<?>> ENC_TYPE_BASED_FILTERED_CLASSES = Stream.of(Encounter.class, Obs.class)
 	        .collect(Collectors.toSet());
 	
 	@Before
 	public void beforeEachMethod() {
-		for (Class<?> clazz : LOCATION_BASED_FILTERED_CLASSES) {
-			locationBasedClassAndFiltersMap.put(clazz, DataFilterConstants.LOCATION_BASED_FILTER_NAMES);
-		}
-		for (Class<?> clazz : ENC_TYPE_BASED_FILTERED_CLASSES) {
-			encTypeViewPrivilegeBasedClassAndFiltersMap.put(clazz, DataFilterConstants.ENC_TYPE_VIEW_PRIV_FILTER_NAMES);
-		}
 		mockStatic(Context.class);
 		mockStatic(AccessUtil.class);
 		adminService = mock(AdministrationService.class);
@@ -93,9 +78,6 @@ public class DataFilterInterceptorTest {
 		when(AccessUtil.isFilterDisabled(anyString())).thenReturn(false);
 		when(adminService.getGlobalPropertyValue(eq(DataFilterConstants.GP_RUN_IN_STRICT_MODE), anyBoolean()))
 		        .thenReturn(true);
-		when(AccessUtil.getLocationBasedClassAndFiltersMap()).thenReturn(locationBasedClassAndFiltersMap);
-		when(AccessUtil.getEncounterTypeViewPrivilegeBasedClassAndFiltersMap())
-		        .thenReturn(encTypeViewPrivilegeBasedClassAndFiltersMap);
 	}
 	
 	@Test
@@ -180,7 +162,7 @@ public class DataFilterInterceptorTest {
 		when(AccessUtil.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
 		when(AccessUtil.isFilterDisabled(startsWith(ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
 		when(Context.getAuthenticatedUser()).thenReturn(user);
-		for (Class<?> clazz : ENC_TYPE_BASED_FILTERED_CLASSES) {
+		for (Class<?> clazz : DataFilterInterceptor.encTypeBasedClassAndFiltersMap.keySet()) {
 			interceptor.onLoad(clazz.newInstance(), null, null, null, null);
 		}
 	}

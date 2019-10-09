@@ -10,11 +10,10 @@
 package org.openmrs.module.datafilter.registration;
 
 /**
- * Any spring bean that implements this interface will be notified before a supported hibernate
- * filter is enabled. A supported filter is one for which a call to {@link #supports(String)}
- * returns true for it. Implementations of this interface can do some useful logic to determine the
- * filter logic a=nd can also set parameter values in the condition for the filter about to be
- * enabled.
+ * Any spring bean that implements this interface will be notified before a supported filter is
+ * enabled. A supported filter is one for which a call to {@link #supports(String)} returns true for
+ * it. Implementations of this interface can do some useful logic to determine the filter logic a=nd
+ * can also set parameter values in the condition for the filter about to be enabled.
  * 
  * <pre>
  * Implementations are expected to ONLY listen for filters they have registered.
@@ -27,8 +26,8 @@ public interface DataFilterListener {
 	 * with the specified name.
 	 *
 	 * @param filterName The name of the filter to be tested
-	 * @return <code>true</code> if and only if {@link #onEnableFilter(DataFilterContext)} should be
-	 *         invoked for a filter with a matching name.
+	 * @return true if and only if {@link #onEnableFilter(DataFilterContext)} should be invoked for a
+	 *         filter with a matching name.
 	 */
 	boolean supports(String filterName);
 	

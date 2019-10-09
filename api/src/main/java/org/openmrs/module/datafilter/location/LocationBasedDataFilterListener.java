@@ -9,20 +9,10 @@
  */
 package org.openmrs.module.datafilter.location;
 
-import static org.openmrs.module.datafilter.DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER;
-import static org.openmrs.module.datafilter.DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS;
-import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER;
-import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS;
-import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT;
-import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT;
-import static org.openmrs.module.datafilter.DataFilterConstants.MODULE_ID;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.openmrs.Location;
 import org.openmrs.api.context.Context;
@@ -32,33 +22,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("locationBasedDataFilterListener")
 public class LocationBasedDataFilterListener implements DataFilterListener {
 	
 	private static final Logger log = LoggerFactory.getLogger(LocationBasedDataFilterListener.class);
 	
-	public static final String LOCATION_BASED_FILTER_NAME_PREFIX = MODULE_ID + "_locationBased";
-	
-	public static final String ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX = MODULE_ID + "_encTypePrivBased";
-	
-	public static final String PARAM_NAME_ATTRIB_TYPE_ID = "attributeTypeId";
-	
-	public static final String PARAM_NAME_BASIS_IDS = "basisIds";
-	
-	public static final String PARAM_NAME_ROLES = "roles";
-	
-	private static final Set<String> FILTER_NAMES = Stream.of(LOCATION_BASED_FILTER_NAME_PATIENT,
-	    LOCATION_BASED_FILTER_NAME_VISIT, LOCATION_BASED_FILTER_NAME_ENCOUNTER, LOCATION_BASED_FILTER_NAME_OBS,
-	    ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER, ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS).collect(Collectors.toSet());
-	
 	@Override
 	public boolean supports(String filterName) {
-		return FILTER_NAMES.contains(filterName);
+		return LocationBasedAccessConstants.FILTER_NAMES.contains(filterName);
 	}
 	
 	@Override
 	public void onEnableFilter(DataFilterContext filterContext) {
-		if (filterContext.getFilterName().startsWith(LOCATION_BASED_FILTER_NAME_PREFIX)) {
+		if (filterContext.getFilterName().startsWith(LocationBasedAccessConstants.LOCATION_BASED_FILTER_NAME_PREFIX)) {
 			Integer attributeTypeId = AccessUtil.getPersonAttributeTypeId(Location.class);
 			//In tests, we can get here because test data is getting setup or flushed to the db
 			if (attributeTypeId == null) {
@@ -77,9 +53,10 @@ public class LocationBasedDataFilterListener implements DataFilterListener {
 				basisIds = Collections.singleton("-1");
 			}
 			
-			filterContext.setParameter(PARAM_NAME_ATTRIB_TYPE_ID, attributeTypeId);
-			filterContext.setParameter(PARAM_NAME_BASIS_IDS, basisIds);
-		} else if (filterContext.getFilterName().startsWith(ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX)) {
+			filterContext.setParameter(LocationBasedAccessConstants.PARAM_NAME_ATTRIB_TYPE_ID, attributeTypeId);
+			filterContext.setParameter(LocationBasedAccessConstants.PARAM_NAME_BASIS_IDS, basisIds);
+		} else if (filterContext.getFilterName()
+		        .startsWith(LocationBasedAccessConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX)) {
 			Collection<String> roles = new HashSet();
 			if (Context.isAuthenticated()) {
 				Collection<String> allRoles = Context.getAuthenticatedUser().getAllRoles().stream().map(r -> r.getName())
@@ -87,7 +64,7 @@ public class LocationBasedDataFilterListener implements DataFilterListener {
 				roles.addAll(allRoles);
 			}
 			
-			filterContext.setParameter(PARAM_NAME_ROLES, roles);
+			filterContext.setParameter(LocationBasedAccessConstants.PARAM_NAME_ROLES, roles);
 		}
 	}
 	

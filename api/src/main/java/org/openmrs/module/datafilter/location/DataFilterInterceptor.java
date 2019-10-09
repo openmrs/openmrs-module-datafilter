@@ -10,7 +10,7 @@
 package org.openmrs.module.datafilter.location;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -23,6 +23,7 @@ import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.Obs;
+import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.User;
 import org.openmrs.Visit;
@@ -46,6 +47,22 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 	
 	private static final Logger log = LoggerFactory.getLogger(DataFilterInterceptor.class);
 	
+	protected static final Map<Class<?>, String> locationBasedClassAndFiltersMap;
+	
+	protected static final Map<Class<?>, String> encTypeBasedClassAndFiltersMap;
+	
+	static {
+		locationBasedClassAndFiltersMap = new HashMap();
+		locationBasedClassAndFiltersMap.put(Visit.class, DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT);
+		locationBasedClassAndFiltersMap.put(Encounter.class, DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER);
+		locationBasedClassAndFiltersMap.put(Obs.class, DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS);
+		locationBasedClassAndFiltersMap.put(Patient.class, DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT);
+		
+		encTypeBasedClassAndFiltersMap = new HashMap();
+		encTypeBasedClassAndFiltersMap.put(Encounter.class, DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER);
+		encTypeBasedClassAndFiltersMap.put(Obs.class, DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS);
+	}
+	
 	/**
 	 * @see EmptyInterceptor#onLoad(Object, Serializable, Object[], String[], Type[])
 	 */
@@ -62,10 +79,6 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 					log.trace("Skipping DataFilterInterceptor for super user");
 				}
 			} else {
-				Map<Class<?>, Collection<String>> locationBasedClassAndFiltersMap = AccessUtil
-				        .getLocationBasedClassAndFiltersMap();
-				Map<Class<?>, Collection<String>> encTypeBasedClassAndFiltersMap = AccessUtil
-				        .getEncounterTypeViewPrivilegeBasedClassAndFiltersMap();
 				boolean filteredByLoc = locationBasedClassAndFiltersMap.keySet().contains(entity.getClass());
 				boolean filteredByEnc = encTypeBasedClassAndFiltersMap.keySet().contains(entity.getClass());
 				//TODO We should allow filter registrations to actually provide the logic of what the interceptor
@@ -108,16 +121,9 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 	}
 	
 	private void checkIfHasLocationBasedAccess(Object entity, Serializable id, Object[] state, String[] propertyNames,
-	                                           User user, Map<Class<?>, Collection<String>> filtersMap) {
+	                                           User user, Map<Class<?>, String> filtersMap) {
 		
-		boolean check = true;
-		for (String filterName : filtersMap.get(entity.getClass())) {
-			check = !AccessUtil.isFilterDisabled(filterName);
-			if (check) {
-				break;
-			}
-		}
-		
+		boolean check = !AccessUtil.isFilterDisabled(filtersMap.get(entity.getClass()));
 		if (check) {
 			Object personId = id;
 			if (entity instanceof Visit || entity instanceof Encounter || entity instanceof Obs) {
@@ -133,16 +139,9 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 	}
 	
 	private void checkIfHasEncounterTypeBasedAccess(Object entity, Object[] state, String[] propertyNames, User user,
-	                                                Map<Class<?>, Collection<String>> filtersMap) {
+	                                                Map<Class<?>, String> filtersMap) {
 		
-		boolean check = true;
-		for (String filterName : filtersMap.get(entity.getClass())) {
-			check = !AccessUtil.isFilterDisabled(filterName);
-			if (check) {
-				break;
-			}
-		}
-		
+		boolean check = !AccessUtil.isFilterDisabled(filtersMap.get(entity.getClass()));
 		if (check) {
 			Integer encounterTypeId = null;
 			boolean isEncounterLessObs = false;

@@ -230,51 +230,6 @@ public class AccessUtil {
 	}
 	
 	/**
-	 * Records the specified filterName as registered for the specified class
-	 *
-	 * @param clazz the class object
-	 * @param filterName the name of the filter
-	 */
-	public static void recordLocationFilterRegistrationForClass(Class<?> clazz, String filterName) {
-		if (!locationBasedClassAndFiltersMap.containsKey(clazz)) {
-			locationBasedClassAndFiltersMap.put(clazz, new HashSet());
-		}
-		locationBasedClassAndFiltersMap.get(clazz).add(filterName);
-	}
-	
-	/**
-	 * Gets the collection of all the classes that are filtered by location
-	 *
-	 * @return the collection of classes
-	 */
-	protected static Map<Class<?>, Collection<String>> getLocationBasedClassAndFiltersMap() {
-		return locationBasedClassAndFiltersMap;
-	}
-	
-	/**
-	 * Records the specified encounter type view privilege based filterName as registered for the
-	 * specified class
-	 *
-	 * @param clazz the class object
-	 * @param filterName the name of the filter
-	 */
-	public static void recordEncounterTypeViewPrivilegeFilterRegistrationForClass(Class<?> clazz, String filterName) {
-		if (!encTypeViewPrivilegeBasedClassAndFiltersMap.containsKey(clazz)) {
-			encTypeViewPrivilegeBasedClassAndFiltersMap.put(clazz, new HashSet());
-		}
-		encTypeViewPrivilegeBasedClassAndFiltersMap.get(clazz).add(filterName);
-	}
-	
-	/**
-	 * Gets the collection of all the classes that are filtered by encounter type view privilege
-	 *
-	 * @return the collection of classes
-	 */
-	protected static Map<Class<?>, Collection<String>> getEncounterTypeViewPrivilegeBasedClassAndFiltersMap() {
-		return encTypeViewPrivilegeBasedClassAndFiltersMap;
-	}
-	
-	/**
 	 * Gets the view privilege for the encounter type matching the specified encounter type id
 	 * 
 	 * @param encounterTypeId the encounter type id to match

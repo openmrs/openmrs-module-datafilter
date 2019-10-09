@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class DataFilterConstants {
+public final class DataFilterConstants {
 	
 	public static final String MODULE_ID = "datafilter";
 	
@@ -60,8 +60,6 @@ public class DataFilterConstants {
 	public final static String ATTRIB_TYPE_ID_PLACEHOLDER = ":" + PARAM_NAME_ATTRIB_TYPE_ID;
 	
 	public final static String BASIS_IDS_PLACEHOLDER = ":" + PARAM_NAME_BASIS_IDS;
-	
-	public static final String PARAM_NAME_ROLES = "roles";
 	
 	public static final String PERSON_ID_QUERY = "SELECT DISTINCT pa.person_id FROM person_attribute pa WHERE "
 	        + "pa.person_attribute_type_id = " + ATTRIB_TYPE_ID_PLACEHOLDER + " AND pa.value IN (" + BASIS_IDS_PLACEHOLDER

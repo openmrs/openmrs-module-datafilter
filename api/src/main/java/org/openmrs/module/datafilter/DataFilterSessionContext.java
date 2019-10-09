@@ -9,25 +9,26 @@
  */
 package org.openmrs.module.datafilter;
 
-import static org.openmrs.module.datafilter.DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER;
-import static org.openmrs.module.datafilter.DataFilterConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS;
-import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER;
-import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_OBS;
-import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT;
-import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_VISIT;
-
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Filter;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.openmrs.Location;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.Daemon;
+import org.openmrs.module.datafilter.location.AccessUtil;
+import org.openmrs.module.datafilter.registration.DataFilterContext;
+import org.openmrs.module.datafilter.registration.DataFilterListener;
+import org.openmrs.module.datafilter.registration.FilterParameter;
+import org.openmrs.module.datafilter.registration.FilterRegistration;
+import org.openmrs.module.datafilter.registration.HibernateFilterRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate4.SpringSessionContext;
@@ -62,7 +63,7 @@ public class DataFilterSessionContext extends SpringSessionContext {
 	
 	private static final Logger log = LoggerFactory.getLogger(DataFilterSessionContext.class);
 	
-	private ThreadLocal<Session> tempSessionHolder = new ThreadLocal<>();
+	private ThreadLocal<Session> tempSessionHolder = new ThreadLocal();
 	
 	public DataFilterSessionContext(SessionFactoryImplementor sessionFactory) {
 		super(sessionFactory);
@@ -106,122 +107,78 @@ public class DataFilterSessionContext extends SpringSessionContext {
 			log.debug("Enabling filters on the current session");
 		}
 		
-		Integer attributeTypeId;
-		try {
-			//Don't run this method on the next line since we're already inside it
-			tempSessionHolder.set(session);
-			attributeTypeId = AccessUtil.getPersonAttributeTypeId(Location.class);
-			//In tests, we can get here because test data is getting setup or flushed to the db
-			if (attributeTypeId == null) {
-				//In theory this should match no attribute type hence no patients
-				attributeTypeId = -1;
-			}
-		}
-		finally {
-			tempSessionHolder.remove();
-		}
-		
-		Collection<String> basisIds = new HashSet();
-		Collection<String> roles = new HashSet();
-		if (Context.isAuthenticated()) {
-			Collection<String> allRoles = Context.getAuthenticatedUser().getAllRoles().stream().map(r -> r.getName())
-			        .collect(Collectors.toSet());
-			roles.addAll(allRoles);
-			try {
-				tempSessionHolder.set(session);
-				basisIds.addAll(AccessUtil.getAssignedBasisIds(Location.class));
-			}
-			finally {
-				tempSessionHolder.remove();
-			}
-		}
-		
-		if (basisIds.isEmpty()) {
-			//If the user isn't granted access to patients at any basis, we add -1 because ids are all > 0,
-			//in theory the query will match no records if the user isn't granted access to any basis
-			basisIds = Collections.singleton("-1");
-		}
-		
+		//When AccessUtil.isFilterDisabled is called, it triggers a call to SessionFactory.getCurrentSession()
+		//which gets us back here and we don't want that to happen, see beginning of this method.
 		tempSessionHolder.set(session);
-		boolean isLocPatientFilterDisabled;
-		boolean isLocVisitFilterDisabled;
-		boolean isLocEncFilterDisabled;
-		boolean isLocObsFilterDisabled;
-		boolean isEncTypeViewPrivEncFilterDisabled;
-		boolean isEncTypeViewPrivObsFilterDisabled;
+		Set<String> enabledFilters = new HashSet();
 		try {
-			isLocPatientFilterDisabled = AccessUtil.isFilterDisabled(LOCATION_BASED_FILTER_NAME_PATIENT);
-			isLocVisitFilterDisabled = AccessUtil.isFilterDisabled(LOCATION_BASED_FILTER_NAME_VISIT);
-			isLocEncFilterDisabled = AccessUtil.isFilterDisabled(LOCATION_BASED_FILTER_NAME_ENCOUNTER);
-			isLocObsFilterDisabled = AccessUtil.isFilterDisabled(LOCATION_BASED_FILTER_NAME_OBS);
-			isEncTypeViewPrivEncFilterDisabled = AccessUtil.isFilterDisabled(ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER);
-			isEncTypeViewPrivObsFilterDisabled = AccessUtil.isFilterDisabled(ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS);
+			for (HibernateFilterRegistration registration : Util.getHibernateFilterRegistrations()) {
+				if (!AccessUtil.isFilterDisabled(registration.getName())) {
+					enabledFilters.add(registration.getName());
+				}
+			}
 		}
 		finally {
 			tempSessionHolder.remove();
 		}
 		
-		if (!isLocPatientFilterDisabled) {
-			enableFilter(LOCATION_BASED_FILTER_NAME_PATIENT, attributeTypeId, basisIds, session);
-		} else {
-			session.disableFilter(LOCATION_BASED_FILTER_NAME_PATIENT);
-		}
-		
-		if (!isLocVisitFilterDisabled) {
-			enableFilter(LOCATION_BASED_FILTER_NAME_VISIT, attributeTypeId, basisIds, session);
-		} else {
-			session.disableFilter(LOCATION_BASED_FILTER_NAME_VISIT);
-		}
-		
-		if (!isLocEncFilterDisabled) {
-			enableFilter(LOCATION_BASED_FILTER_NAME_ENCOUNTER, attributeTypeId, basisIds, session);
-		} else {
-			session.disableFilter(LOCATION_BASED_FILTER_NAME_ENCOUNTER);
-		}
-		
-		if (!isLocObsFilterDisabled) {
-			enableFilter(LOCATION_BASED_FILTER_NAME_OBS, attributeTypeId, basisIds, session);
-		} else {
-			session.disableFilter(LOCATION_BASED_FILTER_NAME_OBS);
-		}
-		
-		if (!isEncTypeViewPrivEncFilterDisabled) {
-			enableEncTypeViewPrivFilter(ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER, roles, session);
-		} else {
-			session.disableFilter(ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER);
-		}
-		
-		if (!isEncTypeViewPrivObsFilterDisabled) {
-			enableEncTypeViewPrivFilter(ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS, roles, session);
-		} else {
-			session.disableFilter(ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS);
+		Map<String, Map<String, Object>> filterParamsMap = new HashMap();
+		for (HibernateFilterRegistration registration : Util.getHibernateFilterRegistrations()) {
+			if (enabledFilters.contains(registration.getName())) {
+				if (CollectionUtils.isNotEmpty(registration.getParameters())) {
+					filterParamsMap.put(registration.getName(), new HashMap());
+				}
+				
+				DataFilterContext filterContext = new DataFilterContext(registration.getName(), filterParamsMap);
+				List<DataFilterListener> listeners = Context.getRegisteredComponents(DataFilterListener.class);
+				//Just in case any listener makes a call to the DB
+				tempSessionHolder.set(session);
+				try {
+					for (DataFilterListener listener : listeners) {
+						if (listener.supports(registration.getName())) {
+							listener.onEnableFilter(filterContext);
+						}
+					}
+				}
+				finally {
+					tempSessionHolder.remove();
+				}
+				
+				enableFilter(registration, filterParamsMap.get(registration.getName()), session);
+			} else {
+				session.disableFilter(registration.getName());
+			}
 		}
 		
 		return session;
 	}
 	
-	private void enableFilter(String filterName, Integer attributeTypeId, Collection<String> basisIds, Session session) {
-		Filter filter = session.getEnabledFilter(filterName);
+	private void enableFilter(HibernateFilterRegistration registration, Map<String, Object> paramNameValueMap,
+	                          Session session) {
+		
+		Filter filter = session.getEnabledFilter(registration.getName());
 		if (filter == null) {
-			filter = session.enableFilter(filterName);
+			filter = session.enableFilter(registration.getName());
 		}
 		
-		filter.setParameter(DataFilterConstants.PARAM_NAME_ATTRIB_TYPE_ID, attributeTypeId);
-		filter.setParameterList(DataFilterConstants.PARAM_NAME_BASIS_IDS, basisIds);
-	}
-	
-	private void enableEncTypeViewPrivFilter(String filterName, Collection<String> roles, Session session) {
-		Filter filter = session.getEnabledFilter(filterName);
-		if (filter == null) {
-			filter = session.enableFilter(filterName);
+		if (registration.getParameters() != null) {
+			for (FilterParameter parameter : registration.getParameters()) {
+				Object value = paramNameValueMap.get(parameter.getName());
+				if (value != null && value.getClass().isArray()) {
+					filter.setParameterList(parameter.getName(), (Object[]) value);
+				} else if (value instanceof Collection) {
+					filter.setParameterList(parameter.getName(), (Collection) value);
+				} else {
+					filter.setParameter(parameter.getName(), value);
+				}
+			}
 		}
 		
-		filter.setParameterList(DataFilterConstants.PARAM_NAME_ROLES, roles);
 	}
 	
 	private void disableAllFilters(Session session) {
-		for (String filter : DataFilterConstants.FILTER_NAMES) {
-			session.disableFilter(filter);
+		for (FilterRegistration registration : Util.getHibernateFilterRegistrations()) {
+			session.disableFilter(registration.getName());
 		}
 	}
 	

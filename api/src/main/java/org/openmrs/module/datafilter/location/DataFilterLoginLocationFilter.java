@@ -7,14 +7,14 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.datafilter;
+package org.openmrs.module.datafilter.location;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Location;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.Daemon;
 import org.openmrs.module.appframework.LoginLocationFilter;
-import org.openmrs.module.datafilter.location.AccessUtil;
+import org.openmrs.module.datafilter.DataFilterConstants;
 import org.springframework.stereotype.Component;
 
 @Component(DataFilterConstants.MODULE_ID + "LoginLocationFilter")

@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.datafilter;
+package org.openmrs.module.datafilter.location;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -22,6 +22,9 @@ import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.Program;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.datafilter.BaseFilterTest;
+import org.openmrs.module.datafilter.DataFilterConstants;
+import org.openmrs.module.datafilter.TestConstants;
 import org.openmrs.util.DatabaseUtil;
 
 public class AccessUtilTest extends BaseFilterTest {

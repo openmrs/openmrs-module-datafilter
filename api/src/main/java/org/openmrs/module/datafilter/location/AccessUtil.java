@@ -219,7 +219,7 @@ public class AccessUtil {
 	 * @param filterName the name of the filter to match
 	 * @return true if the filter is disabled otherwise false
 	 */
-	protected static boolean isFilterDisabled(String filterName) {
+	public static boolean isFilterDisabled(String filterName) {
 		List<List<Object>> rows = executeQuery("SELECT property_value FROM global_property WHERE property = '" + filterName
 		        + DataFilterConstants.DISABLED + "'");
 		if (rows.isEmpty() || rows.get(0).isEmpty() || rows.get(0).get(0) == null) {
@@ -235,7 +235,7 @@ public class AccessUtil {
 	 * @param clazz the class object
 	 * @param filterName the name of the filter
 	 */
-	protected static void recordLocationFilterRegistrationForClass(Class<?> clazz, String filterName) {
+	public static void recordLocationFilterRegistrationForClass(Class<?> clazz, String filterName) {
 		if (!locationBasedClassAndFiltersMap.containsKey(clazz)) {
 			locationBasedClassAndFiltersMap.put(clazz, new HashSet());
 		}
@@ -258,7 +258,7 @@ public class AccessUtil {
 	 * @param clazz the class object
 	 * @param filterName the name of the filter
 	 */
-	protected static void recordEncounterTypeViewPrivilegeFilterRegistrationForClass(Class<?> clazz, String filterName) {
+	public static void recordEncounterTypeViewPrivilegeFilterRegistrationForClass(Class<?> clazz, String filterName) {
 		if (!encTypeViewPrivilegeBasedClassAndFiltersMap.containsKey(clazz)) {
 			encTypeViewPrivilegeBasedClassAndFiltersMap.put(clazz, new HashSet());
 		}

@@ -14,6 +14,7 @@ import org.openmrs.Location;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.Daemon;
 import org.openmrs.module.appframework.LoginLocationFilter;
+import org.openmrs.module.datafilter.location.AccessUtil;
 import org.springframework.stereotype.Component;
 
 @Component(DataFilterConstants.MODULE_ID + "LoginLocationFilter")

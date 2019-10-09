@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.datafilter;
+package org.openmrs.module.datafilter.location;
 
 import static org.openmrs.module.datafilter.DataFilterConstants.GP_PERSON_ATTRIBUTE_TYPE_UUIDS;
 
@@ -28,6 +28,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.db.AdministrationDAO;
 import org.openmrs.api.db.LocationDAO;
+import org.openmrs.module.datafilter.DataFilterConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

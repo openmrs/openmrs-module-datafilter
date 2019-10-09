@@ -24,6 +24,7 @@ import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.db.FullTextQueryAndEntityClass;
 import org.openmrs.api.db.FullTextQueryCreatedEvent;
+import org.openmrs.module.datafilter.location.AccessUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;

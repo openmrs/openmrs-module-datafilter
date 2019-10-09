@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.datafilter.location.AccessUtilTest;
 import org.openmrs.test.TestUtil;
 import org.openmrs.util.OpenmrsConstants;
 import org.springframework.beans.factory.annotation.Autowired;

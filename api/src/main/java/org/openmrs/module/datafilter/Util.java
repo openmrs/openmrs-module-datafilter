@@ -24,6 +24,8 @@ import org.hibernate.annotations.Filters;
 import org.hibernate.annotations.ParamDef;
 import org.hibernate.search.annotations.FullTextFilterDefs;
 import org.openmrs.api.APIException;
+import org.openmrs.api.context.Context;
+import org.openmrs.api.db.AdministrationDAO;
 import org.openmrs.module.datafilter.annotations.AggregateAnnotation;
 import org.openmrs.module.datafilter.annotations.FilterAnnotation;
 import org.openmrs.module.datafilter.annotations.FilterDefAnnotation;
@@ -51,6 +53,26 @@ public class Util {
 	private static List<HibernateFilterRegistration> hibernateFilterRegistrations;
 	
 	private static List<FullTextFilterRegistration> fullTextFilterRegistrations;
+	
+	/**
+	 * Checks if the filter matching the specified name is disabled, every filter can be disabled via a
+	 * global property, the name of the global property is the filter name with the a dot and disabled
+	 * word appended to the end.
+	 *
+	 * @param filterName the name of the filter to match
+	 * @return true if the filter is disabled otherwise false
+	 */
+	public static boolean isFilterDisabled(String filterName) {
+		AdministrationDAO adminDAO = Context.getRegisteredComponent("adminDAO", AdministrationDAO.class);
+		List<List<Object>> rows = adminDAO.executeSQL("SELECT property_value FROM global_property WHERE property = '"
+		        + filterName + DataFilterConstants.DISABLED + "'",
+		    true);
+		if (rows.isEmpty() || rows.get(0).isEmpty() || rows.get(0).get(0) == null) {
+			return false;
+		}
+		
+		return "true".equalsIgnoreCase(rows.get(0).get(0).toString().trim());
+	}
 	
 	protected static List<HibernateFilterRegistration> getHibernateFilterRegistrations() {
 		if (hibernateFilterRegistrations == null) {

@@ -32,6 +32,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.api.context.Daemon;
 import org.openmrs.module.datafilter.DataFilterConstants;
+import org.openmrs.module.datafilter.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -123,7 +124,7 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 	private void checkIfHasLocationBasedAccess(Object entity, Serializable id, Object[] state, String[] propertyNames,
 	                                           User user, Map<Class<?>, String> filtersMap) {
 		
-		boolean check = !AccessUtil.isFilterDisabled(filtersMap.get(entity.getClass()));
+		boolean check = !Util.isFilterDisabled(filtersMap.get(entity.getClass()));
 		if (check) {
 			Object personId = id;
 			if (entity instanceof Visit || entity instanceof Encounter || entity instanceof Obs) {
@@ -141,7 +142,7 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 	private void checkIfHasEncounterTypeBasedAccess(Object entity, Object[] state, String[] propertyNames, User user,
 	                                                Map<Class<?>, String> filtersMap) {
 		
-		boolean check = !AccessUtil.isFilterDisabled(filtersMap.get(entity.getClass()));
+		boolean check = !Util.isFilterDisabled(filtersMap.get(entity.getClass()));
 		if (check) {
 			Integer encounterTypeId = null;
 			boolean isEncounterLessObs = false;

@@ -25,6 +25,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.db.FullTextQueryAndEntityClass;
 import org.openmrs.api.db.FullTextQueryCreatedEvent;
 import org.openmrs.module.datafilter.DataFilterConstants;
+import org.openmrs.module.datafilter.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
@@ -69,7 +70,7 @@ public class FullTextQueryCreatedEventListener implements ApplicationListener<Fu
 			return;
 		}
 		
-		if (AccessUtil.isFilterDisabled(LOCATION_BASED_FILTER_NAME_PATIENT)) {
+		if (Util.isFilterDisabled(LOCATION_BASED_FILTER_NAME_PATIENT)) {
 			return;
 		}
 		

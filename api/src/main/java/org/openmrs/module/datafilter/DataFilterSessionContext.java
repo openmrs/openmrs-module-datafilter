@@ -23,7 +23,6 @@ import org.hibernate.Session;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.Daemon;
-import org.openmrs.module.datafilter.location.AccessUtil;
 import org.openmrs.module.datafilter.registration.DataFilterContext;
 import org.openmrs.module.datafilter.registration.DataFilterListener;
 import org.openmrs.module.datafilter.registration.FilterParameter;
@@ -113,7 +112,7 @@ public class DataFilterSessionContext extends SpringSessionContext {
 		Set<String> enabledFilters = new HashSet();
 		try {
 			for (HibernateFilterRegistration registration : Util.getHibernateFilterRegistrations()) {
-				if (!AccessUtil.isFilterDisabled(registration.getName())) {
+				if (!Util.isFilterDisabled(registration.getName())) {
 					enabledFilters.add(registration.getName());
 				}
 			}

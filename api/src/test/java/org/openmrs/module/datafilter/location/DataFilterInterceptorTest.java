@@ -49,11 +49,12 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.api.context.Daemon;
 import org.openmrs.module.datafilter.DataFilterConstants;
+import org.openmrs.module.datafilter.Util;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ AccessUtil.class, Context.class, Daemon.class })
+@PrepareForTest({ AccessUtil.class, Util.class, Context.class, Daemon.class })
 public class DataFilterInterceptorTest {
 	
 	private DataFilterInterceptor interceptor = new DataFilterInterceptor();
@@ -70,12 +71,13 @@ public class DataFilterInterceptorTest {
 	public void beforeEachMethod() {
 		mockStatic(Context.class);
 		mockStatic(AccessUtil.class);
+		mockStatic(Util.class);
 		adminService = mock(AdministrationService.class);
 		when(Context.getAdministrationService()).thenReturn(adminService);
 		SessionFactory sf = mock(SessionFactory.class);
 		when(sf.getCurrentSession()).thenReturn(mock(Session.class));
 		when(Context.getRegisteredComponents(eq(SessionFactory.class))).thenReturn(Collections.singletonList(sf));
-		when(AccessUtil.isFilterDisabled(anyString())).thenReturn(false);
+		when(Util.isFilterDisabled(anyString())).thenReturn(false);
 		when(adminService.getGlobalPropertyValue(eq(DataFilterConstants.GP_RUN_IN_STRICT_MODE), anyBoolean()))
 		        .thenReturn(true);
 	}
@@ -131,7 +133,7 @@ public class DataFilterInterceptorTest {
 	@Test
 	public void onLoad_shouldPassForAllFilteredTypesIfAllLocationBasedFiltersAreDisabled() {
 		User user = mock(User.class);
-		when(AccessUtil.isFilterDisabled(anyString())).thenReturn(true);
+		when(Util.isFilterDisabled(anyString())).thenReturn(true);
 		when(Context.getAuthenticatedUser()).thenReturn(user);
 		interceptor.onLoad(new Patient(), null, null, null, null);
 	}
@@ -143,7 +145,7 @@ public class DataFilterInterceptorTest {
 		User user = mock(User.class);
 		user.setId(userId);
 		when(Context.getAuthenticatedUser()).thenReturn(user);
-		when(AccessUtil.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
+		when(Util.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
 		final String privilege = "Some Privilege";
 		final Integer encounterTypeId = 5000;
 		when(AccessUtil.getViewPrivilege(Matchers.eq(encounterTypeId))).thenReturn(privilege);
@@ -159,8 +161,8 @@ public class DataFilterInterceptorTest {
 	@Test
 	public void onLoad_shouldPassIfAllEncounterTypeViewPrivilegeBasedFiltersAreDisabled() throws Exception {
 		User user = mock(User.class);
-		when(AccessUtil.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
-		when(AccessUtil.isFilterDisabled(startsWith(ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
+		when(Util.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
+		when(Util.isFilterDisabled(startsWith(ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
 		when(Context.getAuthenticatedUser()).thenReturn(user);
 		for (Class<?> clazz : DataFilterInterceptor.encTypeBasedClassAndFiltersMap.keySet()) {
 			interceptor.onLoad(clazz.newInstance(), null, null, null, null);
@@ -170,7 +172,7 @@ public class DataFilterInterceptorTest {
 	@Test
 	public void onLoad_shouldPassIfTheEncounterTypeForTheEncounterHasNoViewPrivilege() {
 		User user = mock(User.class);
-		when(AccessUtil.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
+		when(Util.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
 		when(Context.getAuthenticatedUser()).thenReturn(user);
 		final Integer encounterTypeId = 1;
 		when(AccessUtil.getViewPrivilege(Matchers.eq(encounterTypeId))).thenReturn(null);
@@ -186,7 +188,7 @@ public class DataFilterInterceptorTest {
 		User user = mock(User.class);
 		user.setId(userId);
 		when(Context.getAuthenticatedUser()).thenReturn(user);
-		when(AccessUtil.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
+		when(Util.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
 		final String privilege = "Some Privilege";
 		final Integer encounterTypeId = 5000;
 		when(AccessUtil.getViewPrivilege(Matchers.eq(encounterTypeId))).thenReturn(privilege);
@@ -205,7 +207,7 @@ public class DataFilterInterceptorTest {
 		User user = mock(User.class);
 		user.setId(userId);
 		when(Context.getAuthenticatedUser()).thenReturn(user);
-		when(AccessUtil.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
+		when(Util.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
 		final String privilege = "Some Privilege";
 		final Integer encounterTypeId = 5000;
 		when(AccessUtil.getViewPrivilege(Matchers.eq(encounterTypeId))).thenReturn(privilege);
@@ -220,7 +222,7 @@ public class DataFilterInterceptorTest {
 	
 	@Test
 	public void onLoad_shouldPassIfTheTheObsBelongsToNoEncounter() {
-		when(AccessUtil.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
+		when(Util.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
 		when(AccessUtil.getViewPrivilege(Matchers.any())).thenReturn("Some Privilege");
 		interceptor.onLoad(new Obs(), null, new Object[] { null }, new String[] { "encounter" }, null);
 	}
@@ -228,7 +230,7 @@ public class DataFilterInterceptorTest {
 	@Test
 	public void onLoad_shouldPassIfTheAssociatedEncounterTypeForTheObsEncounterHasNoViewPrivilege() {
 		User user = mock(User.class);
-		when(AccessUtil.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
+		when(Util.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
 		when(Context.getAuthenticatedUser()).thenReturn(user);
 		final Integer encounterId = 101;
 		interceptor.onLoad(new Obs(), null, new Object[] { new Encounter(encounterId) }, new String[] { "encounter" }, null);
@@ -247,7 +249,7 @@ public class DataFilterInterceptorTest {
 	public void onLoad_shouldPassIfTheAuthenticatedUserIsAllowedToViewThePatientEncounterGettingLoaded() {
 		final Integer patientId = 101;
 		Collection<String> accessiblePatientIds = Stream.of(patientId.toString()).collect(Collectors.toSet());
-		when(AccessUtil.isFilterDisabled(startsWith(ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
+		when(Util.isFilterDisabled(startsWith(ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
 		when(Context.getAuthenticatedUser()).thenReturn(new User());
 		when(AccessUtil.getAccessiblePersonIds(eq(Location.class))).thenReturn(accessiblePatientIds);
 		interceptor.onLoad(new Encounter(), null, new Object[] { new Patient(101) }, new String[] { "patient" }, null);
@@ -257,7 +259,7 @@ public class DataFilterInterceptorTest {
 	public void onLoad_shouldPassIfTheAuthenticatedUserIsAllowedToViewTheObsGettingLoaded() {
 		final Integer patientId = 101;
 		Collection<String> accessiblePatientIds = Stream.of(patientId.toString()).collect(Collectors.toSet());
-		when(AccessUtil.isFilterDisabled(startsWith(ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
+		when(Util.isFilterDisabled(startsWith(ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
 		when(Context.getAuthenticatedUser()).thenReturn(new User());
 		when(AccessUtil.getAccessiblePersonIds(eq(Location.class))).thenReturn(accessiblePatientIds);
 		interceptor.onLoad(new Obs(), null, new Object[] { new Patient(patientId) }, new String[] { "person" }, null);

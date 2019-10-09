@@ -212,24 +212,6 @@ public class AccessUtil {
 	}
 	
 	/**
-	 * Checks if the filter matching the specified name is disabled, every filter can be disabled via a
-	 * global property, the name of the global property is the filter name with the a dot and disabled
-	 * word appended to the end.
-	 * 
-	 * @param filterName the name of the filter to match
-	 * @return true if the filter is disabled otherwise false
-	 */
-	public static boolean isFilterDisabled(String filterName) {
-		List<List<Object>> rows = executeQuery("SELECT property_value FROM global_property WHERE property = '" + filterName
-		        + DataFilterConstants.DISABLED + "'");
-		if (rows.isEmpty() || rows.get(0).isEmpty() || rows.get(0).get(0) == null) {
-			return false;
-		}
-		
-		return "true".equalsIgnoreCase(rows.get(0).get(0).toString().trim());
-	}
-	
-	/**
 	 * Gets the view privilege for the encounter type matching the specified encounter type id
 	 * 
 	 * @param encounterTypeId the encounter type id to match

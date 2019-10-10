@@ -56,7 +56,7 @@ public class AccessUtil {
 	        + ENTITY_TYPE_PLACEHOLDER + "' AND basis_type = '" + BASIS_TYPE_PLACEHOLDER + "'";
 	
 	private final static String GP_QUERY = "SELECT property_value FROM global_property WHERE property = '"
-	        + LocationBasedAccessConstants.GP_PERSON_ATTRIBUTE_TYPE_UUIDS + "'";
+	        + ImplConstants.GP_PERSON_ATTRIBUTE_TYPE_UUIDS + "'";
 	
 	private final static String ATTRIBUTE_TYPE_QUERY = "SELECT person_attribute_type_id, format FROM person_attribute_type WHERE uuid IN ("
 	        + UUIDS_PLACEHOLDER + ")";
@@ -90,9 +90,9 @@ public class AccessUtil {
 				    "Filtering on " + basisType.getSimpleName() + "(s) with id(s): " + String.join(",", accessibleBasisIds));
 			}
 			
-			String personQuery = LocationBasedAccessConstants.PERSON_ID_QUERY
-			        .replace(LocationBasedAccessConstants.ATTRIB_TYPE_ID_PLACEHOLDER, attributeTypeId.toString())
-			        .replace(LocationBasedAccessConstants.BASIS_IDS_PLACEHOLDER, String.join(",", accessibleBasisIds));
+			String personQuery = ImplConstants.PERSON_ID_QUERY
+			        .replace(ImplConstants.ATTRIB_TYPE_ID_PLACEHOLDER, attributeTypeId.toString())
+			        .replace(ImplConstants.BASIS_IDS_PLACEHOLDER, String.join(",", accessibleBasisIds));
 			List<List<Object>> personRows = executeQuery(personQuery);
 			Set<String> personIds = new HashSet();
 			personRows.forEach((List<Object> personRow) -> personIds.add(personRow.get(0).toString()));
@@ -149,7 +149,7 @@ public class AccessUtil {
 	
 	/**
 	 * Gets the id of the person attribute type that matches any of the uuids configured via the
-	 * {@link LocationBasedAccessConstants#GP_PERSON_ATTRIBUTE_TYPE_UUIDS} for the specified basis type.
+	 * {@link ImplConstants#GP_PERSON_ATTRIBUTE_TYPE_UUIDS} for the specified basis type.
 	 * 
 	 * @param basisType the basis type to match
 	 * @return the if of the person attribute type
@@ -160,7 +160,7 @@ public class AccessUtil {
 		String attribTypeUuids = null;
 		if (!rows.isEmpty()) {
 			if (rows.get(0).get(0) == null) {
-				log.warn("The value for the " + LocationBasedAccessConstants.GP_PERSON_ATTRIBUTE_TYPE_UUIDS + " global property is not yet set");
+				log.warn("The value for the " + ImplConstants.GP_PERSON_ATTRIBUTE_TYPE_UUIDS + " global property is not yet set");
 				throw new APIException("Failed to load accessible persons");
 			}
 			attribTypeUuids = rows.get(0).get(0).toString();

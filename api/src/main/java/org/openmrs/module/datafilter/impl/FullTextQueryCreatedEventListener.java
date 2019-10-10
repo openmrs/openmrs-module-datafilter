@@ -67,7 +67,7 @@ public class FullTextQueryCreatedEventListener implements ApplicationListener<Fu
 			return;
 		}
 		
-		if (Util.isFilterDisabled(LocationBasedAccessConstants.LOCATION_BASED_FILTER_NAME_PATIENT)) {
+		if (Util.isFilterDisabled(ImplConstants.LOCATION_BASED_FILTER_NAME_PATIENT)) {
 			return;
 		}
 		
@@ -76,7 +76,7 @@ public class FullTextQueryCreatedEventListener implements ApplicationListener<Fu
 		}
 		
 		FullTextFilter filter = query
-		        .enableFullTextFilter(LocationBasedAccessConstants.LOCATION_BASED_FULL_TEXT_FILTER_NAME_PATIENT);
+		        .enableFullTextFilter(ImplConstants.LOCATION_BASED_FULL_TEXT_FILTER_NAME_PATIENT);
 		filter.setParameter("field", CLASS_FIELD_MAP.get(entityClass));
 		Collection<String> personIds = AccessUtil.getAccessiblePersonIds(Location.class);
 		if (personIds.isEmpty()) {

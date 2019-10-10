@@ -17,7 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public final class LocationBasedAccessConstants {
+public final class ImplConstants {
 	
 	public static final String LOCATION_BASED_FILTER_NAME_PREFIX = MODULE_ID + "_locationBased";
 	

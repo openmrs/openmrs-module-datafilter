@@ -9,12 +9,12 @@
  */
 package org.openmrs.module.datafilter.impl;
 
-import static org.openmrs.module.datafilter.impl.LocationBasedAccessConstants.GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER;
-import static org.openmrs.module.datafilter.impl.LocationBasedAccessConstants.GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS;
-import static org.openmrs.module.datafilter.impl.LocationBasedAccessConstants.GP_LOCATION_BASED_FILTER_NAME_ENCOUNTER;
-import static org.openmrs.module.datafilter.impl.LocationBasedAccessConstants.GP_LOCATION_BASED_FILTER_NAME_OBS;
-import static org.openmrs.module.datafilter.impl.LocationBasedAccessConstants.GP_LOCATION_BASED_FILTER_NAME_PATIENT;
-import static org.openmrs.module.datafilter.impl.LocationBasedAccessConstants.GP_LOCATION_BASED_FILTER_NAME_VISIT;
+import static org.openmrs.module.datafilter.impl.ImplConstants.GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER;
+import static org.openmrs.module.datafilter.impl.ImplConstants.GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS;
+import static org.openmrs.module.datafilter.impl.ImplConstants.GP_LOCATION_BASED_FILTER_NAME_ENCOUNTER;
+import static org.openmrs.module.datafilter.impl.ImplConstants.GP_LOCATION_BASED_FILTER_NAME_OBS;
+import static org.openmrs.module.datafilter.impl.ImplConstants.GP_LOCATION_BASED_FILTER_NAME_PATIENT;
+import static org.openmrs.module.datafilter.impl.ImplConstants.GP_LOCATION_BASED_FILTER_NAME_VISIT;
 
 import org.openmrs.Privilege;
 import org.openmrs.Role;

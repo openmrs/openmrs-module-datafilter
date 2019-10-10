@@ -23,13 +23,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component("locationBasedDataFilterListener")
-public class LocationBasedDataFilterListener implements DataFilterListener {
+public class ImplDataFilterListener implements DataFilterListener {
 	
-	private static final Logger log = LoggerFactory.getLogger(LocationBasedDataFilterListener.class);
+	private static final Logger log = LoggerFactory.getLogger(ImplDataFilterListener.class);
 	
 	@Override
 	public boolean supports(String filterName) {
-		return LocationBasedAccessConstants.FILTER_NAMES.contains(filterName);
+		return ImplConstants.FILTER_NAMES.contains(filterName);
 	}
 	
 	@Override
@@ -42,7 +42,7 @@ public class LocationBasedDataFilterListener implements DataFilterListener {
 			return false;
 		}
 		
-		if (filterContext.getFilterName().startsWith(LocationBasedAccessConstants.LOCATION_BASED_FILTER_NAME_PREFIX)) {
+		if (filterContext.getFilterName().startsWith(ImplConstants.LOCATION_BASED_FILTER_NAME_PREFIX)) {
 			Integer attributeTypeId = AccessUtil.getPersonAttributeTypeId(Location.class);
 			//In tests, we can get here because test data is getting setup or flushed to the db
 			if (attributeTypeId == null) {
@@ -61,10 +61,10 @@ public class LocationBasedDataFilterListener implements DataFilterListener {
 				basisIds = Collections.singleton("-1");
 			}
 			
-			filterContext.setParameter(LocationBasedAccessConstants.PARAM_NAME_ATTRIB_TYPE_ID, attributeTypeId);
-			filterContext.setParameter(LocationBasedAccessConstants.PARAM_NAME_BASIS_IDS, basisIds);
+			filterContext.setParameter(ImplConstants.PARAM_NAME_ATTRIB_TYPE_ID, attributeTypeId);
+			filterContext.setParameter(ImplConstants.PARAM_NAME_BASIS_IDS, basisIds);
 		} else if (filterContext.getFilterName()
-		        .startsWith(LocationBasedAccessConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX)) {
+		        .startsWith(ImplConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX)) {
 			Collection<String> roles = new HashSet();
 			if (Context.isAuthenticated()) {
 				Collection<String> allRoles = Context.getAuthenticatedUser().getAllRoles().stream().map(r -> r.getName())
@@ -72,7 +72,7 @@ public class LocationBasedDataFilterListener implements DataFilterListener {
 				roles.addAll(allRoles);
 			}
 			
-			filterContext.setParameter(LocationBasedAccessConstants.PARAM_NAME_ROLES, roles);
+			filterContext.setParameter(ImplConstants.PARAM_NAME_ROLES, roles);
 		}
 		
 		return true;

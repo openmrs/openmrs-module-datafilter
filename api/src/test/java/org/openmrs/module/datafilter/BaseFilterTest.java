@@ -23,7 +23,7 @@ import org.openmrs.api.context.UsernamePasswordCredentials;
 import org.openmrs.module.datafilter.annotations.FilterDefsAnnotation;
 import org.openmrs.module.datafilter.annotations.FiltersAnnotation;
 import org.openmrs.module.datafilter.annotations.FullTextFilterDefsAnnotation;
-import org.openmrs.module.datafilter.impl.LocationBasedAccessConstants;
+import org.openmrs.module.datafilter.impl.ImplConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.util.PrivilegeConstants;
 
@@ -61,9 +61,9 @@ public abstract class BaseFilterTest extends BaseModuleContextSensitiveTest {
 		String originalValue = null;
 		Context.addProxyPrivilege(PrivilegeConstants.MANAGE_GLOBAL_PROPERTIES);
 		AdministrationService as = Context.getAdministrationService();
-		GlobalProperty gp = as.getGlobalPropertyObject(LocationBasedAccessConstants.GP_RUN_IN_STRICT_MODE);
+		GlobalProperty gp = as.getGlobalPropertyObject(ImplConstants.GP_RUN_IN_STRICT_MODE);
 		if (gp == null) {
-			gp = new GlobalProperty(LocationBasedAccessConstants.GP_RUN_IN_STRICT_MODE);
+			gp = new GlobalProperty(ImplConstants.GP_RUN_IN_STRICT_MODE);
 		} else {
 			originalValue = gp.getPropertyValue();
 			if ("true".equalsIgnoreCase(gp.getPropertyValue())) {

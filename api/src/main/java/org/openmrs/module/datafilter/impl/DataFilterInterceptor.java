@@ -53,16 +53,16 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 	
 	static {
 		locationBasedClassAndFiltersMap = new HashMap();
-		locationBasedClassAndFiltersMap.put(Visit.class, LocationBasedAccessConstants.LOCATION_BASED_FILTER_NAME_VISIT);
+		locationBasedClassAndFiltersMap.put(Visit.class, ImplConstants.LOCATION_BASED_FILTER_NAME_VISIT);
 		locationBasedClassAndFiltersMap.put(Encounter.class,
-		    LocationBasedAccessConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER);
-		locationBasedClassAndFiltersMap.put(Obs.class, LocationBasedAccessConstants.LOCATION_BASED_FILTER_NAME_OBS);
-		locationBasedClassAndFiltersMap.put(Patient.class, LocationBasedAccessConstants.LOCATION_BASED_FILTER_NAME_PATIENT);
+		    ImplConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER);
+		locationBasedClassAndFiltersMap.put(Obs.class, ImplConstants.LOCATION_BASED_FILTER_NAME_OBS);
+		locationBasedClassAndFiltersMap.put(Patient.class, ImplConstants.LOCATION_BASED_FILTER_NAME_PATIENT);
 		
 		encTypeBasedClassAndFiltersMap = new HashMap();
 		encTypeBasedClassAndFiltersMap.put(Encounter.class,
-		    LocationBasedAccessConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER);
-		encTypeBasedClassAndFiltersMap.put(Obs.class, LocationBasedAccessConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS);
+		    ImplConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER);
+		encTypeBasedClassAndFiltersMap.put(Obs.class, ImplConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS);
 	}
 	
 	/**
@@ -94,7 +94,7 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 					session.setFlushMode(FlushMode.MANUAL);
 					try {
 						AdministrationService as = Context.getAdministrationService();
-						String strictModeStr = as.getGlobalProperty(LocationBasedAccessConstants.GP_RUN_IN_STRICT_MODE);
+						String strictModeStr = as.getGlobalProperty(ImplConstants.GP_RUN_IN_STRICT_MODE);
 						if ("false".equalsIgnoreCase(strictModeStr)) {
 							if (log.isDebugEnabled()) {
 								log.trace("Skipping DataFilterInterceptor because the module is not running in strict mode");
@@ -135,7 +135,7 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 			}
 			
 			if (user == null || !AccessUtil.getAccessiblePersonIds(Location.class).contains(personId.toString())) {
-				throw new ContextAuthenticationException(LocationBasedAccessConstants.ILLEGAL_RECORD_ACCESS_MESSAGE);
+				throw new ContextAuthenticationException(ImplConstants.ILLEGAL_RECORD_ACCESS_MESSAGE);
 			}
 		}
 	}
@@ -171,7 +171,7 @@ public class DataFilterInterceptor extends EmptyInterceptor {
 				String requiredPrivilege = AccessUtil.getViewPrivilege(encounterTypeId);
 				if (requiredPrivilege != null) {
 					if (user == null || !user.hasPrivilege(requiredPrivilege)) {
-						throw new ContextAuthenticationException(LocationBasedAccessConstants.ILLEGAL_RECORD_ACCESS_MESSAGE);
+						throw new ContextAuthenticationException(ImplConstants.ILLEGAL_RECORD_ACCESS_MESSAGE);
 					}
 				}
 			}

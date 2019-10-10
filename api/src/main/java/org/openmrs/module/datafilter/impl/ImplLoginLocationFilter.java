@@ -18,7 +18,7 @@ import org.openmrs.module.datafilter.DataFilterConstants;
 import org.springframework.stereotype.Component;
 
 @Component(DataFilterConstants.MODULE_ID + "LoginLocationFilter")
-public class DataFilterLoginLocationFilter implements LoginLocationFilter {
+public class ImplLoginLocationFilter implements LoginLocationFilter {
 	
 	public static final String GP_LOGIN_LOCATION_USER_PROPERTY = "referenceapplication.locationUserPropertyName";
 	

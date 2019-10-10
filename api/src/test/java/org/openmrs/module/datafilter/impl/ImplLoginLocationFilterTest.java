@@ -33,9 +33,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ AccessUtil.class, Context.class, Daemon.class })
-public class DataFilterLoginLocationFilterTest {
+public class ImplLoginLocationFilterTest {
 	
-	private LoginLocationFilter filter = new DataFilterLoginLocationFilter();
+	private LoginLocationFilter filter = new ImplLoginLocationFilter();
 	
 	private static final Integer LOCATION_ID = 2;
 	
@@ -48,7 +48,7 @@ public class DataFilterLoginLocationFilterTest {
 		when(AccessUtil.getAssignedBasisIds(eq(Location.class)))
 		        .thenReturn(Stream.of("1", LOCATION_ID.toString()).collect(Collectors.toSet()));
 		when(Context.getAdministrationService()).thenReturn(as);
-		when(as.getGlobalProperty(eq(DataFilterLoginLocationFilter.GP_LOGIN_LOCATION_USER_PROPERTY)))
+		when(as.getGlobalProperty(eq(ImplLoginLocationFilter.GP_LOGIN_LOCATION_USER_PROPERTY)))
 		        .thenReturn("some value");
 	}
 	
@@ -80,7 +80,7 @@ public class DataFilterLoginLocationFilterTest {
 	
 	@Test
 	public void accept_shouldReturnTrueIfTheUserLoginLocationPropertyIsNotSet() {
-		when(as.getGlobalProperty(eq(DataFilterLoginLocationFilter.GP_LOGIN_LOCATION_USER_PROPERTY))).thenReturn(null);
+		when(as.getGlobalProperty(eq(ImplLoginLocationFilter.GP_LOGIN_LOCATION_USER_PROPERTY))).thenReturn(null);
 		assertTrue(filter.accept(new Location(3)));
 	}
 	

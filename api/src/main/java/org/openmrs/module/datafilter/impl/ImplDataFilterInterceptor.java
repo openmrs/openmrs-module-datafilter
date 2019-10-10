@@ -43,9 +43,9 @@ import org.springframework.stereotype.Component;
  * for super and daemon user.
  */
 @Component("dataFilterInterceptor")
-public class DataFilterInterceptor extends EmptyInterceptor {
+public class ImplDataFilterInterceptor extends EmptyInterceptor {
 	
-	private static final Logger log = LoggerFactory.getLogger(DataFilterInterceptor.class);
+	private static final Logger log = LoggerFactory.getLogger(ImplDataFilterInterceptor.class);
 	
 	protected static final Map<Class<?>, String> locationBasedClassAndFiltersMap;
 	

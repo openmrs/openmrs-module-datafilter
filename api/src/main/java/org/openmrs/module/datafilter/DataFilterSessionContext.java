@@ -92,16 +92,6 @@ public class DataFilterSessionContext extends SpringSessionContext {
 			return session;
 		}
 		
-		if (Context.isAuthenticated() && Context.getAuthenticatedUser().isSuperUser()) {
-			if (log.isTraceEnabled()) {
-				log.trace("Skipping enabling of filters for super user");
-			}
-			
-			disableAllFilters(session);
-			
-			return session;
-		}
-		
 		if (log.isDebugEnabled()) {
 			log.debug("Enabling filters on the current session");
 		}
@@ -122,7 +112,8 @@ public class DataFilterSessionContext extends SpringSessionContext {
 		}
 		
 		Map<String, Map<String, Object>> filterParamsMap = new HashMap();
-		for (HibernateFilterRegistration registration : Util.getHibernateFilterRegistrations()) {
+		
+		filterLoop: for (HibernateFilterRegistration registration : Util.getHibernateFilterRegistrations()) {
 			if (enabledFilters.contains(registration.getName())) {
 				if (CollectionUtils.isNotEmpty(registration.getParameters())) {
 					filterParamsMap.put(registration.getName(), new HashMap());
@@ -135,7 +126,18 @@ public class DataFilterSessionContext extends SpringSessionContext {
 				try {
 					for (DataFilterListener listener : listeners) {
 						if (listener.supports(registration.getName())) {
-							listener.onEnableFilter(filterContext);
+							//In theory, expect l one listener per filter, since we found one, no more will get called.
+							//TODO During filter registration, check for cases where a filter has multiple listeners
+							boolean enable = listener.onEnableFilter(filterContext);
+							if (!enable) {
+								enabledFilters.remove(registration.getName());
+								session.disableFilter(registration.getName());
+								//Don't call anymore filters since we've found one.
+								continue filterLoop;
+							}
+							
+							//Don't call anymore filters since we've found one.
+							break;
 						}
 					}
 				}

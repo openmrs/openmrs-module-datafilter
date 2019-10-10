@@ -33,7 +33,15 @@ public class LocationBasedDataFilterListener implements DataFilterListener {
 	}
 	
 	@Override
-	public void onEnableFilter(DataFilterContext filterContext) {
+	public boolean onEnableFilter(DataFilterContext filterContext) {
+		if (Context.isAuthenticated() && Context.getAuthenticatedUser().isSuperUser()) {
+			if (log.isTraceEnabled()) {
+				log.trace("Skipping enabling of filters for super user");
+			}
+			
+			return false;
+		}
+		
 		if (filterContext.getFilterName().startsWith(LocationBasedAccessConstants.LOCATION_BASED_FILTER_NAME_PREFIX)) {
 			Integer attributeTypeId = AccessUtil.getPersonAttributeTypeId(Location.class);
 			//In tests, we can get here because test data is getting setup or flushed to the db
@@ -66,6 +74,8 @@ public class LocationBasedDataFilterListener implements DataFilterListener {
 			
 			filterContext.setParameter(LocationBasedAccessConstants.PARAM_NAME_ROLES, roles);
 		}
+		
+		return true;
 	}
 	
 }

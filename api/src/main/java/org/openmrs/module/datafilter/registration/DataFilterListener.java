@@ -33,11 +33,13 @@ public interface DataFilterListener {
 	
 	/**
 	 * This method is called just before a listener is enabled, implementation logic is expected to be
-	 * include in this method e.g to set parameter values include in the condition.
+	 * include in this method e.g to set parameter values include in the condition. The return value
+	 * determines if the filter should be enabled or not.
 	 * 
 	 * @param filterContext the {@link DataFilterContext} instance associated with the filter getting
 	 *            enabled.
+	 * @return true if the filter should be enabled otherwise false
 	 */
-	void onEnableFilter(DataFilterContext filterContext);
+	boolean onEnableFilter(DataFilterContext filterContext);
 	
 }

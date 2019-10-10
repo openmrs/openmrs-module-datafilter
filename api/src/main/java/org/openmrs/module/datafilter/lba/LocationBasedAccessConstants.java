@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.datafilter.location;
+package org.openmrs.module.datafilter.lba;
 
 import static org.openmrs.module.datafilter.DataFilterConstants.DISABLED;
 import static org.openmrs.module.datafilter.DataFilterConstants.MODULE_ID;
@@ -17,7 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-final class LocationBasedAccessConstants {
+public final class LocationBasedAccessConstants {
 	
 	public static final String LOCATION_BASED_FILTER_NAME_PREFIX = MODULE_ID + "_locationBased";
 	

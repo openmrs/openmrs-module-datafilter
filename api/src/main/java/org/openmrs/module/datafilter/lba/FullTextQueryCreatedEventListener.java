@@ -7,9 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.datafilter.location;
-
-import static org.openmrs.module.datafilter.location.LocationBasedAccessConstants.LOCATION_BASED_FILTER_NAME_PATIENT;
+package org.openmrs.module.datafilter.lba;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -69,7 +67,7 @@ public class FullTextQueryCreatedEventListener implements ApplicationListener<Fu
 			return;
 		}
 		
-		if (Util.isFilterDisabled(LOCATION_BASED_FILTER_NAME_PATIENT)) {
+		if (Util.isFilterDisabled(LocationBasedAccessConstants.LOCATION_BASED_FILTER_NAME_PATIENT)) {
 			return;
 		}
 		

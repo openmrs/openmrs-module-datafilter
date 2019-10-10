@@ -7,9 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.datafilter.location;
-
-import static org.openmrs.module.datafilter.location.LocationBasedAccessConstants.GP_PERSON_ATTRIBUTE_TYPE_UUIDS;
+package org.openmrs.module.datafilter.lba;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,7 +56,7 @@ public class AccessUtil {
 	        + ENTITY_TYPE_PLACEHOLDER + "' AND basis_type = '" + BASIS_TYPE_PLACEHOLDER + "'";
 	
 	private final static String GP_QUERY = "SELECT property_value FROM global_property WHERE property = '"
-	        + GP_PERSON_ATTRIBUTE_TYPE_UUIDS + "'";
+	        + LocationBasedAccessConstants.GP_PERSON_ATTRIBUTE_TYPE_UUIDS + "'";
 	
 	private final static String ATTRIBUTE_TYPE_QUERY = "SELECT person_attribute_type_id, format FROM person_attribute_type WHERE uuid IN ("
 	        + UUIDS_PLACEHOLDER + ")";
@@ -162,7 +160,7 @@ public class AccessUtil {
 		String attribTypeUuids = null;
 		if (!rows.isEmpty()) {
 			if (rows.get(0).get(0) == null) {
-				log.warn("The value for the " + GP_PERSON_ATTRIBUTE_TYPE_UUIDS + " global property is not yet set");
+				log.warn("The value for the " + LocationBasedAccessConstants.GP_PERSON_ATTRIBUTE_TYPE_UUIDS + " global property is not yet set");
 				throw new APIException("Failed to load accessible persons");
 			}
 			attribTypeUuids = rows.get(0).get(0).toString();

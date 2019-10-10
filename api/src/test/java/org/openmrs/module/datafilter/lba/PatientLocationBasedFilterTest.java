@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.datafilter.location;
+package org.openmrs.module.datafilter.lba;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -21,8 +21,6 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.datafilter.BaseFilterTest;
 import org.openmrs.module.datafilter.TestConstants;
-import org.openmrs.module.datafilter.location.AccessUtilTest;
-import org.openmrs.module.datafilter.location.DataFilterTestUtils;
 import org.openmrs.test.TestUtil;
 import org.openmrs.util.OpenmrsConstants;
 import org.springframework.beans.factory.annotation.Autowired;

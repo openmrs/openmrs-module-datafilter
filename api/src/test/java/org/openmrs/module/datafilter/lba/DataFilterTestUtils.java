@@ -7,14 +7,14 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.datafilter.location;
+package org.openmrs.module.datafilter.lba;
 
-import static org.openmrs.module.datafilter.location.LocationBasedAccessConstants.GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER;
-import static org.openmrs.module.datafilter.location.LocationBasedAccessConstants.GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS;
-import static org.openmrs.module.datafilter.location.LocationBasedAccessConstants.GP_LOCATION_BASED_FILTER_NAME_ENCOUNTER;
-import static org.openmrs.module.datafilter.location.LocationBasedAccessConstants.GP_LOCATION_BASED_FILTER_NAME_OBS;
-import static org.openmrs.module.datafilter.location.LocationBasedAccessConstants.GP_LOCATION_BASED_FILTER_NAME_PATIENT;
-import static org.openmrs.module.datafilter.location.LocationBasedAccessConstants.GP_LOCATION_BASED_FILTER_NAME_VISIT;
+import static org.openmrs.module.datafilter.lba.LocationBasedAccessConstants.GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER;
+import static org.openmrs.module.datafilter.lba.LocationBasedAccessConstants.GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS;
+import static org.openmrs.module.datafilter.lba.LocationBasedAccessConstants.GP_LOCATION_BASED_FILTER_NAME_ENCOUNTER;
+import static org.openmrs.module.datafilter.lba.LocationBasedAccessConstants.GP_LOCATION_BASED_FILTER_NAME_OBS;
+import static org.openmrs.module.datafilter.lba.LocationBasedAccessConstants.GP_LOCATION_BASED_FILTER_NAME_PATIENT;
+import static org.openmrs.module.datafilter.lba.LocationBasedAccessConstants.GP_LOCATION_BASED_FILTER_NAME_VISIT;
 
 import org.openmrs.Privilege;
 import org.openmrs.Role;

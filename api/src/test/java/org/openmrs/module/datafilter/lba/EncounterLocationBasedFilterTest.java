@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.datafilter.location;
+package org.openmrs.module.datafilter.lba;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -24,7 +24,7 @@ import org.openmrs.module.datafilter.TestConstants;
 import org.openmrs.test.TestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class EncounterAllFiltersTest extends BaseFilterTest {
+public class EncounterLocationBasedFilterTest extends BaseFilterTest {
 	
 	@Autowired
 	private EncounterService encounterService;
@@ -32,11 +32,10 @@ public class EncounterAllFiltersTest extends BaseFilterTest {
 	@Before
 	public void before() {
 		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "encounters.xml");
-		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "privilegedEncounters.xml");
 	}
 	
 	@Test
-	public void getEncounters_shouldReturnNoEncountersIfTheUserIsNotGrantedAnyAccess() {
+	public void getEncounters_shouldReturnNoEncountersIfTheUserIsNotGrantedAccessToAnyBasis() {
 		reloginAs("dBeckham", "test");
 		final String name = "Navuga";
 		final int expCount = 0;
@@ -56,41 +55,36 @@ public class EncounterAllFiltersTest extends BaseFilterTest {
 		assertTrue(TestUtil.containsId(encounters, 1001));
 		
 		AccessUtilTest.grantLocationAccessToUser(Context.getAuthenticatedUser().getUserId(), 4001, getConnection());
-		DataFilterTestUtils.addPrivilege(BaseEncTypeViewPrivilegeBasedFilterTest.PRIV_MANAGE_CHEMO_PATIENTS);
-		//TODO Update test data to include another Enc that requires a different privilege
-		expCount = 4;
+		expCount = 3;
 		assertEquals(expCount, encounterService.getCountOfEncounters(name, false).intValue());
 		encounters = encounterService.getEncounters(name, 0, Integer.MAX_VALUE, false);
 		assertEquals(expCount, encounters.size());
 		assertTrue(TestUtil.containsId(encounters, 1000));
 		assertTrue(TestUtil.containsId(encounters, 1001));
 		assertTrue(TestUtil.containsId(encounters, 1002));
-		assertTrue(TestUtil.containsId(encounters, 2001));
 	}
 	
 	@Test
 	public void getEncounters_shouldReturnAllEncountersIfTheAuthenticatedUserIsASuperUser() {
 		assertTrue(Context.getAuthenticatedUser().isSuperUser());
 		final String name = "Navuga";
-		final int expCount = 4;
+		final int expCount = 3;
 		assertEquals(expCount, encounterService.getCountOfEncounters(name, false).intValue());
 		Collection<Encounter> encounters = encounterService.getEncounters(name, 0, Integer.MAX_VALUE, false);
 		assertEquals(expCount, encounters.size());
 		assertTrue(TestUtil.containsId(encounters, 1000));
 		assertTrue(TestUtil.containsId(encounters, 1001));
 		assertTrue(TestUtil.containsId(encounters, 1002));
-		assertTrue(TestUtil.containsId(encounters, 2001));
 	}
 	
 	@Test
-	public void getEncounters_shouldReturnAllEncountersIfAllFiltersAreDisabled() {
+	public void getEncounters_shouldReturnAllEncountersIfLocationFilteringIsDisabled() {
 		DataFilterTestUtils.disableLocationFiltering();
-		DataFilterTestUtils.disableEncTypeViewPrivilegeFiltering();
 		reloginAs("dyorke", "test");
+		final int expCount = 3;
 		final String name = "Navuga";
-		assertEquals(4, encounterService.getCountOfEncounters(name, false).intValue());
-		//In core this method already filters encounters by privilege
-		assertEquals(3, encounterService.getEncounters(name, 0, Integer.MAX_VALUE, false).size());
+		assertEquals(expCount, encounterService.getCountOfEncounters(name, false).intValue());
+		assertEquals(expCount, encounterService.getEncounters(name, 0, Integer.MAX_VALUE, false).size());
 	}
 	
 }

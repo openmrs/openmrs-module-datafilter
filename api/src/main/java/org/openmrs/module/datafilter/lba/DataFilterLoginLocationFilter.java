@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.datafilter.location;
+package org.openmrs.module.datafilter.lba;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Location;

@@ -7,15 +7,52 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.datafilter.location;
+package org.openmrs.module.datafilter;
 
+import org.hibernate.cfg.Environment;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.openmrs.Encounter;
 import org.openmrs.GlobalProperty;
+import org.openmrs.Obs;
+import org.openmrs.Patient;
+import org.openmrs.Visit;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.context.UsernamePasswordCredentials;
+import org.openmrs.module.datafilter.annotations.FilterDefsAnnotation;
+import org.openmrs.module.datafilter.annotations.FiltersAnnotation;
+import org.openmrs.module.datafilter.annotations.FullTextFilterDefsAnnotation;
+import org.openmrs.module.datafilter.lba.LocationBasedAccessConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.util.PrivilegeConstants;
 
-public abstract class BaseDataFilterTest extends BaseModuleContextSensitiveTest {
+public abstract class BaseFilterTest extends BaseModuleContextSensitiveTest {
+	
+	@BeforeClass
+	public static void beforeBaseFilterClass() throws ReflectiveOperationException {
+		Util.addAnnotationToClass(Patient.class, new FilterDefsAnnotation());
+		Util.addAnnotationToClass(Patient.class, new FiltersAnnotation());
+		Util.addAnnotationToClass(Patient.class, new FullTextFilterDefsAnnotation());
+		Util.addAnnotationToClass(Visit.class, new FilterDefsAnnotation());
+		Util.addAnnotationToClass(Visit.class, new FiltersAnnotation());
+		Util.addAnnotationToClass(Encounter.class, new FilterDefsAnnotation());
+		Util.addAnnotationToClass(Encounter.class, new FiltersAnnotation());
+		Util.addAnnotationToClass(Obs.class, new FilterDefsAnnotation());
+		Util.addAnnotationToClass(Obs.class, new FiltersAnnotation());
+		Util.setupFilters();
+		Context.addConfigProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, DataFilterSessionContext.class.getName());
+	}
+	
+	@Before
+	public void beforeTestMethod() {
+		executeDataSet(TestConstants.MODULE_TEST_DATASET_XML);
+	}
+	
+	protected void reloginAs(String username, String password) {
+		Context.logout();
+		Context.authenticate(new UsernamePasswordCredentials(username, password));
+	}
 	
 	@Override
 	public void updateSearchIndex() {
@@ -51,4 +88,5 @@ public abstract class BaseDataFilterTest extends BaseModuleContextSensitiveTest 
 			}
 		}
 	}
+	
 }

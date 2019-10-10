@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.datafilter;
+package org.openmrs.module.datafilter.impl;
 
 import org.hibernate.cfg.Environment;
 import org.junit.Before;
@@ -20,10 +20,12 @@ import org.openmrs.Visit;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UsernamePasswordCredentials;
+import org.openmrs.module.datafilter.DataFilterSessionContext;
+import org.openmrs.module.datafilter.TestConstants;
+import org.openmrs.module.datafilter.Util;
 import org.openmrs.module.datafilter.annotations.FilterDefsAnnotation;
 import org.openmrs.module.datafilter.annotations.FiltersAnnotation;
 import org.openmrs.module.datafilter.annotations.FullTextFilterDefsAnnotation;
-import org.openmrs.module.datafilter.impl.ImplConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.util.PrivilegeConstants;
 

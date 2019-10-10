@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.datafilter;
+package org.openmrs.module.datafilter.impl;
 
 import java.util.Date;
 
@@ -24,6 +24,7 @@ import javax.persistence.UniqueConstraint;
 import org.openmrs.BaseOpenmrsObject;
 import org.openmrs.Creatable;
 import org.openmrs.User;
+import org.openmrs.module.datafilter.DataFilterConstants;
 
 /**
  * An instance of this class encapsulates information about a mapping between an entity and a basis

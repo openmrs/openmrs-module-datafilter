@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.datafilter;
+package org.openmrs.module.datafilter.impl.api;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -22,7 +22,9 @@ import org.openmrs.Location;
 import org.openmrs.OpenmrsObject;
 import org.openmrs.Program;
 import org.openmrs.User;
-import org.openmrs.module.datafilter.api.DataFilterService;
+import org.openmrs.module.datafilter.TestConstants;
+import org.openmrs.module.datafilter.impl.BaseFilterTest;
+import org.openmrs.module.datafilter.impl.api.DataFilterService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class DataFilterServiceTest extends BaseFilterTest {

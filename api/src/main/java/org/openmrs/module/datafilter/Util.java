@@ -94,7 +94,7 @@ public class Util {
 	 * Adds the defined filter annotations to persistent classes mapped with JPA annotations that need
 	 * to be filtered.
 	 */
-	protected static void setupFilters() {
+	public static void setupFilters() {
 		if (log.isInfoEnabled()) {
 			log.info("Registering filters");
 		}
@@ -184,7 +184,7 @@ public class Util {
 	 * @param clazz the class to add the annotation
 	 * @param annotation the annotation to add
 	 */
-	protected static void addAnnotationToClass(Class<?> clazz, Annotation annotation) throws ReflectiveOperationException {
+	public static void addAnnotationToClass(Class<?> clazz, Annotation annotation) throws ReflectiveOperationException {
 		
 		final String annotationName = annotation.annotationType().getName();
 		if (log.isDebugEnabled()) {

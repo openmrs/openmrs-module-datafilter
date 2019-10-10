@@ -10,7 +10,6 @@
 package org.openmrs.module.datafilter.impl;
 
 import org.junit.Before;
-import org.openmrs.module.datafilter.BaseFilterTest;
 
 public abstract class BaseEncTypeViewPrivilegeBasedFilterTest extends BaseFilterTest {
 	

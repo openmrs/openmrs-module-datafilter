@@ -24,7 +24,6 @@ import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.datafilter.BaseFilterTest;
 import org.openmrs.module.datafilter.TestConstants;
 import org.openmrs.test.TestUtil;
 import org.springframework.beans.factory.annotation.Autowired;

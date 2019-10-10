@@ -7,13 +7,13 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.datafilter.api.db.hibernate;
+package org.openmrs.module.datafilter.impl.api.db.hibernate;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
-import org.openmrs.module.datafilter.EntityBasisMap;
-import org.openmrs.module.datafilter.api.db.DataFilterDAO;
+import org.openmrs.module.datafilter.impl.EntityBasisMap;
+import org.openmrs.module.datafilter.impl.api.db.DataFilterDAO;
 
 public class HibernateDataFilterDAO implements DataFilterDAO {
 	

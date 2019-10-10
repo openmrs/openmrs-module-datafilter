@@ -22,7 +22,6 @@ import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.Program;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.datafilter.BaseFilterTest;
 import org.openmrs.module.datafilter.DataFilterConstants;
 import org.openmrs.module.datafilter.TestConstants;
 import org.openmrs.util.DatabaseUtil;

@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.datafilter.api.impl;
+package org.openmrs.module.datafilter.impl.api.impl;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -18,9 +18,9 @@ import org.openmrs.Role;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
-import org.openmrs.module.datafilter.EntityBasisMap;
-import org.openmrs.module.datafilter.api.DataFilterService;
-import org.openmrs.module.datafilter.api.db.DataFilterDAO;
+import org.openmrs.module.datafilter.impl.EntityBasisMap;
+import org.openmrs.module.datafilter.impl.api.DataFilterService;
+import org.openmrs.module.datafilter.impl.api.db.DataFilterDAO;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)

@@ -20,7 +20,7 @@
     <bean parent="serviceContext">
         <property name="moduleService">
             <list>
-                <value>${project.parent.groupId}.${project.parent.artifactId}.api.DataFilterService</value>
+                <value>${project.parent.groupId}.${project.parent.artifactId}.impl.api.DataFilterService</value>
                 <ref bean="dataFilterService" />
             </list>
         </property>
@@ -31,7 +31,7 @@
             <ref bean="transactionManager" />
         </property>
         <property name="target">
-            <bean class="${project.parent.groupId}.${project.parent.artifactId}.api.impl.DataFilterServiceImpl">
+            <bean class="${project.parent.groupId}.${project.parent.artifactId}.impl.api.impl.DataFilterServiceImpl">
                 <property name="dao" ref="dataFilterDAO" />
             </bean>
         </property>
@@ -43,7 +43,7 @@
         </property>
     </bean>
 
-    <bean name="dataFilterDAO" class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernateDataFilterDAO">
+    <bean name="dataFilterDAO" class="${project.parent.groupId}.${project.parent.artifactId}.impl.api.db.hibernate.HibernateDataFilterDAO">
         <property name="sessionFactory">
             <ref bean="sessionFactory" />
         </property>

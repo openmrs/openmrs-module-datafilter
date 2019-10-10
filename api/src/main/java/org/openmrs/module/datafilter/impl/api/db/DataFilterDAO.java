@@ -7,9 +7,9 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.datafilter.api.db;
+package org.openmrs.module.datafilter.impl.api.db;
 
-import org.openmrs.module.datafilter.EntityBasisMap;
+import org.openmrs.module.datafilter.impl.EntityBasisMap;
 
 public interface DataFilterDAO {
 	

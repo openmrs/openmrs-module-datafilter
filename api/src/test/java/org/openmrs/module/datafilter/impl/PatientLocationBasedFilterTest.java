@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.datafilter.BaseFilterTest;
 import org.openmrs.module.datafilter.TestConstants;
 import org.openmrs.test.TestUtil;
 import org.openmrs.util.OpenmrsConstants;

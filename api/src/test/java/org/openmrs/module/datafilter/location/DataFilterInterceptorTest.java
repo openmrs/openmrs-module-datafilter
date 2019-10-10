@@ -48,7 +48,6 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.api.context.Daemon;
-import org.openmrs.module.datafilter.DataFilterConstants;
 import org.openmrs.module.datafilter.Util;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -78,7 +77,7 @@ public class DataFilterInterceptorTest {
 		when(sf.getCurrentSession()).thenReturn(mock(Session.class));
 		when(Context.getRegisteredComponents(eq(SessionFactory.class))).thenReturn(Collections.singletonList(sf));
 		when(Util.isFilterDisabled(anyString())).thenReturn(false);
-		when(adminService.getGlobalPropertyValue(eq(DataFilterConstants.GP_RUN_IN_STRICT_MODE), anyBoolean()))
+		when(adminService.getGlobalPropertyValue(eq(LocationBasedAccessConstants.GP_RUN_IN_STRICT_MODE), anyBoolean()))
 		        .thenReturn(true);
 	}
 	
@@ -90,7 +89,7 @@ public class DataFilterInterceptorTest {
 		when(Context.getAuthenticatedUser()).thenReturn(new User(userId));
 		when(AccessUtil.getAccessiblePersonIds(eq(Location.class))).thenReturn(accessiblePatientIds);
 		ee.expect(ContextAuthenticationException.class);
-		ee.expectMessage(equalTo(DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE));
+		ee.expectMessage(equalTo(LocationBasedAccessConstants.ILLEGAL_RECORD_ACCESS_MESSAGE));
 		interceptor.onLoad(new Patient(), patientId, null, null, null);
 	}
 	
@@ -121,7 +120,7 @@ public class DataFilterInterceptorTest {
 	
 	@Test
 	public void onLoad_shouldPassIfTheInterceptorIsDisabled() {
-		when(adminService.getGlobalProperty(eq(DataFilterConstants.GP_RUN_IN_STRICT_MODE))).thenReturn("false");
+		when(adminService.getGlobalProperty(eq(LocationBasedAccessConstants.GP_RUN_IN_STRICT_MODE))).thenReturn("false");
 		interceptor.onLoad(new Patient(), null, null, null, null);
 	}
 	
@@ -151,7 +150,7 @@ public class DataFilterInterceptorTest {
 		when(AccessUtil.getViewPrivilege(Matchers.eq(encounterTypeId))).thenReturn(privilege);
 		when(user.hasPrivilege(Matchers.eq(privilege))).thenReturn(false);
 		ee.expect(ContextAuthenticationException.class);
-		ee.expectMessage(equalTo(DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE));
+		ee.expectMessage(equalTo(LocationBasedAccessConstants.ILLEGAL_RECORD_ACCESS_MESSAGE));
 		EncounterType encType = new EncounterType();
 		encType.setId(encounterTypeId);
 		interceptor.onLoad(new Encounter(), encounterId, new Object[] { encType }, new String[] { "encounterType" },
@@ -194,7 +193,7 @@ public class DataFilterInterceptorTest {
 		when(AccessUtil.getViewPrivilege(Matchers.eq(encounterTypeId))).thenReturn(privilege);
 		when(user.hasPrivilege(Matchers.eq(privilege))).thenReturn(false);
 		ee.expect(ContextAuthenticationException.class);
-		ee.expectMessage(equalTo(DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE));
+		ee.expectMessage(equalTo(LocationBasedAccessConstants.ILLEGAL_RECORD_ACCESS_MESSAGE));
 		when(AccessUtil.getEncounterTypeId(Matchers.eq(encounterId))).thenReturn(encounterTypeId);
 		interceptor.onLoad(new Obs(), obsId, new Object[] { new Encounter(encounterId) }, new String[] { "encounter" },
 		    new Type[] { new ManyToOneType(null, null) });
@@ -213,7 +212,7 @@ public class DataFilterInterceptorTest {
 		when(AccessUtil.getViewPrivilege(Matchers.eq(encounterTypeId))).thenReturn(privilege);
 		when(user.hasPrivilege(Matchers.eq(privilege))).thenReturn(false);
 		ee.expect(ContextAuthenticationException.class);
-		ee.expectMessage(equalTo(DataFilterConstants.ILLEGAL_RECORD_ACCESS_MESSAGE));
+		ee.expectMessage(equalTo(LocationBasedAccessConstants.ILLEGAL_RECORD_ACCESS_MESSAGE));
 		Encounter e = new Encounter();
 		e.setEncounterType(new EncounterType(encounterTypeId));
 		interceptor.onLoad(new Obs(), obsId, new Object[] { e }, new String[] { "encounter" },

@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.datafilter;
+package org.openmrs.module.datafilter.location;
 
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.AdministrationService;
@@ -24,9 +24,9 @@ public abstract class BaseDataFilterTest extends BaseModuleContextSensitiveTest 
 		String originalValue = null;
 		Context.addProxyPrivilege(PrivilegeConstants.MANAGE_GLOBAL_PROPERTIES);
 		AdministrationService as = Context.getAdministrationService();
-		GlobalProperty gp = as.getGlobalPropertyObject(DataFilterConstants.GP_RUN_IN_STRICT_MODE);
+		GlobalProperty gp = as.getGlobalPropertyObject(LocationBasedAccessConstants.GP_RUN_IN_STRICT_MODE);
 		if (gp == null) {
-			gp = new GlobalProperty(DataFilterConstants.GP_RUN_IN_STRICT_MODE);
+			gp = new GlobalProperty(LocationBasedAccessConstants.GP_RUN_IN_STRICT_MODE);
 		} else {
 			originalValue = gp.getPropertyValue();
 			if ("true".equalsIgnoreCase(gp.getPropertyValue())) {

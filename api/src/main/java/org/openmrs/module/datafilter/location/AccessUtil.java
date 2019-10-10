@@ -9,15 +9,13 @@
  */
 package org.openmrs.module.datafilter.location;
 
-import static org.openmrs.module.datafilter.DataFilterConstants.GP_PERSON_ATTRIBUTE_TYPE_UUIDS;
+import static org.openmrs.module.datafilter.location.LocationBasedAccessConstants.GP_PERSON_ATTRIBUTE_TYPE_UUIDS;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -65,10 +63,6 @@ public class AccessUtil {
 	private final static String ATTRIBUTE_TYPE_QUERY = "SELECT person_attribute_type_id, format FROM person_attribute_type WHERE uuid IN ("
 	        + UUIDS_PLACEHOLDER + ")";
 	
-	private static Map<Class<?>, Collection<String>> locationBasedClassAndFiltersMap = new HashMap();
-	
-	private static Map<Class<?>, Collection<String>> encTypeViewPrivilegeBasedClassAndFiltersMap = new HashMap();
-	
 	/**
 	 * Gets the collection of person ids for all the persons associated to the bases of the specified
 	 * type, the basis could be something like Location, Program etc.
@@ -98,9 +92,9 @@ public class AccessUtil {
 				    "Filtering on " + basisType.getSimpleName() + "(s) with id(s): " + String.join(",", accessibleBasisIds));
 			}
 			
-			String personQuery = DataFilterConstants.PERSON_ID_QUERY
-			        .replace(DataFilterConstants.ATTRIB_TYPE_ID_PLACEHOLDER, attributeTypeId.toString())
-			        .replace(DataFilterConstants.BASIS_IDS_PLACEHOLDER, String.join(",", accessibleBasisIds));
+			String personQuery = LocationBasedAccessConstants.PERSON_ID_QUERY
+			        .replace(LocationBasedAccessConstants.ATTRIB_TYPE_ID_PLACEHOLDER, attributeTypeId.toString())
+			        .replace(LocationBasedAccessConstants.BASIS_IDS_PLACEHOLDER, String.join(",", accessibleBasisIds));
 			List<List<Object>> personRows = executeQuery(personQuery);
 			Set<String> personIds = new HashSet();
 			personRows.forEach((List<Object> personRow) -> personIds.add(personRow.get(0).toString()));
@@ -157,7 +151,7 @@ public class AccessUtil {
 	
 	/**
 	 * Gets the id of the person attribute type that matches any of the uuids configured via the
-	 * {@link DataFilterConstants#GP_PERSON_ATTRIBUTE_TYPE_UUIDS} for the specified basis type.
+	 * {@link LocationBasedAccessConstants#GP_PERSON_ATTRIBUTE_TYPE_UUIDS} for the specified basis type.
 	 * 
 	 * @param basisType the basis type to match
 	 * @return the if of the person attribute type

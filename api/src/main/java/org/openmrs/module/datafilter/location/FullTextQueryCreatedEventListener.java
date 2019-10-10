@@ -9,7 +9,7 @@
  */
 package org.openmrs.module.datafilter.location;
 
-import static org.openmrs.module.datafilter.DataFilterConstants.LOCATION_BASED_FILTER_NAME_PATIENT;
+import static org.openmrs.module.datafilter.location.LocationBasedAccessConstants.LOCATION_BASED_FILTER_NAME_PATIENT;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -24,7 +24,6 @@ import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.db.FullTextQueryAndEntityClass;
 import org.openmrs.api.db.FullTextQueryCreatedEvent;
-import org.openmrs.module.datafilter.DataFilterConstants;
 import org.openmrs.module.datafilter.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +77,8 @@ public class FullTextQueryCreatedEventListener implements ApplicationListener<Fu
 			log.debug("Enabling filters on the full text query for " + entityClass.getName());
 		}
 		
-		FullTextFilter filter = query.enableFullTextFilter(DataFilterConstants.LOCATION_BASED_FULL_TEXT_FILTER_NAME_PATIENT);
+		FullTextFilter filter = query
+		        .enableFullTextFilter(LocationBasedAccessConstants.LOCATION_BASED_FULL_TEXT_FILTER_NAME_PATIENT);
 		filter.setParameter("field", CLASS_FIELD_MAP.get(entityClass));
 		Collection<String> personIds = AccessUtil.getAccessiblePersonIds(Location.class);
 		if (personIds.isEmpty()) {

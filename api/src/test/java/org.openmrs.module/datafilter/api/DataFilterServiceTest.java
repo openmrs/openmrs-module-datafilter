@@ -22,7 +22,7 @@ import org.openmrs.Location;
 import org.openmrs.OpenmrsObject;
 import org.openmrs.Program;
 import org.openmrs.User;
-import org.openmrs.module.datafilter.BaseDataFilterTest;
+import org.openmrs.module.datafilter.location.BaseDataFilterTest;
 import org.openmrs.module.datafilter.TestConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 

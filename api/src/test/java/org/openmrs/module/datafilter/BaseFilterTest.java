@@ -23,7 +23,7 @@ import org.openmrs.api.context.UsernamePasswordCredentials;
 import org.openmrs.module.datafilter.annotations.FilterDefsAnnotation;
 import org.openmrs.module.datafilter.annotations.FiltersAnnotation;
 import org.openmrs.module.datafilter.annotations.FullTextFilterDefsAnnotation;
-import org.openmrs.module.datafilter.lba.LocationBasedAccessConstants;
+import org.openmrs.module.datafilter.impl.LocationBasedAccessConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.util.PrivilegeConstants;
 

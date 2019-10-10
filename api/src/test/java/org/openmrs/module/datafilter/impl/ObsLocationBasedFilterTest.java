@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.datafilter.lba;
+package org.openmrs.module.datafilter.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -24,56 +24,72 @@ import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.datafilter.BaseFilterTest;
 import org.openmrs.module.datafilter.TestConstants;
 import org.openmrs.test.TestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class ObsEncTypeViewPrivilegeBasedFilterTest extends BaseEncTypeViewPrivilegeBasedFilterTest {
+public class ObsLocationBasedFilterTest extends BaseFilterTest {
 	
 	@Autowired
 	private ObsService obsService;
 	
 	@Before
 	public void before() {
-		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "privilegedEncounters.xml");
+		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "encounters.xml");
+		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "observations.xml");
 	}
 	
 	private List<Obs> getObservations() {
 		List<Concept> questions = Collections.singletonList(new Concept(5089));
 		List<Encounter> encounters = new ArrayList<>();
-		encounters.add(new Encounter(2001));
+		encounters.add(new Encounter(1000));
+		encounters.add(new Encounter(1001));
+		encounters.add(new Encounter(1002));
 		return obsService.getObservations(null, encounters, questions, null, null, null, null, null, null, null, null,
 		    false);
 	}
 	
 	@Test
-	public void getObs_shouldIncludeEncountersThatRequireAPrivilegeAndTheUserHasIt() {
-		reloginAs("dyorke", "test");
-		int expCount = 0;
-		assertEquals(expCount, getObservations().size());
+	public void getObs_shouldReturnNoObsIfTheUserIsNotGrantedAccessToAnyBasis() {
+		reloginAs("dBeckham", "test");
+		assertEquals(0, getObservations().size());
 	}
 	
 	@Test
-	public void getObs_shouldExcludeEncountersThatRequireAPrivilege() {
+	public void getObs_shouldReturnObsBelongingToPatientsAccessibleToTheUser() {
 		reloginAs("dyorke", "test");
-		int expCount = 0;
+		int expCount = 2;
 		Collection<Obs> observations = getObservations();
 		assertEquals(expCount, observations.size());
+		assertTrue(TestUtil.containsId(observations, 1001));
+		assertTrue(TestUtil.containsId(observations, 1002));
 		
-		DataFilterTestUtils.addPrivilege(BaseEncTypeViewPrivilegeBasedFilterTest.PRIV_MANAGE_CHEMO_PATIENTS);
-		expCount = 1;
+		AccessUtilTest.grantLocationAccessToUser(Context.getAuthenticatedUser().getUserId(), 4001, getConnection());
+		expCount = 3;
 		observations = getObservations();
 		assertEquals(expCount, observations.size());
-		assertTrue(TestUtil.containsId(observations, 1004));
+		assertTrue(TestUtil.containsId(observations, 1001));
+		assertTrue(TestUtil.containsId(observations, 1002));
+		assertTrue(TestUtil.containsId(observations, 1003));
 	}
 	
 	@Test
 	public void getObs_shouldReturnAllObsIfTheAuthenticatedUserIsASuperUser() {
 		assertTrue(Context.getAuthenticatedUser().isSuperUser());
-		int expCount = 1;
+		int expCount = 3;
 		Collection<Obs> observations = getObservations();
 		assertEquals(expCount, observations.size());
-		assertTrue(TestUtil.containsId(observations, 1004));
+		assertTrue(TestUtil.containsId(observations, 1001));
+		assertTrue(TestUtil.containsId(observations, 1002));
+		assertTrue(TestUtil.containsId(observations, 1003));
+	}
+	
+	@Test
+	public void getObs_shouldReturnAllObsIfLocationFilteringIsDisabled() {
+		DataFilterTestUtils.disableLocationFiltering();
+		reloginAs("dyorke", "test");
+		assertEquals(3, getObservations().size());
 	}
 	
 }

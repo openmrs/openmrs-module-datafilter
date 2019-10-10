@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.datafilter.lba;
+package org.openmrs.module.datafilter.impl;
 
 import org.junit.Before;
 import org.openmrs.module.datafilter.BaseFilterTest;

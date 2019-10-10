@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.datafilter.lba;
+package org.openmrs.module.datafilter.impl;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.mockito.Matchers.anyBoolean;
@@ -15,8 +15,8 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.mock;
-import static org.openmrs.module.datafilter.lba.LocationBasedAccessConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX;
-import static org.openmrs.module.datafilter.lba.LocationBasedAccessConstants.LOCATION_BASED_FILTER_NAME_PREFIX;
+import static org.openmrs.module.datafilter.impl.LocationBasedAccessConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX;
+import static org.openmrs.module.datafilter.impl.LocationBasedAccessConstants.LOCATION_BASED_FILTER_NAME_PREFIX;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 

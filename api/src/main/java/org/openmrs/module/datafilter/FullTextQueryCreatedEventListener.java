@@ -14,15 +14,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.search.FullTextQuery;
 import org.hibernate.search.filter.FullTextFilter;
-import org.openmrs.PatientIdentifier;
-import org.openmrs.PersonAttribute;
-import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.Daemon;
 import org.openmrs.api.db.FullTextQueryAndEntityClass;
@@ -57,9 +52,9 @@ public class FullTextQueryCreatedEventListener implements ApplicationListener<Fu
 		}
 		
 		Set<String> enabledFilters = new HashSet();
-		Set<Class<?>> filteredClasses = Stream.of(PersonName.class, PersonAttribute.class, PatientIdentifier.class)
-		        .collect(Collectors.toSet());
+		Set<Class> filteredClasses = new HashSet();
 		for (FullTextFilterRegistration registration : Util.getFullTextFilterRegistrations()) {
+			filteredClasses.addAll(registration.getTargetClasses());
 			if (!Util.isFilterDisabled(registration.getName())) {
 				enabledFilters.add(registration.getName());
 			}

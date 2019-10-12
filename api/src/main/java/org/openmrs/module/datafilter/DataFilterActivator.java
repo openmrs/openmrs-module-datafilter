@@ -13,6 +13,7 @@ import org.hibernate.cfg.Environment;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
 import org.openmrs.Visit;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
@@ -58,7 +59,7 @@ public class DataFilterActivator extends BaseModuleActivator {
 			//TODO First check if the class has the @Entity annotation before we even bother to add others
 			Util.addAnnotationToClass(Patient.class, new FilterDefsAnnotation());
 			Util.addAnnotationToClass(Patient.class, new FiltersAnnotation());
-			Util.addAnnotationToClass(Patient.class, new FullTextFilterDefsAnnotation());
+			Util.addAnnotationToClass(PatientIdentifier.class, new FullTextFilterDefsAnnotation());
 			Util.addAnnotationToClass(Visit.class, new FilterDefsAnnotation());
 			Util.addAnnotationToClass(Visit.class, new FiltersAnnotation());
 			Util.addAnnotationToClass(Encounter.class, new FilterDefsAnnotation());

@@ -15,7 +15,7 @@ public abstract class FilterRegistration<T extends FilterParameter> {
 	
 	private String name;
 	
-	private Class targetClass;
+	private List<Class> targetClasses;
 	
 	private List<T> parameters;
 	
@@ -38,21 +38,21 @@ public abstract class FilterRegistration<T extends FilterParameter> {
 	}
 	
 	/**
-	 * Gets the targetClass
+	 * Gets the targetClasses
 	 *
-	 * @return the targetClass
+	 * @return the targetClasses
 	 */
-	public Class getTargetClass() {
-		return targetClass;
+	public List<Class> getTargetClasses() {
+		return targetClasses;
 	}
 	
 	/**
-	 * Sets the targetClass
+	 * Sets the targetClasses
 	 *
-	 * @param targetClass the targetClass to set
+	 * @param targetClasses the targetClasses to set
 	 */
-	public void setTargetClass(Class targetClass) {
-		this.targetClass = targetClass;
+	public void setTargetClasses(List<Class> targetClasses) {
+		this.targetClasses = targetClasses;
 	}
 	
 	/**

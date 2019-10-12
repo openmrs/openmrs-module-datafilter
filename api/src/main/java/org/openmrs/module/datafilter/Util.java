@@ -111,13 +111,20 @@ public class Util {
 					}
 				}
 				
-				registerFilter(registration.getTargetClass(),
-				    new FilterDefAnnotation(registration.getName(), registration.getDefaultCondition(), paramDefs),
-				    new FilterAnnotation(registration.getName(), registration.getCondition()));
+				for (Class clazz : registration.getTargetClasses()) {
+					registerFilter(clazz,
+					    new FilterDefAnnotation(registration.getName(), registration.getDefaultCondition(), paramDefs),
+					    new FilterAnnotation(registration.getName(), registration.getCondition()));
+				}
+				
 			} else {
 				//This is a filter to be applied to a property
+				if (registration.getTargetClasses().size() > 1) {
+					throw new APIException("Only one target class can be defined for a filter added to a property");
+				}
+				
 				try {
-					addAnnotationToField(registration.getProperty(), registration.getTargetClass(),
+					addAnnotationToField(registration.getProperty(), registration.getTargetClasses().get(0),
 					    new FilterAnnotation(registration.getName(), registration.getCondition()));
 				}
 				catch (ReflectiveOperationException e) {
@@ -127,8 +134,9 @@ public class Util {
 		}
 		
 		for (FullTextFilterRegistration registration : getFullTextFilterRegistrations()) {
-			registerFullTextFilter(registration.getTargetClass(), new FullTextFilterDefAnnotation(registration.getName(),
-			        registration.getImplClass(), registration.getCacheMode()));
+			//Full text filters are added to one entity but can be enabled for any entity
+			registerFullTextFilter(registration.getTargetClasses().get(0), new FullTextFilterDefAnnotation(
+			        registration.getName(), registration.getImplClass(), registration.getCacheMode()));
 		}
 		
 		if (log.isInfoEnabled()) {

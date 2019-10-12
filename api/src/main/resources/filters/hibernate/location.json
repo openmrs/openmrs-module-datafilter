@@ -1,7 +1,7 @@
 [
     {
         "name": "datafilter_locationBasedVisitFilter",
-        "targetClass": "org.openmrs.Visit",
+        "targetClasses": ["org.openmrs.Visit"],
         "condition": "patient_id IN (SELECT DISTINCT pa.person_id FROM person_attribute pa WHERE pa.person_attribute_type_id = :attributeTypeId AND pa.value IN (:basisIds) AND pa.voided = 0)",
         "parameters": [
             {
@@ -16,7 +16,7 @@
     },
     {
         "name": "datafilter_locationBasedEncounterFilter",
-        "targetClass": "org.openmrs.Encounter",
+        "targetClasses": ["org.openmrs.Encounter"],
         "condition": "patient_id IN (SELECT DISTINCT pa.person_id FROM person_attribute pa WHERE pa.person_attribute_type_id = :attributeTypeId AND pa.value IN (:basisIds) AND pa.voided = 0)",
         "parameters": [
             {
@@ -31,7 +31,7 @@
     },
     {
         "name": "datafilter_locationBasedObsFilter",
-        "targetClass": "org.openmrs.Obs",
+        "targetClasses": ["org.openmrs.Obs"],
         "condition": "person_id IN (SELECT DISTINCT pa.person_id FROM person_attribute pa WHERE pa.person_attribute_type_id = :attributeTypeId AND pa.value IN (:basisIds) AND pa.voided = 0)",
         "parameters": [
             {
@@ -46,7 +46,7 @@
     },
     {
         "name": "datafilter_locationBasedPatientFilter",
-        "targetClass": "org.openmrs.Patient",
+        "targetClasses": ["org.openmrs.Patient"],
         "condition": "patient_id IN (SELECT DISTINCT pa.person_id FROM person_attribute pa WHERE pa.person_attribute_type_id = :attributeTypeId AND pa.value IN (:basisIds) AND pa.voided = 0)",
         "parameters": [
             {

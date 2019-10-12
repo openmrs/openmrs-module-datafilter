@@ -16,6 +16,7 @@ import org.openmrs.Encounter;
 import org.openmrs.GlobalProperty;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
 import org.openmrs.Visit;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
@@ -35,7 +36,7 @@ public abstract class BaseFilterTest extends BaseModuleContextSensitiveTest {
 	public static void beforeBaseFilterClass() throws ReflectiveOperationException {
 		Util.addAnnotationToClass(Patient.class, new FilterDefsAnnotation());
 		Util.addAnnotationToClass(Patient.class, new FiltersAnnotation());
-		Util.addAnnotationToClass(Patient.class, new FullTextFilterDefsAnnotation());
+		Util.addAnnotationToClass(PatientIdentifier.class, new FullTextFilterDefsAnnotation());
 		Util.addAnnotationToClass(Visit.class, new FilterDefsAnnotation());
 		Util.addAnnotationToClass(Visit.class, new FiltersAnnotation());
 		Util.addAnnotationToClass(Encounter.class, new FilterDefsAnnotation());

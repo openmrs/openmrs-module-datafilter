@@ -9,6 +9,8 @@
  */
 package org.openmrs.module.datafilter;
 
+import static org.openmrs.module.datafilter.DataFilterConstants.MODULE_ID;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -33,7 +35,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
-@Component("dataFilterFullTextQueryCreatedEventListener")
+@Component(MODULE_ID + "FullTextQueryCreatedEventListener")
 public class FullTextQueryCreatedEventListener implements ApplicationListener<FullTextQueryCreatedEvent> {
 	
 	private static final Logger log = LoggerFactory.getLogger(FullTextQueryCreatedEventListener.class);

@@ -9,8 +9,6 @@
  */
 package org.openmrs.module.datafilter.impl;
 
-import static org.openmrs.module.datafilter.DataFilterConstants.MODULE_ID;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@Component(MODULE_ID + "ImplFullTextDataFilterListener")
+@Component("implFullTextDataFilterListener")
 public class ImplFullTextDataFilterListener implements DataFilterListener {
 	
 	private static final Logger log = LoggerFactory.getLogger(ImplFullTextDataFilterListener.class);

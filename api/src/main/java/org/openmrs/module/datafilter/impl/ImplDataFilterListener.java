@@ -16,14 +16,13 @@ import java.util.stream.Collectors;
 
 import org.openmrs.Location;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.datafilter.DataFilterConstants;
 import org.openmrs.module.datafilter.registration.DataFilterContext;
 import org.openmrs.module.datafilter.registration.DataFilterListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@Component(DataFilterConstants.MODULE_ID + "ImplDataFilterListener")
+@Component("implDataFilterListener")
 public class ImplDataFilterListener implements DataFilterListener {
 	
 	private static final Logger log = LoggerFactory.getLogger(ImplDataFilterListener.class);

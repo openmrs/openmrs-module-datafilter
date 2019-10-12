@@ -14,10 +14,9 @@ import org.openmrs.Location;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.Daemon;
 import org.openmrs.module.appframework.LoginLocationFilter;
-import org.openmrs.module.datafilter.DataFilterConstants;
 import org.springframework.stereotype.Component;
 
-@Component(DataFilterConstants.MODULE_ID + "LoginLocationFilter")
+@Component("loginLocationFilter")
 public class ImplLoginLocationFilter implements LoginLocationFilter {
 	
 	public static final String GP_LOGIN_LOCATION_USER_PROPERTY = "referenceapplication.locationUserPropertyName";

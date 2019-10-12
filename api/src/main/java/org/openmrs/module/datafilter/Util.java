@@ -22,6 +22,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.FilterDefs;
 import org.hibernate.annotations.Filters;
 import org.hibernate.annotations.ParamDef;
+import org.hibernate.cfg.Environment;
 import org.hibernate.search.annotations.FullTextFilterDefs;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
@@ -29,7 +30,10 @@ import org.openmrs.api.db.AdministrationDAO;
 import org.openmrs.module.datafilter.annotations.AggregateAnnotation;
 import org.openmrs.module.datafilter.annotations.FilterAnnotation;
 import org.openmrs.module.datafilter.annotations.FilterDefAnnotation;
+import org.openmrs.module.datafilter.annotations.FilterDefsAnnotation;
+import org.openmrs.module.datafilter.annotations.FiltersAnnotation;
 import org.openmrs.module.datafilter.annotations.FullTextFilterDefAnnotation;
+import org.openmrs.module.datafilter.annotations.FullTextFilterDefsAnnotation;
 import org.openmrs.module.datafilter.annotations.ParamDefAnnotation;
 import org.openmrs.module.datafilter.registration.FullTextFilterRegistration;
 import org.openmrs.module.datafilter.registration.HibernateFilterParameter;
@@ -94,11 +98,12 @@ public class Util {
 	 * Adds the defined filter annotations to persistent classes mapped with JPA annotations that need
 	 * to be filtered.
 	 */
-	public static void setupFilters() {
+	public static void initializeFilters() throws ReflectiveOperationException {
 		if (log.isInfoEnabled()) {
-			log.info("Registering filters");
+			log.info("Initializing filters");
 		}
 		
+		//Register hibernate filters
 		for (HibernateFilterRegistration registration : getHibernateFilterRegistrations()) {
 			if (registration.getProperty() == null) {
 				ParamDef[] paramDefs = null;
@@ -133,15 +138,19 @@ public class Util {
 			}
 		}
 		
+		//Register full text filters
 		for (FullTextFilterRegistration registration : getFullTextFilterRegistrations()) {
 			//Full text filters are added to one entity but can be enabled for any entity
 			registerFullTextFilter(registration.getTargetClasses().get(0), new FullTextFilterDefAnnotation(
 			        registration.getName(), registration.getImplClass(), registration.getCacheMode()));
 		}
 		
+		Context.addConfigProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, DataFilterSessionContext.class.getName());
+		
 		if (log.isInfoEnabled()) {
-			log.info("Successfully registered filters");
+			log.info("Successfully initialized filters");
 		}
+		
 	}
 	
 	/**
@@ -153,7 +162,8 @@ public class Util {
 	 * @param filterAnnotation the {@link org.hibernate.annotations.Filter} annotation to add
 	 */
 	protected static void registerFilter(Class<?> entityClass, FilterDefAnnotation filterDefAnnotation,
-	                                     FilterAnnotation filterAnnotation) {
+	                                     FilterAnnotation filterAnnotation)
+	    throws ReflectiveOperationException {
 		
 		addAnnotationToGroup(entityClass, FilterDefs.class, filterDefAnnotation);
 		addAnnotationToGroup(entityClass, Filters.class, filterAnnotation);
@@ -167,7 +177,8 @@ public class Util {
 	 * @param filterDefAnnotation the {@link org.hibernate.search.annotations.FullTextFilterDef}
 	 *            annotation to add
 	 */
-	protected static void registerFullTextFilter(Class<?> entityClass, FullTextFilterDefAnnotation filterDefAnnotation) {
+	protected static void registerFullTextFilter(Class<?> entityClass, FullTextFilterDefAnnotation filterDefAnnotation)
+	    throws ReflectiveOperationException {
 		addAnnotationToGroup(entityClass, FullTextFilterDefs.class, filterDefAnnotation);
 	}
 	
@@ -175,14 +186,26 @@ public class Util {
 	 * Utility method that adds a grouped annotation to it's containing aggregate annotation.
 	 * 
 	 * @param entityClass the class that has the aggregate annotation
-	 * @param aggregateAnnotationClass the aggregate annotation type
+	 * @param aggregateAnnClass the aggregate annotation type
 	 * @param toAdd the grouped annotation instance to add
-	 * @param <A>
 	 */
-	private static <A extends Annotation> void addAnnotationToGroup(Class<?> entityClass, Class<A> aggregateAnnotationClass,
-	                                                                Object toAdd) {
+	private static void addAnnotationToGroup(Class<?> entityClass, Class<? extends Annotation> aggregateAnnClass,
+	                                         Annotation toAdd)
+	    throws ReflectiveOperationException {
 		
-		A aggregateAnnotation = entityClass.getAnnotation(aggregateAnnotationClass);
+		Annotation aggregateAnnotation = entityClass.getAnnotation(aggregateAnnClass);
+		if (aggregateAnnotation == null) {
+			if (FilterDefs.class.equals(aggregateAnnClass)) {
+				aggregateAnnotation = new FilterDefsAnnotation();
+			} else if (Filters.class.equals(aggregateAnnClass)) {
+				aggregateAnnotation = new FiltersAnnotation();
+			} else if (FullTextFilterDefs.class.equals(aggregateAnnClass)) {
+				aggregateAnnotation = new FullTextFilterDefsAnnotation();
+			}
+			
+			addAnnotationToClass(entityClass, aggregateAnnotation);
+		}
+		
 		((AggregateAnnotation) aggregateAnnotation).add(toAdd);
 	}
 	
@@ -206,7 +229,6 @@ public class Util {
 			Map<Class<? extends Annotation>, Annotation> map = (Map<Class<? extends Annotation>, Annotation>) method
 			        .invoke(clazz);
 			//TODO handle the case where the annotation is already present in case of module restart
-			//TODO We also need to take care of FilterDefs and Filters annotations if present
 			map.put(annotation.annotationType(), annotation);
 			
 			if (log.isDebugEnabled()) {

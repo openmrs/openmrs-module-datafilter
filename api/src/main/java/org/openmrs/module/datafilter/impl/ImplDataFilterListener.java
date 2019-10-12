@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 
 import org.openmrs.Location;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.datafilter.registration.DataFilterContext;
-import org.openmrs.module.datafilter.registration.DataFilterListener;
+import org.openmrs.module.datafilter.DataFilterContext;
+import org.openmrs.module.datafilter.DataFilterListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

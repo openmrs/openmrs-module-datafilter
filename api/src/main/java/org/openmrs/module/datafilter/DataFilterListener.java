@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.datafilter.registration;
+package org.openmrs.module.datafilter;
 
 /**
  * Any spring bean that implements this interface will be notified before a supported filter is

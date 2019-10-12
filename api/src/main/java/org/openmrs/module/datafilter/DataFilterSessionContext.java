@@ -23,8 +23,6 @@ import org.hibernate.Session;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.Daemon;
-import org.openmrs.module.datafilter.registration.DataFilterContext;
-import org.openmrs.module.datafilter.registration.DataFilterListener;
 import org.openmrs.module.datafilter.registration.FilterParameter;
 import org.openmrs.module.datafilter.registration.FilterRegistration;
 import org.openmrs.module.datafilter.registration.HibernateFilterRegistration;
@@ -35,8 +33,8 @@ import org.springframework.orm.hibernate4.SpringSessionContext;
 ;
 
 /**
- * Custom hibernate CurrentSessionContext that will enable filters on the current Session object,
- * that way the module can always enable filters on it from this single centralized place.
+ * Custom hibernate CurrentSessionContext that enables filters on the current Session object from
+ * this single centralized place before it is returned.
  *
  * <pre>
  *  TODO:

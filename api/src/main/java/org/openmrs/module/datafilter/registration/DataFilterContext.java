@@ -13,7 +13,7 @@ import java.util.Map;
 
 /**
  * An object used to pass information between the data filter framework and a
- * {@link DataFilterListener} before enabling teh filter.
+ * {@link DataFilterListener} before enabling the filter.
  */
 public class DataFilterContext {
 	

@@ -16,13 +16,14 @@ import java.util.stream.Collectors;
 
 import org.openmrs.Location;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.datafilter.DataFilterConstants;
 import org.openmrs.module.datafilter.registration.DataFilterContext;
 import org.openmrs.module.datafilter.registration.DataFilterListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@Component("locationBasedDataFilterListener")
+@Component(DataFilterConstants.MODULE_ID + "ImplDataFilterListener")
 public class ImplDataFilterListener implements DataFilterListener {
 	
 	private static final Logger log = LoggerFactory.getLogger(ImplDataFilterListener.class);
@@ -63,8 +64,7 @@ public class ImplDataFilterListener implements DataFilterListener {
 			
 			filterContext.setParameter(ImplConstants.PARAM_NAME_ATTRIB_TYPE_ID, attributeTypeId);
 			filterContext.setParameter(ImplConstants.PARAM_NAME_BASIS_IDS, basisIds);
-		} else if (filterContext.getFilterName()
-		        .startsWith(ImplConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX)) {
+		} else if (filterContext.getFilterName().startsWith(ImplConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX)) {
 			Collection<String> roles = new HashSet();
 			if (Context.isAuthenticated()) {
 				Collection<String> allRoles = Context.getAuthenticatedUser().getAllRoles().stream().map(r -> r.getName())

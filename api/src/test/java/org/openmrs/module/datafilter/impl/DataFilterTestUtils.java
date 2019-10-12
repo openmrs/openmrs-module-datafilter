@@ -15,6 +15,7 @@ import static org.openmrs.module.datafilter.impl.ImplConstants.GP_LOCATION_BASED
 import static org.openmrs.module.datafilter.impl.ImplConstants.GP_LOCATION_BASED_FILTER_NAME_OBS;
 import static org.openmrs.module.datafilter.impl.ImplConstants.GP_LOCATION_BASED_FILTER_NAME_PATIENT;
 import static org.openmrs.module.datafilter.impl.ImplConstants.GP_LOCATION_BASED_FILTER_NAME_VISIT;
+import static org.openmrs.module.datafilter.impl.ImplConstants.GP_LOCATION_BASED_FULL_TEXT_FILTER_PATIENT;
 
 import org.openmrs.Privilege;
 import org.openmrs.Role;
@@ -26,6 +27,7 @@ public class DataFilterTestUtils {
 	
 	public static void disableLocationFiltering() {
 		AdministrationService as = Context.getAdministrationService();
+		as.setGlobalProperty(GP_LOCATION_BASED_FULL_TEXT_FILTER_PATIENT, "true");
 		as.setGlobalProperty(GP_LOCATION_BASED_FILTER_NAME_PATIENT, "true");
 		as.setGlobalProperty(GP_LOCATION_BASED_FILTER_NAME_VISIT, "true");
 		as.setGlobalProperty(GP_LOCATION_BASED_FILTER_NAME_ENCOUNTER, "true");

@@ -78,7 +78,14 @@
     <globalProperty>
         <property>${project.parent.artifactId}_locationBasedPatientFilter.disabled</property>
         <description>
-            When the value is set to true, then location based filtering for patients will be disabled
+            When the value is set to true, non full text based location based filtering for patients will be disabled
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>${project.parent.artifactId}_locationBasedPatientFullTextFilter</property>
+        <description>
+            When the value is set to true, full text location based filtering for patients will be disabled
         </description>
     </globalProperty>
 

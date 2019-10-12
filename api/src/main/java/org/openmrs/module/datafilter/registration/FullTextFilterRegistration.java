@@ -9,7 +9,7 @@
  */
 package org.openmrs.module.datafilter.registration;
 
-public class FullTextFilterRegistration extends FilterRegistration {
+public class FullTextFilterRegistration extends FilterRegistration<FilterParameter> {
 	
 	private Class implClass;
 	

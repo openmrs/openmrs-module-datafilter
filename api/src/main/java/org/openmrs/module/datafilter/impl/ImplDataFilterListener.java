@@ -42,6 +42,14 @@ public class ImplDataFilterListener implements DataFilterListener {
 			return false;
 		}
 		
+		if (Context.getAuthenticatedUser() == null
+		        && ImplConstants.LOCATION_BASED_FILTER_NAME_USER.equals(filterContext.getFilterName())) {
+			
+			//We have to allow this so that user look during authentication never fails
+			//TODO Apply some smart logic to ensure that this is ONLY permitted once
+			return false;
+		}
+		
 		if (filterContext.getFilterName().startsWith(ImplConstants.LOCATION_BASED_FILTER_NAME_PREFIX)) {
 			Integer attributeTypeId = AccessUtil.getPersonAttributeTypeId(Location.class);
 			//In tests, we can get here because test data is getting setup or flushed to the db

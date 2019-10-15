@@ -33,12 +33,12 @@ public class UtilTest {
 		
 		assertTrue(clazz.isAnnotationPresent(annotationClass));
 	}
-	
+
 	@Test
 	public void loadHibernateFilterRegistrations_shouldLoadAllHibernateFilterRegistrations() {
-		assertEquals(7, Util.getHibernateFilterRegistrations().size());
+		assertEquals(8, Util.getHibernateFilterRegistrations().size());
 	}
-	
+
 	@Test
 	public void loadFullTextFilterRegistrations_shouldLoadAllFullTextFilterRegistrations() {
 		assertEquals(1, Util.getFullTextFilterRegistrations().size());

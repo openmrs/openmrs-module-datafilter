@@ -13,7 +13,7 @@
 -->
 
 <dataset>
-    <privilege privilege="Manage Chemo Patients" description="Can Manage Patients Enrolled in Chemotherapy Program" uuid="ee80cb6d-c291-46c8-8d3a-96dc33d188fc" />
+    <privilege privilege="Manage Chemo Patients" description="Can Manage Patients Enrolled in Chemotherapy Program" uuid="ee80cb7d-c291-46c8-8d3a-96dc33d188fc" />
     <encounter_type encounter_type_id="5000" name="Chemotherapy" view_privilege="Manage Chemo Patients" description="Chemotherapy Encounter" creator="1" date_created="2019-05-01 00:00:00.0" retired="0" uuid="a1ae86f4-6afe-4351-b6f8-cd4fc383cce1" />
     <encounter encounter_id="2001" encounter_type="5000" patient_id="1001" location_id="4000" encounter_datetime="2019-05-24 11:00:00.0" creator="1" date_created="2019-05-24 11:00:00.0" voided="0" uuid="d219d653-393b-4118-9c83-a3715b82d4ad" />
     <encounter_provider encounter_provider_id="3001" encounter_id="2001" provider_id="1" encounter_role_id="1" creator="1" date_created="2019-05-24 11:00:00.0" voided="0" uuid="d9e0aae8-20ee-46b7-ade6-9e68f897b7a8" />

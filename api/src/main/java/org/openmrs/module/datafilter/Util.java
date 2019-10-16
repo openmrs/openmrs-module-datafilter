@@ -258,7 +258,7 @@ public class Util {
 		
 		final String annotationName = annotation.annotationType().getName();
 		if (log.isDebugEnabled()) {
-			log.debug("Adding " + annotationName + " annotation to " + clazz + "." + fieldName);
+			log.debug("Adding " + annotationName + " annotation to " + clazz.getName() + "." + fieldName);
 		}
 		
 		Field field = clazz.getDeclaredField(fieldName);

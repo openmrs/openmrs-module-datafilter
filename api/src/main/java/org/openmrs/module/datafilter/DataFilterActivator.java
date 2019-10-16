@@ -39,10 +39,10 @@ public class DataFilterActivator extends BaseModuleActivator {
 	}
 	
 	/**
-	 * @see BaseModuleActivator#willStart()
+	 * @see BaseModuleActivator#willRefreshContext() ()
 	 */
 	@Override
-	public void willStart() {
+	public void willRefreshContext() {
 		try {
 			Util.initializeFilters();
 		}

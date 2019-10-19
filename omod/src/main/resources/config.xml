@@ -32,6 +32,12 @@
         <require_module version="${appframeworkVersion}">${project.parent.groupId}.appframework</require_module>
     </require_modules>
 
+    <!-- Privileges -->
+    <privilege>
+        <name>ByPass Data Filters</name>
+        <description>Any user with this privilege bypasses all configured data filters</description>
+    </privilege>
+
     <!-- Global properties -->
     <globalProperty>
         <property>${project.parent.artifactId}.personAttributeTypeUuids</property>

@@ -90,6 +90,16 @@ public class DataFilterSessionContext extends SpringSessionContext {
 			return session;
 		}
 		
+		if (Context.isAuthenticated() && Context.getAuthenticatedUser().hasPrivilege(DataFilterConstants.PRIV_BY_PASS)) {
+			if (log.isTraceEnabled()) {
+				log.trace("Skipping enabling of filters for user with bypass privilege");
+			}
+			
+			disableAllFilters(session);
+			
+			return session;
+		}
+		
 		if (log.isDebugEnabled()) {
 			log.debug("Enabling filters on the current session");
 		}

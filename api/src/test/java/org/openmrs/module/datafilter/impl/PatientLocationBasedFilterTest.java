@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.datafilter.DataFilterConstants;
 import org.openmrs.module.datafilter.TestConstants;
 import org.openmrs.test.TestUtil;
 import org.openmrs.util.OpenmrsConstants;
@@ -207,6 +208,31 @@ public class PatientLocationBasedFilterTest extends BaseFilterTest {
 		assertTrue(TestUtil.containsId(patients, 1502));
 		assertTrue(TestUtil.containsId(patients, 1503));
 		assertTrue(TestUtil.containsId(patients, 1504));
+	}
+	
+	@Test
+	public void getAllPatients_shouldReturnAllPatientsForAUserWithTheByPassPrivilege() {
+		reloginAs("dyorke", "test");
+		assertEquals(3, patientService.getAllPatients().size());
+		DataFilterTestUtils.addPrivilege(DataFilterConstants.PRIV_BY_PASS);
+		
+		assertEquals(11, patientService.getAllPatients().size());
+	}
+	
+	@Test
+	public void getPatients_shouldReturnAllPatientsForAUserWithTheByPassPrivilege() {
+		Context.getAdministrationService().setGlobalProperty(
+		    OpenmrsConstants.GLOBAL_PROPERTY_PERSON_ATTRIBUTE_SEARCH_MATCH_MODE,
+		    OpenmrsConstants.GLOBAL_PROPERTY_PERSON_ATTRIBUTE_SEARCH_MATCH_ANYWHERE);
+		reloginAs("dyorke", "test");
+		int expCount = 2;
+		assertEquals(expCount, patientService.getCountOfPatients(IDENTIFIER_PREFIX).intValue());
+		assertEquals(expCount, patientService.getPatients(IDENTIFIER_PREFIX).size());
+		expCount = 4;
+		DataFilterTestUtils.addPrivilege(DataFilterConstants.PRIV_BY_PASS);
+		
+		assertEquals(expCount, patientService.getCountOfPatients(IDENTIFIER_PREFIX).intValue());
+		assertEquals(expCount, patientService.getPatients(IDENTIFIER_PREFIX).size());
 	}
 	
 }

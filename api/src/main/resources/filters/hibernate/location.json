@@ -62,12 +62,8 @@
     {
         "name": "datafilter_locationBasedUserFilter",
         "targetClasses": ["org.openmrs.User"],
-        "condition": "person_id IN (SELECT DISTINCT pa.person_id FROM person_attribute pa WHERE pa.person_attribute_type_id = :attributeTypeId AND pa.value IN (:basisIds) AND pa.voided = 0)",
+        "condition": "person_id IN (SELECT DISTINCT o.entity_identifier FROM datafilter_entity_basis_map o WHERE o.entity_type = 'org.openmrs.User' AND o.basis_type = 'org.openmrs.Location' AND o.basis_identifier IN (:basisIds))",
         "parameters": [
-            {
-                "name": "attributeTypeId",
-                "type": "integer"
-            },
             {
                 "name": "basisIds",
                 "type": "string"

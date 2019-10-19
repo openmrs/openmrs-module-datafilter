@@ -23,12 +23,12 @@
     <person_name person_name_id="10003" preferred="1" person_id="10003" given_name="Makayla" family_name="Mulemba" creator="1" date_created="2019-05-02 00:00:00.0" voided="0" uuid="389e3b7b-6482-487d-94ce-c07bb3ca3cc3" />
     <person_name person_name_id="10004" preferred="1" person_id="10004" given_name="Jennifer" family_name="Mulemba" creator="1" date_created="2019-05-02 00:00:00.0" voided="0" uuid="389e3b7b-6482-487d-94ce-c07bb3ca3cc4" />
 
-    <person_attribute person_attribute_id="10001" person_id="10001" person_attribute_type_id="6000" value="4000" creator="1" date_created="2019-05-24 00:00:00.0" voided="0" uuid="a768f3de-b693-44b7-a33f-abf2c450474a" />
-    <person_attribute person_attribute_id="10002" person_id="10002" person_attribute_type_id="6000" value="4000" creator="1" date_created="2019-05-24 00:00:00.0" voided="0" uuid="b768f3de-b693-44b7-a33f-abf2c450474b" />
-    <person_attribute person_attribute_id="100003" person_id="10003" person_attribute_type_id="6000" value="4001" creator="1" date_created="2019-05-24 00:00:00.0" voided="0" uuid="c768f3de-b693-44b7-a33f-abf2c450474c" />
-
     <users user_id="10001" person_id="10001" system_id="1-1" username="cmulemba" password="4a1750c8607d0fa237de36c6305715c223415189" salt="c788c6ad82a157b712392ca695dfcf2eed193d7f" creator="1" date_created="2019-05-02 00:00:00.0" retired="0" uuid="d2d8f5d2-e131-11de-babe-001e378eb67a" />
     <users user_id="10002" person_id="10002" system_id="1-2" username="amulemba" password="4a1750c8607d0fa237de36c6305715c223415189" salt="c788c6ad82a157b712392ca695dfcf2eed193d7f" creator="1" date_created="2019-05-02 00:00:00.0" retired="0" uuid="d2d8f5d2-e131-11de-babe-001e378eb67b" />
     <users user_id="10003" person_id="10003" system_id="1-3" username="mmulemba" password="4a1750c8607d0fa237de36c6305715c223415189" salt="c788c6ad82a157b712392ca695dfcf2eed193d7f" creator="1" date_created="2019-05-02 00:00:00.0" retired="0" uuid="d2d8f5d2-e131-11de-babe-001e378eb67c" />
     <users user_id="10004" person_id="10004" system_id="1-4" username="jmulemba" password="4a1750c8607d0fa237de36c6305715c223415189" salt="c788c6ad82a157b712392ca695dfcf2eed193d7f" creator="1" date_created="2019-05-02 00:00:00.0" retired="0" uuid="d2d8f5d2-e131-11de-babe-001e378eb67d" />
+
+    <datafilter_entity_basis_map entity_basis_map_id="10001" entity_identifier="10001" entity_type="org.openmrs.User" basis_identifier="4000" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="ae51928c-3bcb-56r4-a4dc-9198f6b2873c" />
+    <datafilter_entity_basis_map entity_basis_map_id="10002" entity_identifier="10002" entity_type="org.openmrs.User" basis_identifier="4000" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="be51928c-3bcb-56r4-a4dc-9198f6b2873c" />
+    <datafilter_entity_basis_map entity_basis_map_id="10003" entity_identifier="10003" entity_type="org.openmrs.User" basis_identifier="4001" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="ce51928c-3bcb-56r4-a4dc-9198f6b2873c" />
 </dataset>

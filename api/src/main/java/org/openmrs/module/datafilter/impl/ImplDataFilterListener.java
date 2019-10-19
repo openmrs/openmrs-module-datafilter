@@ -69,8 +69,12 @@ public class ImplDataFilterListener implements DataFilterListener {
 				basisIds = Collections.singleton("-1");
 			}
 			
-			filterContext.setParameter(ImplConstants.PARAM_NAME_ATTRIB_TYPE_ID, attributeTypeId);
+			if (!filterContext.getFilterName().equals(ImplConstants.LOCATION_BASED_FILTER_NAME_USER)) {
+				filterContext.setParameter(ImplConstants.PARAM_NAME_ATTRIB_TYPE_ID, attributeTypeId);
+			}
+			
 			filterContext.setParameter(ImplConstants.PARAM_NAME_BASIS_IDS, basisIds);
+			
 		} else if (filterContext.getFilterName().startsWith(ImplConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX)) {
 			Collection<String> roles = new HashSet();
 			if (Context.isAuthenticated()) {

@@ -55,6 +55,7 @@
     <privilege privilege="Get Observations" description="Can View Observations" uuid="ce80cb6d-c291-46c8-8d3a-96dc33d188fc" />
     <privilege privilege="Get Visits" description="Can View Visits" uuid="de80cb6d-c291-46c8-8d3a-96dc33d188fc" />
     <privilege privilege="Get Users" description="Can View Users" uuid="ee80cb6d-c291-46c8-8d3a-96dc33d188fc" />
+    <privilege privilege="Get Providers" description="Can View Users" uuid="fe80cb6d-c291-46c8-8d3a-96dc33d188fc" />
 
     <role role="Physician" description="Physician" uuid="1280cb6d-c291-46c8-8d3a-96dc33d199fc" />
 
@@ -63,6 +64,7 @@
     <role_privilege role="Physician" privilege="Get Observations" />
     <role_privilege role="Physician" privilege="Get Visits" />
     <role_privilege role="Physician" privilege="Get Users" />
+    <role_privilege role="Physician" privilege="Get Providers" />
 
     <user_role user_id="3000" role="Physician" />
     <user_role user_id="3001" role="Physician" />

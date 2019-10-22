@@ -13,16 +13,6 @@
 -->
 
 <dataset>
-    <person person_id="10001" gender="M" birthdate="1948-01-01 00:00:00.0" birthdate_estimated="0" dead="0" creator="1" date_created="2019-05-02 00:00:00.0" voided="0" uuid="db1a19c2-3ed6-4f63-b8c0-f762dc8d7561" />
-    <person person_id="10002" gender="M" birthdate="1985-01-01 00:00:00.0" birthdate_estimated="0" dead="0" creator="1" date_created="2019-05-24 00:00:00.0" voided="0" uuid="db1a19c2-3ed6-4f63-b8c0-f762dc8d7562" />
-    <person person_id="10003" gender="F" birthdate="1985-01-01 00:00:00.0" birthdate_estimated="0" dead="0" creator="1" date_created="2019-05-24 00:00:00.0" voided="0" uuid="db1a19c2-3ed6-4f63-b8c0-f762dc8d7563" />
-    <person person_id="10004" gender="F" birthdate="1985-01-01 00:00:00.0" birthdate_estimated="0" dead="0" creator="1" date_created="2019-05-24 00:00:00.0" voided="0" uuid="db1a19c2-3ed6-4f63-b8c0-f762dc8d7564" />
-
-    <person_name person_name_id="10001" preferred="1" person_id="10001" given_name="Clif" family_name="Mulemba" creator="1" date_created="2019-05-02 00:00:00.0" voided="0" uuid="189e3b7b-6482-487d-94ce-c07bb3ca3cc1" />
-    <person_name person_name_id="10002" preferred="1" person_id="10002" given_name="Adrian" family_name="Mulemba" creator="1" date_created="2019-05-02 00:00:00.0" voided="0" uuid="289e3b7b-6482-487d-94ce-c07bb3ca3cc2" />
-    <person_name person_name_id="10003" preferred="1" person_id="10003" given_name="Makayla" family_name="Mulemba" creator="1" date_created="2019-05-02 00:00:00.0" voided="0" uuid="389e3b7b-6482-487d-94ce-c07bb3ca3cc3" />
-    <person_name person_name_id="10004" preferred="1" person_id="10004" given_name="Jennifer" family_name="Mulemba" creator="1" date_created="2019-05-02 00:00:00.0" voided="0" uuid="389e3b7b-6482-487d-94ce-c07bb3ca3cc4" />
-
     <users user_id="10001" person_id="10001" system_id="1-1" username="cmulemba" password="4a1750c8607d0fa237de36c6305715c223415189" salt="c788c6ad82a157b712392ca695dfcf2eed193d7f" creator="1" date_created="2019-05-02 00:00:00.0" retired="0" uuid="d2d8f5d2-e131-11de-babe-001e378eb67a" />
     <users user_id="10002" person_id="10002" system_id="1-2" username="amulemba" password="4a1750c8607d0fa237de36c6305715c223415189" salt="c788c6ad82a157b712392ca695dfcf2eed193d7f" creator="1" date_created="2019-05-02 00:00:00.0" retired="0" uuid="d2d8f5d2-e131-11de-babe-001e378eb67b" />
     <users user_id="10003" person_id="10003" system_id="1-3" username="mmulemba" password="4a1750c8607d0fa237de36c6305715c223415189" salt="c788c6ad82a157b712392ca695dfcf2eed193d7f" creator="1" date_created="2019-05-02 00:00:00.0" retired="0" uuid="d2d8f5d2-e131-11de-babe-001e378eb67c" />

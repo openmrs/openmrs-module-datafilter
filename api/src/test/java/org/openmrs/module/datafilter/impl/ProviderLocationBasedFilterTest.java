@@ -17,67 +17,66 @@ import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Location;
-import org.openmrs.User;
-import org.openmrs.api.UserService;
+import org.openmrs.Provider;
+import org.openmrs.api.ProviderService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.datafilter.TestConstants;
 import org.openmrs.module.datafilter.impl.api.DataFilterService;
 import org.openmrs.test.TestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class UserLocationBasedFilterTest extends BaseFilterTest {
+public class ProviderLocationBasedFilterTest extends BaseFilterTest {
 	
 	@Autowired
-	private UserService userService;
+	private ProviderService providerService;
 	
 	@Autowired
 	private DataFilterService service;
 	
 	@Before
 	public void before() {
-		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "persons.xml");
-		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "users.xml");
+		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "providers.xml");
 	}
 	
-	private Collection<User> getUsers() {
-		return userService.getUsers("Mulemba", null, true, null, null);
+	private Collection<Provider> getProviders() {
+		return providerService.getProviders("Mulemba", null, null, null, true);
 	}
 	
 	@Test
-	public void getUsers_shouldReturnNoUsersIfTheUserIsNotGrantedAccessToAnyBasis() {
+	public void getProviders_shouldReturnNoProvidersIfTheProviderIsNotGrantedAccessToAnyBasis() {
 		reloginAs("dBeckham", "test");
-		assertEquals(0, getUsers().size());
+		assertEquals(0, getProviders().size());
 	}
 	
 	@Test
-	public void getUsers_shouldReturnUsersAccessibleToTheUser() {
+	public void getProviders_shouldReturnProvidersAccessibleToTheProvider() {
 		reloginAs("dyorke", "test");
 		int expCount = 2;
-		Collection<User> users = getUsers();
-		assertEquals(expCount, users.size());
-		assertTrue(TestUtil.containsId(users, 10001));
-		assertTrue(TestUtil.containsId(users, 10002));
+		Collection<Provider> providers = getProviders();
+		assertEquals(expCount, providers.size());
+		assertTrue(TestUtil.containsId(providers, 10001));
+		assertTrue(TestUtil.containsId(providers, 10002));
 		
 		service.grantAccess(Context.getAuthenticatedUser(), new Location(4001));
 		expCount = 3;
-		users = getUsers();
-		assertEquals(expCount, users.size());
-		assertTrue(TestUtil.containsId(users, 10001));
-		assertTrue(TestUtil.containsId(users, 10002));
-		assertTrue(TestUtil.containsId(users, 10003));
+		providers = getProviders();
+		assertEquals(expCount, providers.size());
+		assertTrue(TestUtil.containsId(providers, 10001));
+		assertTrue(TestUtil.containsId(providers, 10002));
+		assertTrue(TestUtil.containsId(providers, 10003));
 	}
 	
 	@Test
-	public void getUsers_shouldReturnAllUsersIfTheAuthenticatedUserIsASuperUser() {
+	public void getProviders_shouldReturnAllProvidersIfTheAuthenticatedProviderIsASuperProvider() {
 		assertTrue(Context.getAuthenticatedUser().isSuperUser());
-		assertEquals(4, getUsers().size());
+		assertEquals(4, getProviders().size());
 	}
 	
 	@Test
-	public void getUsers_shouldReturnAllUsersIfLocationFilteringIsDisabled() {
+	public void getProviders_shouldReturnAllProvidersIfLocationFilteringIsDisabled() {
 		DataFilterTestUtils.disableLocationFiltering();
 		reloginAs("dyorke", "test");
-		assertEquals(4, getUsers().size());
+		assertEquals(4, getProviders().size());
 	}
 	
 }

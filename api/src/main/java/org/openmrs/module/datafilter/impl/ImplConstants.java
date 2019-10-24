@@ -21,6 +21,8 @@ final class ImplConstants {
 	
 	public static final String LOCATION_BASED_FILTER_NAME_PREFIX = MODULE_ID + "_locationBased";
 	
+	public static final String PROGRAM_BASED_FILTER_NAME_PREFIX = MODULE_ID + "_programBased";
+	
 	public static final String ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX = MODULE_ID + "_encTypePrivBased";
 	
 	public static final String PARAM_NAME_ATTRIB_TYPE_ID = "attributeTypeId";
@@ -28,6 +30,10 @@ final class ImplConstants {
 	public static final String PARAM_NAME_BASIS_IDS = "basisIds";
 	
 	public static final String PARAM_NAME_ROLES = "roles";
+	
+	public static final String PARAM_NAME_USER_PROG_PRIVILEGES = "userProgramPrivileges";
+	
+	public static final String PARAM_NAME_ALL_PROG_PRIVILEGES = "allProgramPrivileges";
 	
 	public static final String LOCATION_BASED_FILTER_NAME_ENCOUNTER = LOCATION_BASED_FILTER_NAME_PREFIX + "EncounterFilter";
 	
@@ -41,6 +47,8 @@ final class ImplConstants {
 	
 	public static final String LOCATION_BASED_FILTER_NAME_PROVIDER = LOCATION_BASED_FILTER_NAME_PREFIX + "ProviderFilter";
 	
+	public static final String PROGRAM_BASED_FILTER_NAME_USER = PROGRAM_BASED_FILTER_NAME_PREFIX + "UserFilter";
+	
 	public static final String ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER = ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX
 	        + "EncounterFilter";
 	
@@ -49,6 +57,9 @@ final class ImplConstants {
 	public static final Set<String> LOCATION_BASED_FILTER_NAMES = Stream
 	        .of(LOCATION_BASED_FILTER_NAME_PATIENT, LOCATION_BASED_FILTER_NAME_VISIT, LOCATION_BASED_FILTER_NAME_ENCOUNTER,
 	            LOCATION_BASED_FILTER_NAME_OBS, LOCATION_BASED_FILTER_NAME_USER, LOCATION_BASED_FILTER_NAME_PROVIDER)
+	        .collect(Collectors.toSet());
+	
+	public static final Set<String> PROGRAM_BASED_FILTER_NAMES = Stream.of(PROGRAM_BASED_FILTER_NAME_USER)
 	        .collect(Collectors.toSet());
 	
 	public static final Set<String> ENC_TYPE_VIEW_PRIV_FILTER_NAMES = Stream
@@ -60,6 +71,7 @@ final class ImplConstants {
 		FILTER_NAMES = new HashSet();
 		FILTER_NAMES.addAll(LOCATION_BASED_FILTER_NAMES);
 		FILTER_NAMES.addAll(ENC_TYPE_VIEW_PRIV_FILTER_NAMES);
+		FILTER_NAMES.addAll(PROGRAM_BASED_FILTER_NAMES);
 	}
 	
 	public static final String LOCATION_BASED_FULL_TEXT_FILTER_NAME_PATIENT = MODULE_ID
@@ -89,6 +101,8 @@ final class ImplConstants {
 	
 	public static final String GP_LOCATION_BASED_FULL_TEXT_FILTER_PATIENT = LOCATION_BASED_FULL_TEXT_FILTER_NAME_PATIENT
 	        + DISABLED;
+	
+	public static final String GP_PROGRAM_BASED_FILTER_NAME_USER = PROGRAM_BASED_FILTER_NAME_USER + DISABLED;
 	
 	public static final String GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER = ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER
 	        + DISABLED;

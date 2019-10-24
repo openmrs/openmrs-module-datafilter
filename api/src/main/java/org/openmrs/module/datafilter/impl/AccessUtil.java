@@ -19,6 +19,8 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.BaseOpenmrsObject;
 import org.openmrs.Location;
+import org.openmrs.Privilege;
+import org.openmrs.Program;
 import org.openmrs.User;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
@@ -160,7 +162,8 @@ public class AccessUtil {
 		String attribTypeUuids = null;
 		if (!rows.isEmpty()) {
 			if (rows.get(0).get(0) == null) {
-				log.warn("The value for the " + ImplConstants.GP_PERSON_ATTRIBUTE_TYPE_UUIDS + " global property is not yet set");
+				log.warn(
+				    "The value for the " + ImplConstants.GP_PERSON_ATTRIBUTE_TYPE_UUIDS + " global property is not yet set");
 				throw new APIException("Failed to load accessible persons");
 			}
 			attribTypeUuids = rows.get(0).get(0).toString();
@@ -233,6 +236,23 @@ public class AccessUtil {
 		}
 		final String query = "SELECT encounter_type FROM encounter WHERE encounter_id = " + encounterId;
 		return Integer.valueOf(executeQuery(query).get(0).get(0).toString());
+	}
+	
+	/**
+	 * Gets the list of all privileges mapped to a program
+	 * 
+	 * @return a list of all program privileges
+	 */
+	protected static Collection<String> getAllProgramPrivileges() {
+		final String query = "SELECT DISTINCT entity_identifier FROM datafilter_entity_basis_map WHERE entity_type = '"
+		        + Privilege.class.getName() + "' AND basis_type = '" + Program.class.getName() + "'";
+		List<List<Object>> rows = executeQuery(query);
+		List<String> privileges = new ArrayList();
+		for (List<Object> row : rows) {
+			privileges.add(row.get(0).toString());
+		}
+		
+		return privileges;
 	}
 	
 }

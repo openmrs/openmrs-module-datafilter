@@ -19,7 +19,27 @@
     <users user_id="10004" person_id="10004" system_id="1-4" username="jmulemba" password="4a1750c8607d0fa237de36c6305715c223415189" salt="c788c6ad82a157b712392ca695dfcf2eed193d7f" creator="1" date_created="2019-05-02 00:00:00.0" retired="0" uuid="d2d8f5d2-e131-11de-babe-001e378eb67d" />
     <users user_id="10005" person_id="10005" system_id="1-5" username="smulemba" password="4a1750c8607d0fa237de36c6305715c223415189" salt="c788c6ad82a157b712392ca695dfcf2eed193d7f" creator="1" date_created="2019-05-02 00:00:00.0" retired="0" uuid="d2d8f5d2-e131-11de-babe-001e378eb67e" />
 
+    <privilege privilege="View Program 1" description="Can View Program 1" uuid="ae90cb6d-c291-46c8-8d3a-96dc33d188fd" />
+    <privilege privilege="View Program 2" description="Can View Program 2" uuid="be90cb6d-c291-46c8-8d3a-96dc33d188fd" />
+    <privilege privilege="View Program 3" description="Can View Program 3" uuid="ce90cb6d-c291-46c8-8d3a-96dc33d188fd" />
+
+    <role role="Program 1 Coordinator" description="Program 1 Coordinator" uuid="1380cb6d-c291-46c8-8d3a-96dc33d199fd" />
+    <role role="Program 2 Coordinator" description="Program 2 Coordinator" uuid="2380cb6d-c291-46c8-8d3a-96dc33d199fd" />
+    <role role="Program 3 Coordinator" description="Program 3 Coordinator" uuid="3380cb6d-c291-46c8-8d3a-96dc33d199fd" />
+
+    <role_privilege role="Program 1 Coordinator" privilege="View Program 1" />
+    <role_privilege role="Program 1 Coordinator" privilege="Get Users" />
+    <role_privilege role="Program 2 Coordinator" privilege="View Program 2" />
+
+    <user_role user_id="10001" role="Program 1 Coordinator" />
+    <user_role user_id="10002" role="Program 1 Coordinator" />
+    <user_role user_id="10003" role="Program 2 Coordinator" />
+    <user_role user_id="10004" role="Program 3 Coordinator" />
+
     <datafilter_entity_basis_map entity_basis_map_id="10001" entity_identifier="10001" entity_type="org.openmrs.User" basis_identifier="4000" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="ae51928c-3bcb-56r4-a4dc-9198f6b2873c" />
     <datafilter_entity_basis_map entity_basis_map_id="10002" entity_identifier="10002" entity_type="org.openmrs.User" basis_identifier="4000" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="be51928c-3bcb-56r4-a4dc-9198f6b2873c" />
     <datafilter_entity_basis_map entity_basis_map_id="10003" entity_identifier="10003" entity_type="org.openmrs.User" basis_identifier="4001" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="ce51928c-3bcb-56r4-a4dc-9198f6b2873c" />
+    <datafilter_entity_basis_map entity_basis_map_id="10004" entity_identifier="View Program 1" entity_type="org.openmrs.Privilege" basis_identifier="10001" basis_type="org.openmrs.Program" creator="1" date_created="2019-05-01 00:00:00.0" uuid="de51928c-3bcb-56r4-a4dc-9198f6b2873c" />
+    <datafilter_entity_basis_map entity_basis_map_id="10005" entity_identifier="View Program 2" entity_type="org.openmrs.Privilege" basis_identifier="10002" basis_type="org.openmrs.Program" creator="1" date_created="2019-05-01 00:00:00.0" uuid="ee51928c-3bcb-56r4-a4dc-9198f6b2873c" />
+    <datafilter_entity_basis_map entity_basis_map_id="10006" entity_identifier="View Program 3" entity_type="org.openmrs.Privilege" basis_identifier="10003" basis_type="org.openmrs.Program" creator="1" date_created="2019-05-01 00:00:00.0" uuid="fe51928c-3bcb-56r4-a4dc-9198f6b2873c" />
 </dataset>

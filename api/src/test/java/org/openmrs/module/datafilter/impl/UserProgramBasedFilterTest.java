@@ -16,16 +16,16 @@ import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openmrs.Location;
 import org.openmrs.User;
 import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.datafilter.FilterTestUtils;
 import org.openmrs.module.datafilter.TestConstants;
 import org.openmrs.module.datafilter.impl.api.DataFilterService;
 import org.openmrs.test.TestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class UserLocationBasedFilterTest extends BaseFilterTest {
+public class UserProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 	
 	@Autowired
 	private UserService userService;
@@ -37,7 +37,6 @@ public class UserLocationBasedFilterTest extends BaseFilterTest {
 	public void before() {
 		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "persons.xml");
 		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "users.xml");
-		DataFilterTestUtils.disableProgramBasedFiltering();
 	}
 	
 	private Collection<User> getUsers() {
@@ -45,27 +44,27 @@ public class UserLocationBasedFilterTest extends BaseFilterTest {
 	}
 	
 	@Test
-	public void getUsers_shouldReturnNoUsersIfTheUserIsNotGrantedAccessToAnyBasis() {
-		reloginAs("dBeckham", "test");
-		assertEquals(0, getUsers().size());
-	}
-	
-	@Test
-	public void getUsers_shouldReturnUsersAccessibleToTheUser() {
-		reloginAs("dyorke", "test");
-		int expCount = 2;
+	public void getUsers_shouldReturnUsersWithAccessToTheSameProgramsAsTheAuthenticatedUser() {
+		reloginAs("cmulemba", "test");
+		int expCount = 4;
 		Collection<User> users = getUsers();
 		assertEquals(expCount, users.size());
 		assertTrue(TestUtil.containsId(users, 10001));
 		assertTrue(TestUtil.containsId(users, 10002));
+		//Should include a user that has at least one role but no privileges
+		assertTrue(TestUtil.containsId(users, 10004));
+		//Should include a user with no roles
+		assertTrue(TestUtil.containsId(users, 10005));
 		
-		service.grantAccess(Context.getAuthenticatedUser(), new Location(4001));
-		expCount = 3;
+		DataFilterTestUtils.addPrivilege(BaseProgramBasedFilterTest.PRIV_VIEW_PROGRAM_2);
+		expCount = 5;
 		users = getUsers();
 		assertEquals(expCount, users.size());
 		assertTrue(TestUtil.containsId(users, 10001));
 		assertTrue(TestUtil.containsId(users, 10002));
 		assertTrue(TestUtil.containsId(users, 10003));
+		assertTrue(TestUtil.containsId(users, 10004));
+		assertTrue(TestUtil.containsId(users, 10005));
 	}
 	
 	@Test
@@ -75,8 +74,8 @@ public class UserLocationBasedFilterTest extends BaseFilterTest {
 	}
 	
 	@Test
-	public void getUsers_shouldReturnAllUsersIfLocationFilteringIsDisabled() {
-		DataFilterTestUtils.disableLocationFiltering();
+	public void getUsers_shouldReturnAllUsersIfTheFilterIsDisabled() {
+		FilterTestUtils.disableFilter(ImplConstants.PROGRAM_BASED_FILTER_NAME_USER);
 		reloginAs("dyorke", "test");
 		assertEquals(5, getUsers().size());
 	}

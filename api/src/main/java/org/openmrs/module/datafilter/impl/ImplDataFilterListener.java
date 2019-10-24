@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.stream.Collectors;
 
 import org.openmrs.Location;
+import org.openmrs.Privilege;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.datafilter.DataFilterContext;
 import org.openmrs.module.datafilter.DataFilterListener;
@@ -42,8 +43,7 @@ public class ImplDataFilterListener implements DataFilterListener {
 			return false;
 		}
 		
-		if (Context.getAuthenticatedUser() == null
-		        && ImplConstants.LOCATION_BASED_FILTER_NAME_USER.equals(filterContext.getFilterName())) {
+		if (Context.getAuthenticatedUser() == null && filterContext.getFilterName().endsWith("UserFilter")) {
 			
 			//We have to allow this so that user look during authentication never fails
 			//TODO Apply some smart logic to ensure that this is ONLY permitted once
@@ -69,7 +69,7 @@ public class ImplDataFilterListener implements DataFilterListener {
 				basisIds = Collections.singleton("-1");
 			}
 			
-			if (!filterContext.getFilterName().equals(ImplConstants.LOCATION_BASED_FILTER_NAME_USER)
+			if (!filterContext.getFilterName().endsWith("UserFilter")
 			        || !filterContext.getFilterName().equals(ImplConstants.LOCATION_BASED_FILTER_NAME_PROVIDER)) {
 				filterContext.setParameter(ImplConstants.PARAM_NAME_ATTRIB_TYPE_ID, attributeTypeId);
 			}
@@ -85,6 +85,19 @@ public class ImplDataFilterListener implements DataFilterListener {
 			}
 			
 			filterContext.setParameter(ImplConstants.PARAM_NAME_ROLES, roles);
+			
+		} else if (filterContext.getFilterName().startsWith(ImplConstants.PROGRAM_BASED_FILTER_NAME_USER)) {
+			Collection<String> userProgramPrivNames = new HashSet();
+			Collection<String> allProgramPrivNames = AccessUtil.getAllProgramPrivileges();
+			if (Context.isAuthenticated()) {
+				Collection<Privilege> userProgramPrivs = Context.getAuthenticatedUser().getPrivileges().stream()
+				        .filter(p -> allProgramPrivNames.contains(p.getName())).collect(Collectors.toList());
+				
+				userProgramPrivNames = userProgramPrivs.stream().map(r -> r.getName()).collect(Collectors.toSet());
+			}
+			
+			filterContext.setParameter(ImplConstants.PARAM_NAME_USER_PROG_PRIVILEGES, userProgramPrivNames);
+			filterContext.setParameter(ImplConstants.PARAM_NAME_ALL_PROG_PRIVILEGES, allProgramPrivNames);
 		}
 		
 		return true;

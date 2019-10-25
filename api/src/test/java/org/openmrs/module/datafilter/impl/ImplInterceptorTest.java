@@ -48,6 +48,7 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.api.context.Daemon;
+import org.openmrs.module.datafilter.DataFilterConstants;
 import org.openmrs.module.datafilter.Util;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -77,8 +78,7 @@ public class ImplInterceptorTest {
 		when(sf.getCurrentSession()).thenReturn(mock(Session.class));
 		when(Context.getRegisteredComponents(eq(SessionFactory.class))).thenReturn(Collections.singletonList(sf));
 		when(Util.isFilterDisabled(anyString())).thenReturn(false);
-		when(adminService.getGlobalPropertyValue(eq(ImplConstants.GP_RUN_IN_STRICT_MODE), anyBoolean()))
-		        .thenReturn(true);
+		when(adminService.getGlobalPropertyValue(eq(ImplConstants.GP_RUN_IN_STRICT_MODE), anyBoolean())).thenReturn(true);
 	}
 	
 	@Test
@@ -115,6 +115,15 @@ public class ImplInterceptorTest {
 		User superUser = mock(User.class);
 		when(superUser.isSuperUser()).thenReturn(true);
 		when(Context.getAuthenticatedUser()).thenReturn(superUser);
+		interceptor.onLoad(new Patient(), null, null, null, null);
+	}
+	
+	@Test
+	public void onLoad_shouldPassForAnyUserWithTheByPassPrivilege() {
+		User superUser = mock(User.class);
+		when(Context.isAuthenticated()).thenReturn(true);
+		when(Context.getAuthenticatedUser()).thenReturn(superUser);
+		when(superUser.hasPrivilege(eq(DataFilterConstants.PRIV_BY_PASS))).thenReturn(true);
 		interceptor.onLoad(new Patient(), null, null, null, null);
 	}
 	

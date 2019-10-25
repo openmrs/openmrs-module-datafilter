@@ -31,6 +31,7 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.api.context.Daemon;
+import org.openmrs.module.datafilter.DataFilterConstants;
 import org.openmrs.module.datafilter.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,14 +55,12 @@ public class ImplDataFilterInterceptor extends EmptyInterceptor {
 	static {
 		locationBasedClassAndFiltersMap = new HashMap();
 		locationBasedClassAndFiltersMap.put(Visit.class, ImplConstants.LOCATION_BASED_FILTER_NAME_VISIT);
-		locationBasedClassAndFiltersMap.put(Encounter.class,
-		    ImplConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER);
+		locationBasedClassAndFiltersMap.put(Encounter.class, ImplConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER);
 		locationBasedClassAndFiltersMap.put(Obs.class, ImplConstants.LOCATION_BASED_FILTER_NAME_OBS);
 		locationBasedClassAndFiltersMap.put(Patient.class, ImplConstants.LOCATION_BASED_FILTER_NAME_PATIENT);
 		
 		encTypeBasedClassAndFiltersMap = new HashMap();
-		encTypeBasedClassAndFiltersMap.put(Encounter.class,
-		    ImplConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER);
+		encTypeBasedClassAndFiltersMap.put(Encounter.class, ImplConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER);
 		encTypeBasedClassAndFiltersMap.put(Obs.class, ImplConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS);
 	}
 	
@@ -79,6 +78,10 @@ public class ImplDataFilterInterceptor extends EmptyInterceptor {
 			if (user != null && user.isSuperUser()) {
 				if (log.isDebugEnabled()) {
 					log.trace("Skipping DataFilterInterceptor for super user");
+				}
+			} else if (Context.isAuthenticated() && user.hasPrivilege(DataFilterConstants.PRIV_BY_PASS)) {
+				if (log.isTraceEnabled()) {
+					log.trace("Skipping DataFilterInterceptor for user with bypass privilege");
 				}
 			} else {
 				boolean filteredByLoc = locationBasedClassAndFiltersMap.keySet().contains(entity.getClass());

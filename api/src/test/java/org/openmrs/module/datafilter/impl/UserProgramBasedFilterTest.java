@@ -46,7 +46,7 @@ public class UserProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 	@Test
 	public void getUsers_shouldReturnUsersWithAccessToTheSameProgramsAsTheAuthenticatedUser() {
 		reloginAs("cmulemba", "test");
-		int expCount = 4;
+		int expCount = 5;
 		Collection<User> users = getUsers();
 		assertEquals(expCount, users.size());
 		assertTrue(TestUtil.containsId(users, 10001));
@@ -55,9 +55,11 @@ public class UserProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 		assertTrue(TestUtil.containsId(users, 10004));
 		//Should include a user with no roles
 		assertTrue(TestUtil.containsId(users, 10005));
+		//Should include a user with some other role(s) but none has a program privilege
+		assertTrue(TestUtil.containsId(users, 10006));
 		
 		DataFilterTestUtils.addPrivilege(BaseProgramBasedFilterTest.PRIV_VIEW_PROGRAM_2);
-		expCount = 5;
+		expCount = 6;
 		users = getUsers();
 		assertEquals(expCount, users.size());
 		assertTrue(TestUtil.containsId(users, 10001));
@@ -65,19 +67,20 @@ public class UserProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 		assertTrue(TestUtil.containsId(users, 10003));
 		assertTrue(TestUtil.containsId(users, 10004));
 		assertTrue(TestUtil.containsId(users, 10005));
+		assertTrue(TestUtil.containsId(users, 10006));
 	}
 	
 	@Test
 	public void getUsers_shouldReturnAllUsersIfTheAuthenticatedUserIsASuperUser() {
 		assertTrue(Context.getAuthenticatedUser().isSuperUser());
-		assertEquals(5, getUsers().size());
+		assertEquals(6, getUsers().size());
 	}
 	
 	@Test
 	public void getUsers_shouldReturnAllUsersIfTheFilterIsDisabled() {
 		FilterTestUtils.disableFilter(ImplConstants.PROGRAM_BASED_FILTER_NAME_USER);
 		reloginAs("dyorke", "test");
-		assertEquals(5, getUsers().size());
+		assertEquals(6, getUsers().size());
 	}
 	
 }

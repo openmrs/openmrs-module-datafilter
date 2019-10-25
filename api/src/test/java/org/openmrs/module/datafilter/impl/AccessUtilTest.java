@@ -111,4 +111,15 @@ public class AccessUtilTest extends BaseFilterTest {
 		assertEquals("Manage Chemo Patients", AccessUtil.getViewPrivilege(5000));
 	}
 	
+	@Test
+	public void getAllProgramPrivileges_shouldReturnAllTheProgramRelatedPrivileges() {
+		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "persons.xml");
+		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "users.xml");
+		Collection<String> privileges = AccessUtil.getAllProgramPrivileges();
+		assertEquals(3, privileges.size());
+		assertTrue(privileges.contains("View Program 1"));
+		assertTrue(privileges.contains("View Program 2"));
+		assertTrue(privileges.contains("View Program 3"));
+	}
+	
 }

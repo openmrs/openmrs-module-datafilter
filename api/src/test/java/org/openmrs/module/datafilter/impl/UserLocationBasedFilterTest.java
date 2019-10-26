@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collection;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.User;
@@ -25,6 +26,7 @@ import org.openmrs.module.datafilter.impl.api.DataFilterService;
 import org.openmrs.test.TestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@Ignore
 public class UserLocationBasedFilterTest extends BaseFilterTest {
 	
 	@Autowired

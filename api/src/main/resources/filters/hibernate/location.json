@@ -58,7 +58,7 @@
                 "type": "string"
             }
         ]
-    },
+    }/*,
     {
         "name": "datafilter_locationBasedUserFilter",
         "targetClasses": ["org.openmrs.User"],
@@ -80,5 +80,5 @@
                 "type": "string"
             }
         ]
-    }
+    }*/
 ]

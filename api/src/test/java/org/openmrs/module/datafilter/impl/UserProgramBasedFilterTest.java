@@ -13,9 +13,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.Privilege;
 import org.openmrs.User;
 import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
@@ -23,6 +25,7 @@ import org.openmrs.module.datafilter.FilterTestUtils;
 import org.openmrs.module.datafilter.TestConstants;
 import org.openmrs.module.datafilter.impl.api.DataFilterService;
 import org.openmrs.test.TestUtil;
+import org.openmrs.util.PrivilegeConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class UserProgramBasedFilterTest extends BaseProgramBasedFilterTest {
@@ -41,6 +44,49 @@ public class UserProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 	
 	private Collection<User> getUsers() {
 		return userService.getUsers("Mulemba", null, true, null, null);
+	}
+	
+	@Test
+	public void getUsers_shouldExcludeUsersWithProgramPrivilegeForAUserThatHasAtleastOneRoleButNoPrivileges() {
+		reloginAs("jmulemba", "test");
+		assertTrue(Context.getAuthenticatedUser().getAllRoles().size() > 0);
+		assertEquals(0, Context.getAuthenticatedUser().getPrivileges().size());
+		Context.addProxyPrivilege(PrivilegeConstants.GET_USERS);
+		Collection<User> users = getUsers();
+		Context.removeProxyPrivilege(PrivilegeConstants.GET_USERS);
+		assertEquals(3, users.size());
+		assertTrue(TestUtil.containsId(users, 10004));
+		assertTrue(TestUtil.containsId(users, 10005));
+		assertTrue(TestUtil.containsId(users, 10006));
+	}
+	
+	@Test
+	public void getUsers_shouldExcludeUsersWithProgramPrivilegeForAUserThatHasNoRoles() {
+		reloginAs("smulemba", "test");
+		assertEquals(0, Context.getAuthenticatedUser().getAllRoles().size());
+		Context.addProxyPrivilege(PrivilegeConstants.GET_USERS);
+		Collection<User> users = getUsers();
+		Context.removeProxyPrivilege(PrivilegeConstants.GET_USERS);
+		assertEquals(3, users.size());
+		assertTrue(TestUtil.containsId(users, 10004));
+		assertTrue(TestUtil.containsId(users, 10005));
+		assertTrue(TestUtil.containsId(users, 10006));
+	}
+	
+	@Test
+	public void getUsers_shouldExcludeUsersWithProgramPrivilegeForAUserThatHasSeveralRolesAndOtherPrivilegesButNoProgramPrivileges() {
+		reloginAs("tmulemba", "test");
+		assertTrue(Context.getAuthenticatedUser().getAllRoles().size() > 1);
+		Collection<Privilege> userPrivileges = Context.getAuthenticatedUser().getPrivileges();
+		assertTrue(userPrivileges.size() > 0);
+		Collection<String> programPrivileges = AccessUtil.getAllProgramPrivileges();
+		assertEquals(0, userPrivileges.stream().filter(p -> programPrivileges.contains(p.getName()))
+		        .collect(Collectors.toList()).size());
+		Collection<User> users = getUsers();
+		assertEquals(3, users.size());
+		assertTrue(TestUtil.containsId(users, 10004));
+		assertTrue(TestUtil.containsId(users, 10005));
+		assertTrue(TestUtil.containsId(users, 10006));
 	}
 	
 	@Test

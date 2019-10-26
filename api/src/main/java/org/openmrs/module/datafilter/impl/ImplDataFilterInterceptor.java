@@ -31,7 +31,6 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.api.context.Daemon;
-import org.openmrs.module.datafilter.DataFilterConstants;
 import org.openmrs.module.datafilter.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,11 +78,11 @@ public class ImplDataFilterInterceptor extends EmptyInterceptor {
 				if (log.isDebugEnabled()) {
 					log.trace("Skipping DataFilterInterceptor for super user");
 				}
-			} else if (Context.isAuthenticated() && user.hasPrivilege(DataFilterConstants.PRIV_BY_PASS)) {
-				if (log.isTraceEnabled()) {
-					log.trace("Skipping DataFilterInterceptor for user with bypass privilege");
-				}
-			} else {
+			} /* else if (Context.isAuthenticated() && user.hasPrivilege(DataFilterConstants.PRIV_BY_PASS)) {
+			  if (log.isTraceEnabled()) {
+			  	log.trace("Skipping DataFilterInterceptor for user with bypass privilege");
+			  }
+			  }*/ else {
 				boolean filteredByLoc = locationBasedClassAndFiltersMap.keySet().contains(entity.getClass());
 				boolean filteredByEnc = encTypeBasedClassAndFiltersMap.keySet().contains(entity.getClass());
 				//TODO We should allow filter registrations to actually provide the logic of what the interceptor

@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collection;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
@@ -210,6 +211,7 @@ public class PatientLocationBasedFilterTest extends BaseFilterTest {
 		assertTrue(TestUtil.containsId(patients, 1504));
 	}
 	
+	@Ignore
 	@Test
 	public void getAllPatients_shouldReturnAllPatientsForAUserWithTheByPassPrivilege() {
 		reloginAs("dyorke", "test");
@@ -219,6 +221,7 @@ public class PatientLocationBasedFilterTest extends BaseFilterTest {
 		assertEquals(11, patientService.getAllPatients().size());
 	}
 	
+	@Ignore
 	@Test
 	public void getPatients_shouldReturnAllPatientsForAUserWithTheByPassPrivilege() {
 		Context.getAdministrationService().setGlobalProperty(

@@ -31,6 +31,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.type.ManyToOneType;
 import org.hibernate.type.Type;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -118,6 +119,7 @@ public class ImplInterceptorTest {
 		interceptor.onLoad(new Patient(), null, null, null, null);
 	}
 	
+	@Ignore
 	@Test
 	public void onLoad_shouldPassForAnyUserWithTheByPassPrivilege() {
 		User superUser = mock(User.class);

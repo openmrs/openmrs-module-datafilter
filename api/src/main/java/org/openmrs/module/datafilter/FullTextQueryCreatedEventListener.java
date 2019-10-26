@@ -50,13 +50,13 @@ public class FullTextQueryCreatedEventListener implements ApplicationListener<Fu
 			return;
 		}
 		
-		if (Context.isAuthenticated() && Context.getAuthenticatedUser().hasPrivilege(DataFilterConstants.PRIV_BY_PASS)) {
+		/*if (Context.isAuthenticated() && Context.getAuthenticatedUser().hasPrivilege(DataFilterConstants.PRIV_BY_PASS)) {
 			if (log.isTraceEnabled()) {
 				log.trace("Skipping enabling of full text filters for user with bypass privilege");
 			}
 			
 			return;
-		}
+		}*/
 		
 		Set<String> enabledFilters = new HashSet();
 		Set<Class> filteredClasses = new HashSet();

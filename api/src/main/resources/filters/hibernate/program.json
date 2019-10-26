@@ -24,13 +24,13 @@
             3- If the user has all the program privileges that the authenticated user has (userProgramPrivileges param value) and no other program privileges
             4- If the user has no program privileges
         */
-        "condition": "(\
-            user_id NOT IN (SELECT DISTINCT ur2.user_id FROM user_role ur2) \
-            OR user_id IN (\
-                SELECT DISTINCT ur.user_id FROM user_role ur \
-                    WHERE ur.role IN (SELECT DISTINCT rp.role FROM role_privilege rp WHERE rp.privilege IN (:userProgramPrivileges)) \
-                    OR ur.role NOT IN (SELECT DISTINCT rp.role FROM role_privilege rp WHERE rp.privilege IN (:allProgramPrivileges))\
-            )\
+        "condition": "(
+            user_id NOT IN (SELECT DISTINCT ur2.user_id FROM user_role ur2)
+            OR user_id IN (
+                SELECT DISTINCT ur.user_id FROM user_role ur
+                    WHERE ur.role IN (SELECT DISTINCT rp.role FROM role_privilege rp WHERE rp.privilege IN (:userProgramPrivileges))
+                    OR ur.role NOT IN (SELECT DISTINCT rp.role FROM role_privilege rp WHERE rp.privilege IN (:allProgramPrivileges))
+            )
         )",
         "parameters": [
             {

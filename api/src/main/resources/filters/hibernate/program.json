@@ -25,12 +25,12 @@
             4- If the user has no program privileges
         */
         "condition": "(
-            user_id NOT IN (SELECT DISTINCT ur2.user_id FROM user_role ur2)
-            OR user_id IN (
+            user_id IN (
                 SELECT DISTINCT ur.user_id FROM user_role ur
                     WHERE ur.role IN (SELECT DISTINCT rp.role FROM role_privilege rp WHERE rp.privilege IN (:userProgramPrivileges))
                     OR ur.role NOT IN (SELECT DISTINCT rp.role FROM role_privilege rp WHERE rp.privilege IN (:allProgramPrivileges))
             )
+            OR user_id NOT IN (SELECT DISTINCT ur2.user_id FROM user_role ur2)
         )",
         "parameters": [
             {

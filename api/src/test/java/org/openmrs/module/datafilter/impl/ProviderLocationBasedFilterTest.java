@@ -35,6 +35,7 @@ public class ProviderLocationBasedFilterTest extends BaseFilterTest {
 	
 	@Before
 	public void before() {
+		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "persons.xml");
 		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "providers.xml");
 	}
 	

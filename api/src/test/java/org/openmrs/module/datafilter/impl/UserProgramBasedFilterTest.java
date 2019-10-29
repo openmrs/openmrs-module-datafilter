@@ -92,7 +92,7 @@ public class UserProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 	@Test
 	public void getUsers_shouldReturnUsersWithAccessToTheSameProgramsAsTheAuthenticatedUser() {
 		reloginAs("cmulemba", "test");
-		int expCount = 5;
+		int expCount = 6;
 		Collection<User> users = getUsers();
 		assertEquals(expCount, users.size());
 		assertTrue(TestUtil.containsId(users, 10001));
@@ -105,7 +105,7 @@ public class UserProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 		assertTrue(TestUtil.containsId(users, 10006));
 		
 		DataFilterTestUtils.addPrivilege(BaseProgramBasedFilterTest.PRIV_VIEW_PROGRAM_2);
-		expCount = 6;
+		expCount = 7;
 		users = getUsers();
 		assertEquals(expCount, users.size());
 		assertTrue(TestUtil.containsId(users, 10001));
@@ -114,19 +114,20 @@ public class UserProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 		assertTrue(TestUtil.containsId(users, 10004));
 		assertTrue(TestUtil.containsId(users, 10005));
 		assertTrue(TestUtil.containsId(users, 10006));
+		assertTrue(TestUtil.containsId(users, 10007));
 	}
 	
 	@Test
 	public void getUsers_shouldReturnAllUsersIfTheAuthenticatedUserIsASuperUser() {
 		assertTrue(Context.getAuthenticatedUser().isSuperUser());
-		assertEquals(6, getUsers().size());
+		assertEquals(7, getUsers().size());
 	}
 	
 	@Test
 	public void getUsers_shouldReturnAllUsersIfTheFilterIsDisabled() {
 		FilterTestUtils.disableFilter(ImplConstants.PROGRAM_BASED_FILTER_NAME_USER);
 		reloginAs("dyorke", "test");
-		assertEquals(6, getUsers().size());
+		assertEquals(7, getUsers().size());
 	}
 	
 }

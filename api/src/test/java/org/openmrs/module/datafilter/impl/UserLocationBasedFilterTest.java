@@ -71,14 +71,14 @@ public class UserLocationBasedFilterTest extends BaseFilterTest {
 	@Test
 	public void getUsers_shouldReturnAllUsersIfTheAuthenticatedUserIsASuperUser() {
 		assertTrue(Context.getAuthenticatedUser().isSuperUser());
-		assertEquals(6, getUsers().size());
+		assertEquals(7, getUsers().size());
 	}
 	
 	@Test
 	public void getUsers_shouldReturnAllUsersIfLocationFilteringIsDisabled() {
 		DataFilterTestUtils.disableLocationFiltering();
 		reloginAs("dyorke", "test");
-		assertEquals(6, getUsers().size());
+		assertEquals(7, getUsers().size());
 	}
 	
 }

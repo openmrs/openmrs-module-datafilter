@@ -38,6 +38,7 @@ import org.openmrs.module.datafilter.annotations.ParamDefAnnotation;
 import org.openmrs.module.datafilter.registration.FullTextFilterRegistration;
 import org.openmrs.module.datafilter.registration.HibernateFilterParameter;
 import org.openmrs.module.datafilter.registration.HibernateFilterRegistration;
+import org.openmrs.util.OpenmrsClassLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -46,6 +47,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
 public class Util {
 	
@@ -100,9 +102,7 @@ public class Util {
 	 * to be filtered.
 	 */
 	public static void initializeFilters() throws ReflectiveOperationException {
-		if (log.isInfoEnabled()) {
-			log.info("Initializing filters");
-		}
+		log.info("Initializing filters");
 		
 		//Register hibernate filters
 		for (HibernateFilterRegistration registration : getHibernateFilterRegistrations()) {
@@ -148,10 +148,7 @@ public class Util {
 		
 		Context.addConfigProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, DataFilterSessionContext.class.getName());
 		
-		if (log.isInfoEnabled()) {
-			log.info("Successfully initialized filters");
-		}
-		
+		log.info("Successfully initialized filters");
 	}
 	
 	/**
@@ -220,7 +217,7 @@ public class Util {
 		
 		final String annotationName = annotation.annotationType().getName();
 		if (log.isDebugEnabled()) {
-			log.debug("Adding " + annotationName + " annotation to " + clazz);
+			log.debug("Adding " + annotationName + " annotation to " + clazz.getName());
 		}
 		
 		Method method = Class.class.getDeclaredMethod("getDeclaredAnnotationMap");
@@ -233,11 +230,11 @@ public class Util {
 			map.put(annotation.annotationType(), annotation);
 			
 			if (log.isDebugEnabled()) {
-				log.debug("Successfully added " + annotationName + " annotation to " + clazz);
+				log.debug("Successfully added " + annotationName + " annotation to " + clazz.getName());
 			}
 		}
 		catch (InvocationTargetException | IllegalAccessException e) {
-			log.error("Failed to add " + annotationName + " annotation to " + clazz, e);
+			log.error("Failed to add " + annotationName + " annotation to " + clazz.getName(), e);
 			throw e;
 		}
 		finally {
@@ -277,11 +274,11 @@ public class Util {
 			map.put(annotation.annotationType(), annotation);
 			
 			if (log.isDebugEnabled()) {
-				log.debug("Successfully added " + annotationName + " annotation to " + clazz);
+				log.debug("Successfully added " + annotationName + " annotation to " + clazz.getName() + "." + fieldName);
 			}
 		}
 		catch (InvocationTargetException | IllegalAccessException e) {
-			log.error("Failed to add " + annotationName + " annotation to " + clazz + "." + annotationName, e);
+			log.error("Failed to add " + annotationName + " annotation to " + clazz.getName() + "." + fieldName, e);
 			throw e;
 		}
 		finally {
@@ -297,6 +294,10 @@ public class Util {
 	 * @param isHibernate specifies whether hibernate or full text filters are the ones to load
 	 */
 	private static synchronized void loadFilterRegistrations(boolean isHibernate) {
+		if (log.isDebugEnabled()) {
+			log.debug("Loading " + (isHibernate ? "hibernate" : "full text") + " filter registrations");
+		}
+		
 		if (isHibernate) {
 			if (hibernateFilterRegistrations != null) {
 				return;
@@ -309,11 +310,18 @@ public class Util {
 			fullTextFilterRegistrations = new ArrayList();
 		}
 		
-		PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
+		//During openmrs Installation or upgrade, the thread context classloader is that of the webapp assigned
+		//by the servlet container which doesn't know about module resources, so we need to use the openmrs one.
+		//TODO See TRUNK-5678, when it is done then we can remove this logic
+		ClassLoader classLoader = OpenmrsClassLoader.getInstance();
+		PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver(classLoader);
 		
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
 		mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
+		//See here we need to use the openmrs classloader to load the type field in case of module classes
+		TypeFactory typeFactory = mapper.getTypeFactory().withClassLoader(classLoader);
+		mapper.setTypeFactory(typeFactory);
 		
 		final String pathPattern = FILTER_PATH_PREFIX + (isHibernate ? "hibernate" : "fulltext") + FILTER_PATH_SUFFIX;
 		
@@ -321,16 +329,21 @@ public class Util {
 			Resource[] resources = resourceResolver.getResources(pathPattern);
 			for (Resource resource : resources) {
 				Class clazz = isHibernate ? HibernateFilterRegistration.class : FullTextFilterRegistration.class;
-				JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, clazz);
+				JavaType classListType = typeFactory.constructCollectionType(List.class, clazz);
 				if (isHibernate) {
-					hibernateFilterRegistrations.addAll(mapper.readValue(resource.getInputStream(), type));
+					hibernateFilterRegistrations.addAll(mapper.readValue(resource.getInputStream(), classListType));
 				} else {
-					fullTextFilterRegistrations.addAll(mapper.readValue(resource.getInputStream(), type));
+					fullTextFilterRegistrations.addAll(mapper.readValue(resource.getInputStream(), classListType));
 				}
 			}
 		}
 		catch (IOException e) {
-			throw new APIException("Failed to load some filter registrations", e);
+			throw new APIException(
+			        "Failed to load some " + (isHibernate ? "hibernate" : "full text") + " filter registrations", e);
+		}
+		
+		if (log.isDebugEnabled()) {
+			log.debug("Successfully loaded " + (isHibernate ? "hibernate" : "full text") + " filter registrations");
 		}
 	}
 	

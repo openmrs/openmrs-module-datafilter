@@ -23,9 +23,7 @@ public class DataFilterActivator extends BaseModuleActivator {
 	 */
 	@Override
 	public void started() {
-		if (log.isInfoEnabled()) {
-			log.info("Data Filter Module started");
-		}
+		log.info("Data Filter Module started");
 	}
 	
 	/**
@@ -33,9 +31,7 @@ public class DataFilterActivator extends BaseModuleActivator {
 	 */
 	@Override
 	public void stopped() {
-		if (log.isInfoEnabled()) {
-			log.info("Data Filter Module stopped");
-		}
+		log.info("Data Filter Module stopped");
 	}
 	
 	/**
@@ -43,12 +39,16 @@ public class DataFilterActivator extends BaseModuleActivator {
 	 */
 	@Override
 	public void willRefreshContext() {
+		log.info("Start: Data Filter Module willRefreshContext");
+		
 		try {
 			Util.initializeFilters();
 		}
 		catch (ReflectiveOperationException e) {
 			throw new APIException(e);
 		}
+		
+		log.info("End: Data Filter Module willRefreshContext");
 	}
 	
 	/**

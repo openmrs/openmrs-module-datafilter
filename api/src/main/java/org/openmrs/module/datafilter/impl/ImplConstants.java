@@ -49,6 +49,8 @@ final class ImplConstants {
 	
 	public static final String PROGRAM_BASED_FILTER_NAME_USER = PROGRAM_BASED_FILTER_NAME_PREFIX + "UserFilter";
 	
+	public static final String PROGRAM_BASED_FILTER_NAME_PROVIDER = PROGRAM_BASED_FILTER_NAME_PREFIX + "ProviderFilter";
+	
 	public static final String ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER = ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX
 	        + "EncounterFilter";
 	
@@ -59,8 +61,8 @@ final class ImplConstants {
 	            LOCATION_BASED_FILTER_NAME_OBS, LOCATION_BASED_FILTER_NAME_USER, LOCATION_BASED_FILTER_NAME_PROVIDER)
 	        .collect(Collectors.toSet());
 	
-	public static final Set<String> PROGRAM_BASED_FILTER_NAMES = Stream.of(PROGRAM_BASED_FILTER_NAME_USER)
-	        .collect(Collectors.toSet());
+	public static final Set<String> PROGRAM_BASED_FILTER_NAMES = Stream
+	        .of(PROGRAM_BASED_FILTER_NAME_USER, PROGRAM_BASED_FILTER_NAME_PROVIDER).collect(Collectors.toSet());
 	
 	public static final Set<String> ENC_TYPE_VIEW_PRIV_FILTER_NAMES = Stream
 	        .of(ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER, ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS).collect(Collectors.toSet());
@@ -103,6 +105,8 @@ final class ImplConstants {
 	        + DISABLED;
 	
 	public static final String GP_PROGRAM_BASED_FILTER_NAME_USER = PROGRAM_BASED_FILTER_NAME_USER + DISABLED;
+	
+	public static final String GP_PROGRAM_BASED_FILTER_NAME_PROVIDER = PROGRAM_BASED_FILTER_NAME_PROVIDER + DISABLED;
 	
 	public static final String GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER = ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER
 	        + DISABLED;

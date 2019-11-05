@@ -103,6 +103,8 @@ public class UserProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 		assertTrue(TestUtil.containsId(users, 10005));
 		//Should include a user with some other role(s) but none has a program privilege
 		assertTrue(TestUtil.containsId(users, 10006));
+		//Should include a user with any of the roles the user has
+		assertTrue(TestUtil.containsId(users, 10007));
 		
 		DataFilterTestUtils.addPrivilege(BaseProgramBasedFilterTest.PRIV_VIEW_PROGRAM_2);
 		expCount = 7;

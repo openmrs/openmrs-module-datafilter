@@ -37,6 +37,7 @@ public class ProviderLocationBasedFilterTest extends BaseFilterTest {
 	public void before() {
 		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "persons.xml");
 		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "providers.xml");
+		DataFilterTestUtils.disableProgramBasedFiltering();
 	}
 	
 	private Collection<Provider> getProviders() {
@@ -70,14 +71,14 @@ public class ProviderLocationBasedFilterTest extends BaseFilterTest {
 	@Test
 	public void getProviders_shouldReturnAllProvidersIfTheAuthenticatedProviderIsASuperProvider() {
 		assertTrue(Context.getAuthenticatedUser().isSuperUser());
-		assertEquals(4, getProviders().size());
+		assertEquals(7, getProviders().size());
 	}
 	
 	@Test
 	public void getProviders_shouldReturnAllProvidersIfLocationFilteringIsDisabled() {
 		DataFilterTestUtils.disableLocationFiltering();
 		reloginAs("dyorke", "test");
-		assertEquals(4, getProviders().size());
+		assertEquals(7, getProviders().size());
 	}
 	
 }

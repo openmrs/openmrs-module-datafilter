@@ -20,6 +20,7 @@ public abstract class BaseProgramBasedFilterTest extends BaseFilterTest {
 	public void beforeProgramBasedFilterMethod() {
 		FilterTestUtils.disableAllHibernateFilters();
 		FilterTestUtils.enableFilter(ImplConstants.PROGRAM_BASED_FILTER_NAME_USER);
+		FilterTestUtils.enableFilter(ImplConstants.PROGRAM_BASED_FILTER_NAME_PROVIDER);
 	}
 	
 }

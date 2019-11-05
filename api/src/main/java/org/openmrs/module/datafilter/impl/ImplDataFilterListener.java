@@ -86,7 +86,7 @@ public class ImplDataFilterListener implements DataFilterListener {
 			
 			filterContext.setParameter(ImplConstants.PARAM_NAME_ROLES, roles);
 			
-		} else if (filterContext.getFilterName().startsWith(ImplConstants.PROGRAM_BASED_FILTER_NAME_USER)) {
+		} else if (filterContext.getFilterName().startsWith(ImplConstants.PROGRAM_BASED_FILTER_NAME_PREFIX)) {
 			Collection<String> userProgramPrivNames = new HashSet();
 			Collection<String> allProgramPrivNames = AccessUtil.getAllProgramPrivileges();
 			if (Context.isAuthenticated()) {

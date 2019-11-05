@@ -7,9 +7,10 @@
 
         /*
         Goals:
-            1- Include users that only work in the same program(s) as the authenticated user
+            1- Include users that work in at least one program as the authenticated user
             2- Include users that don't work in any program
-            3- Exclude users that work in any other program(s) that this user doesn't work in
+            4- Include users that have zero roles or privileges
+            3- Otherwise exclude the rest
 
         Assumptions:
             1- filters are applied where there is an authenticated user
@@ -18,19 +19,41 @@
             userProgramPrivileges: The collection of all of the authenticated user's program privileges
             allProgramPrivileges: The collection of all program privileges in the system
 
-        Condition logic is such that it will only return users that match the following criteria:
-            1- The authenticated: Because the userProgramPrivileges is list of their own program privileges, so they get matched
-            2- If the user has no roles, implying they have no privileges so they can't have any program privileges
-            3- If the user has all the program privileges that the authenticated user has (userProgramPrivileges param value) and no other program privileges
-            4- If the user has no program privileges
         */
         "condition": "(
             user_id IN (
                 SELECT DISTINCT ur.user_id FROM user_role ur
                     WHERE ur.role IN (SELECT DISTINCT rp.role FROM role_privilege rp WHERE rp.privilege IN (:userProgramPrivileges))
                     OR ur.role NOT IN (SELECT DISTINCT rp.role FROM role_privilege rp WHERE rp.privilege IN (:allProgramPrivileges))
-            )
-            OR user_id NOT IN (SELECT DISTINCT ur2.user_id FROM user_role ur2)
+            ) OR user_id NOT IN (SELECT DISTINCT ur2.user_id FROM user_role ur2)
+        )",
+        "parameters": [
+            {
+                "name": "userProgramPrivileges",
+                "type": "string"
+            },
+            {
+                "name": "allProgramPrivileges",
+                "type": "string"
+            }
+        ]
+    },
+    {
+        "name": "datafilter_programBasedProviderFilter",
+        "targetClasses": [
+            "org.openmrs.Provider"
+        ],
+
+        /*
+         * See the goals, assumptions and condition logic for user filter above, applies for providers too
+         * for persons with a user account
+         */
+        "condition": "person_id IN (
+            SELECT us.person_id FROM users us WHERE us.user_id IN (
+                SELECT DISTINCT ur.user_id FROM user_role ur
+                    WHERE ur.role IN (SELECT DISTINCT rp.role FROM role_privilege rp WHERE rp.privilege IN (:userProgramPrivileges))
+                    OR ur.role NOT IN (SELECT DISTINCT rp.role FROM role_privilege rp WHERE rp.privilege IN (:allProgramPrivileges))
+            ) OR us.user_id NOT IN (SELECT DISTINCT ur2.user_id FROM user_role ur2)
         )",
         "parameters": [
             {

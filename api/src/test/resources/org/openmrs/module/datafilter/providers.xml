@@ -17,6 +17,9 @@
     <provider provider_id="10002" person_id="10002" identifier="mTwo" creator="1"  date_created="2005-01-01 00:00:00.0" retired="0" uuid="b1e3868a-6b90-11e0-93c3-18a905e044dc" />
     <provider provider_id="10003" person_id="10003" identifier="mThree" creator="1"  date_created="2005-01-01 00:00:00.0" retired="0" uuid="c1e3868a-6b90-11e0-93c3-18a905e044dc" />
     <provider provider_id="10004" person_id="10004" identifier="mFour" creator="1"  date_created="2005-01-01 00:00:00.0" retired="0" uuid="d1e3868a-6b90-11e0-93c3-18a905e044dc" />
+    <provider provider_id="10005" person_id="10005" identifier="mFive" creator="1"  date_created="2005-01-01 00:00:00.0" retired="0" uuid="e1e3868a-6b90-11e0-93c3-18a905e044dc" />
+    <provider provider_id="10006" person_id="10006" identifier="mSix" creator="1"  date_created="2005-01-01 00:00:00.0" retired="0" uuid="f1e3868a-6b90-11e0-93c3-18a905e044dc" />
+    <provider provider_id="10007" person_id="10007" identifier="mSeven" creator="1"  date_created="2005-01-01 00:00:00.0" retired="0" uuid="g1e3868a-6b90-11e0-93c3-18a905e044dc" />
 
     <datafilter_entity_basis_map entity_basis_map_id="10001" entity_identifier="10001" entity_type="org.openmrs.Provider" basis_identifier="4000" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="ae52928c-3bcb-56r4-a4dc-9198f6b2873d" />
     <datafilter_entity_basis_map entity_basis_map_id="10002" entity_identifier="10002" entity_type="org.openmrs.Provider" basis_identifier="4000" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="be52928c-3bcb-56r4-a4dc-9198f6b2873d" />

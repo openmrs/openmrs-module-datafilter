@@ -48,13 +48,15 @@
          * See the goals, assumptions and condition logic for user filter above, applies for providers too
          * for persons with a user account
          */
-        "condition": "person_id IN (
+        "condition": "(person_id IN (
             SELECT us.person_id FROM users us WHERE us.user_id IN (
                 SELECT DISTINCT ur.user_id FROM user_role ur
                     WHERE ur.role IN (SELECT DISTINCT rp.role FROM role_privilege rp WHERE rp.privilege IN (:userProgramPrivileges))
                     OR ur.role NOT IN (SELECT DISTINCT rp.role FROM role_privilege rp WHERE rp.privilege IN (:allProgramPrivileges))
             ) OR us.user_id NOT IN (SELECT DISTINCT ur2.user_id FROM user_role ur2)
-        )",
+        ) OR (person_id IS NULL AND provider_id IN (SELECT DISTINCT pr.provider_id FROM provider pr
+        WHERE pr.role_id IS NULL OR pr.role_id IN (:userProviderRoleIds),
+        OR pr.role_id NOT IN (:allProviderRoleIds))))",
         "parameters": [
             {
                 "name": "userProgramPrivileges",
@@ -63,6 +65,14 @@
             {
                 "name": "allProgramPrivileges",
                 "type": "string"
+            },
+            {
+                "name": "userProviderRoleIds",
+                "type": "integer"
+            },
+            {
+                "name": "allProviderRoleIds",
+                "type": "integer"
             }
         ]
     }

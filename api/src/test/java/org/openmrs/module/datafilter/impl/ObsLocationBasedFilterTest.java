@@ -21,10 +21,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
+import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.datafilter.TestConstants;
+import org.openmrs.module.datafilter.impl.api.DataFilterService;
 import org.openmrs.test.TestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -32,6 +34,9 @@ public class ObsLocationBasedFilterTest extends BaseFilterTest {
 	
 	@Autowired
 	private ObsService obsService;
+	
+	@Autowired
+	private DataFilterService service;
 	
 	@Before
 	public void before() {
@@ -64,7 +69,7 @@ public class ObsLocationBasedFilterTest extends BaseFilterTest {
 		assertTrue(TestUtil.containsId(observations, 1001));
 		assertTrue(TestUtil.containsId(observations, 1002));
 		
-		AccessUtilTest.grantLocationAccessToUser(Context.getAuthenticatedUser().getUserId(), 4001, getConnection());
+		service.grantAccess(Context.getAuthenticatedUser(), new Location(4001));
 		expCount = 3;
 		observations = getObservations();
 		assertEquals(expCount, observations.size());

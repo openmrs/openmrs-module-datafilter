@@ -18,6 +18,7 @@ import org.openmrs.Role;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.module.datafilter.DataFilterSessionContext;
 import org.openmrs.module.datafilter.impl.EntityBasisMap;
 import org.openmrs.module.datafilter.impl.api.DataFilterService;
 import org.openmrs.module.datafilter.impl.api.db.DataFilterDAO;
@@ -63,6 +64,8 @@ public class DataFilterServiceImpl extends BaseOpenmrsService implements DataFil
 				dao.saveEntityBasisMap(map);
 			}
 		}
+		
+		DataFilterSessionContext.reset();
 	}
 	
 	/**
@@ -87,6 +90,8 @@ public class DataFilterServiceImpl extends BaseOpenmrsService implements DataFil
 				dao.deleteEntityBasisMap(map);
 			}
 		}
+		
+		DataFilterSessionContext.reset();
 	}
 	
 	/**

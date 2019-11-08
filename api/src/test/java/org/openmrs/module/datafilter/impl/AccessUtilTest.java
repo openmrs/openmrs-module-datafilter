@@ -13,35 +13,25 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.sql.Connection;
 import java.util.Collection;
-import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.Program;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.datafilter.DataFilterConstants;
 import org.openmrs.module.datafilter.TestConstants;
-import org.openmrs.util.DatabaseUtil;
+import org.openmrs.module.datafilter.impl.api.DataFilterService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class AccessUtilTest extends BaseFilterTest {
+	
+	@Autowired
+	private DataFilterService service;
 	
 	@Before
 	public void beforeTestMethod() {
 		executeDataSet(TestConstants.MODULE_TEST_DATASET_XML);
-	}
-	
-	public static void grantLocationAccessToUser(Integer userId, Integer locationId, Connection conn) {
-		//TODO replace the hard coded id
-		String classname = Location.class.getName();
-		String columns = "entity_basis_map_id, entity_identifier, entity_type, basis_identifier, basis_type, "
-		        + "creator, date_created, uuid";
-		String query = "INSERT INTO " + DataFilterConstants.MODULE_ID + "_entity_basis_map (" + columns + ") "
-		        + "VALUES (100, '" + userId + "', 'org.openmrs.User', '" + locationId + "', '" + classname
-		        + "', 1, '2019-05-01 00:00:00.0', '" + UUID.randomUUID().toString() + "')";
-		DatabaseUtil.executeSQL(conn, query, false);
 	}
 	
 	@Test
@@ -71,7 +61,7 @@ public class AccessUtilTest extends BaseFilterTest {
 		
 		//Should include child locations
 		final Integer ugandaLocationId = 4001;
-		grantLocationAccessToUser(Context.getAuthenticatedUser().getUserId(), ugandaLocationId, getConnection());
+		service.grantAccess(Context.getAuthenticatedUser(), new Location(ugandaLocationId));
 		basisIds = AccessUtil.getAssignedBasisIds(Location.class);
 		assertEquals(4, basisIds.size());
 		assertTrue(basisIds.contains(englandLocationId.toString()));
@@ -96,7 +86,7 @@ public class AccessUtilTest extends BaseFilterTest {
 		assertEquals(1, patientIds.size());
 		assertTrue(patientIds.contains("1001"));
 		
-		grantLocationAccessToUser(Context.getAuthenticatedUser().getUserId(), 4001, getConnection());
+		service.grantAccess(Context.getAuthenticatedUser(), new Location(4001));
 		patientIds = AccessUtil.getAccessiblePersonIds(Location.class);
 		//Should include the child location too
 		assertEquals(3, patientIds.size());

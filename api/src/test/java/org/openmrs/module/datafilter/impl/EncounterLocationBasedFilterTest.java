@@ -17,9 +17,11 @@ import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Encounter;
+import org.openmrs.Location;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.datafilter.TestConstants;
+import org.openmrs.module.datafilter.impl.api.DataFilterService;
 import org.openmrs.test.TestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -27,6 +29,9 @@ public class EncounterLocationBasedFilterTest extends BaseFilterTest {
 	
 	@Autowired
 	private EncounterService encounterService;
+	
+	@Autowired
+	private DataFilterService service;
 	
 	@Before
 	public void before() {
@@ -53,7 +58,7 @@ public class EncounterLocationBasedFilterTest extends BaseFilterTest {
 		assertTrue(TestUtil.containsId(encounters, 1000));
 		assertTrue(TestUtil.containsId(encounters, 1001));
 		
-		AccessUtilTest.grantLocationAccessToUser(Context.getAuthenticatedUser().getUserId(), 4001, getConnection());
+		service.grantAccess(Context.getAuthenticatedUser(), new Location(4001));
 		expCount = 3;
 		assertEquals(expCount, encounterService.getCountOfEncounters(name, false).intValue());
 		encounters = encounterService.getEncounters(name, 0, Integer.MAX_VALUE, false);

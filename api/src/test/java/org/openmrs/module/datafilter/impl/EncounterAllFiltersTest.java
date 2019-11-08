@@ -17,9 +17,11 @@ import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Encounter;
+import org.openmrs.Location;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.datafilter.TestConstants;
+import org.openmrs.module.datafilter.impl.api.DataFilterService;
 import org.openmrs.test.TestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -27,6 +29,9 @@ public class EncounterAllFiltersTest extends BaseFilterTest {
 	
 	@Autowired
 	private EncounterService encounterService;
+	
+	@Autowired
+	private DataFilterService service;
 	
 	@Before
 	public void before() {
@@ -54,7 +59,7 @@ public class EncounterAllFiltersTest extends BaseFilterTest {
 		assertTrue(TestUtil.containsId(encounters, 1000));
 		assertTrue(TestUtil.containsId(encounters, 1001));
 		
-		AccessUtilTest.grantLocationAccessToUser(Context.getAuthenticatedUser().getUserId(), 4001, getConnection());
+		service.grantAccess(Context.getAuthenticatedUser(), new Location(4001));
 		DataFilterTestUtils.addPrivilege(BaseEncTypeViewPrivilegeBasedFilterTest.PRIV_MANAGE_CHEMO_PATIENTS);
 		//TODO Update test data to include another Enc that requires a different privilege
 		expCount = 4;

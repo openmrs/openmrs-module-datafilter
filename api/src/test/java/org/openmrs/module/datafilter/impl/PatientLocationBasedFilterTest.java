@@ -17,11 +17,13 @@ import java.util.Collection;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.datafilter.DataFilterConstants;
 import org.openmrs.module.datafilter.TestConstants;
+import org.openmrs.module.datafilter.impl.api.DataFilterService;
 import org.openmrs.test.TestUtil;
 import org.openmrs.util.OpenmrsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,9 @@ public class PatientLocationBasedFilterTest extends BaseFilterTest {
 	
 	@Autowired
 	private PatientService patientService;
+	
+	@Autowired
+	private DataFilterService service;
 	
 	private static final String PATIENT_NAME = "Magidu";
 	
@@ -53,7 +58,7 @@ public class PatientLocationBasedFilterTest extends BaseFilterTest {
 		assertTrue(TestUtil.containsId(patients, 1501));
 		assertTrue(TestUtil.containsId(patients, 1503));
 		
-		AccessUtilTest.grantLocationAccessToUser(Context.getAuthenticatedUser().getUserId(), 4001, getConnection());
+		service.grantAccess(Context.getAuthenticatedUser(), new Location(4001));
 		expCount = 6;
 		patients = patientService.getAllPatients();
 		assertEquals(expCount, patients.size());
@@ -109,7 +114,7 @@ public class PatientLocationBasedFilterTest extends BaseFilterTest {
 		assertTrue(TestUtil.containsId(patients, 1501));
 		assertTrue(TestUtil.containsId(patients, 1503));
 		
-		AccessUtilTest.grantLocationAccessToUser(Context.getAuthenticatedUser().getUserId(), 4001, getConnection());
+		service.grantAccess(Context.getAuthenticatedUser(), new Location(4001));
 		expCount = 3;
 		assertEquals(expCount, patientService.getCountOfPatients(PATIENT_NAME).intValue());
 		patients = patientService.getPatients(PATIENT_NAME);
@@ -129,7 +134,7 @@ public class PatientLocationBasedFilterTest extends BaseFilterTest {
 		assertTrue(TestUtil.containsId(patients, 1501));
 		assertTrue(TestUtil.containsId(patients, 1503));
 		
-		AccessUtilTest.grantLocationAccessToUser(Context.getAuthenticatedUser().getUserId(), 4001, getConnection());
+		service.grantAccess(Context.getAuthenticatedUser(), new Location(4001));
 		expCount = 3;
 		assertEquals(expCount, patientService.getCountOfPatients(IDENTIFIER_PREFIX).intValue());
 		patients = patientService.getPatients(IDENTIFIER_PREFIX);
@@ -165,7 +170,7 @@ public class PatientLocationBasedFilterTest extends BaseFilterTest {
 		assertTrue(TestUtil.containsId(patients, 1501));
 		assertTrue(TestUtil.containsId(patients, 1503));
 		
-		AccessUtilTest.grantLocationAccessToUser(Context.getAuthenticatedUser().getUserId(), 4001, getConnection());
+		service.grantAccess(Context.getAuthenticatedUser(), new Location(4001));
 		expCount = 3;
 		assertEquals(expCount, patientService.getCountOfPatients(TELEPHONE_AREA_CODE).intValue());
 		patients = patientService.getPatients(TELEPHONE_AREA_CODE);

@@ -17,11 +17,13 @@ import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.Location;
 import org.openmrs.Visit;
 import org.openmrs.VisitType;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.datafilter.TestConstants;
+import org.openmrs.module.datafilter.impl.api.DataFilterService;
 import org.openmrs.test.TestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -29,6 +31,9 @@ public class VisitLocationBasedFilterTest extends BaseFilterTest {
 	
 	@Autowired
 	private VisitService visitService;
+	
+	@Autowired
+	private DataFilterService service;
 	
 	@Before
 	public void before() {
@@ -55,7 +60,7 @@ public class VisitLocationBasedFilterTest extends BaseFilterTest {
 		assertTrue(TestUtil.containsId(visits, 1000));
 		assertTrue(TestUtil.containsId(visits, 1001));
 		
-		AccessUtilTest.grantLocationAccessToUser(Context.getAuthenticatedUser().getUserId(), 4001, getConnection());
+		service.grantAccess(Context.getAuthenticatedUser(), new Location(4001));
 		expCount = 3;
 		visits = getVisits();
 		assertEquals(expCount, visits.size());

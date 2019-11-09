@@ -37,8 +37,8 @@ import org.slf4j.LoggerFactory;
  *
  * <pre>
  *     TODO This is a very simple implementation that should be replaced with a better one
- *     that doesn't use raw sql queries, supports caching of person ids, used global properties,
- *     basis ids and other cool other features.
+ *     that doesn't use raw sql queries, supports caching of person ids, uses global properties,
+ *     basis ids and other cool features.
  * </pre>
  */
 public class AccessUtil {

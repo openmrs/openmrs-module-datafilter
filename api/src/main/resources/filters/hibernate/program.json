@@ -46,7 +46,8 @@
 
         /*
          * See the goals, assumptions and condition logic for user filter above, applies for providers too
-         * for persons with a user account
+         * for persons with a user account. For providers that are not linked to a person record but have no
+         * provider role or they have a provider role linked to the same program, they will be visible
          */
         "condition": "(
             person_id IN (
@@ -60,8 +61,23 @@
             )
             OR (person_id IS NULL AND provider_id IN (
                 SELECT DISTINCT pr.provider_id FROM provider pr
-                    WHERE pr.role_id IS NULL OR pr.role_id IN (:userProviderRoleIds)
-                    OR pr.role_id NOT IN (:allProviderRoleIds)
+                    WHERE pr.role_id IS NULL OR pr.role_id IN (
+                        SELECT DISTINCT dfebm.entity_identifier FROM datafilter_entity_basis_map dfebm
+                            WHERE dfebm.entity_type = 'org.openmrs.Concept'
+                            AND dfebm.basis_type = 'org.openmrs.Program'
+                            AND dfebm.basis_identifier IN (
+                                SELECT DISTINCT dfebm1.basis_identifier FROM datafilter_entity_basis_map dfebm1
+                                    WHERE dfebm1.basis_type = 'org.openmrs.Program'
+                                    AND dfebm1.entity_type = 'org.openmrs.Privilege'
+                                    AND dfebm1.entity_identifier IN (
+                                        SELECT DISTINCT rp1.privilege FROM role_privilege rp1 WHERE rp1.role IN (:userProgramRoleNames)
+                                    )
+                                )
+                            )
+                    OR pr.role_id NOT IN (
+                        SELECT DISTINCT dfebm2.entity_identifier FROM datafilter_entity_basis_map dfebm2
+                            WHERE dfebm2.entity_type = 'org.openmrs.Concept'
+                            AND dfebm2.basis_type = 'org.openmrs.Program')
                 )
             )
         )",
@@ -75,12 +91,8 @@
                 "type": "string"
             },
             {
-                "name": "userProviderRoleIds",
-                "type": "integer"
-            },
-            {
-                "name": "allProviderRoleIds",
-                "type": "integer"
+                "name": "userProgramRoleNames",
+                "type": "string"
             }
         ]
     }

@@ -316,10 +316,10 @@ public class Util {
 		ClassLoader classLoader = OpenmrsClassLoader.getInstance();
 		PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver(classLoader);
 		
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = new ObjectMapper ();
 		mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
 		mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
-		//See here we need to use the openmrs classloader to load the type field in case of module classes
+		//Same here, we need to use the openmrs classloader to load the type field in case of module classes
 		TypeFactory typeFactory = mapper.getTypeFactory().withClassLoader(classLoader);
 		mapper.setTypeFactory(typeFactory);
 		

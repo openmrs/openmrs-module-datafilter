@@ -19,8 +19,8 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.BaseOpenmrsObject;
 import org.openmrs.Location;
-import org.openmrs.Privilege;
 import org.openmrs.Program;
+import org.openmrs.Role;
 import org.openmrs.User;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
@@ -239,20 +239,20 @@ public class AccessUtil {
 	}
 	
 	/**
-	 * Gets the list of all privileges mapped to a program
+	 * Gets the list of all roles mapped to a program
 	 * 
-	 * @return a list of all program privileges
+	 * @return a list of all program role names
 	 */
-	protected static Collection<String> getAllProgramPrivileges() {
+	protected static Collection<String> getAllProgramRoles() {
 		final String query = "SELECT DISTINCT entity_identifier FROM datafilter_entity_basis_map WHERE entity_type = '"
-		        + Privilege.class.getName() + "' AND basis_type = '" + Program.class.getName() + "'";
+		        + Role.class.getName() + "' AND basis_type = '" + Program.class.getName() + "'";
 		List<List<Object>> rows = executeQuery(query);
-		List<String> privileges = new ArrayList();
+		List<String> roles = new ArrayList();
 		for (List<Object> row : rows) {
-			privileges.add(row.get(0).toString());
+			roles.add(row.get(0).toString());
 		}
 		
-		return privileges;
+		return roles;
 	}
 	
 }

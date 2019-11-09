@@ -17,7 +17,8 @@ import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openmrs.Privilege;
+import org.openmrs.Program;
+import org.openmrs.Role;
 import org.openmrs.User;
 import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
@@ -47,44 +48,27 @@ public class UserProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 	}
 	
 	@Test
-	public void getUsers_shouldExcludeUsersWithProgramPrivilegeForAUserThatHasAtleastOneRoleButNoPrivileges() {
-		reloginAs("jmulemba", "test");
-		assertTrue(Context.getAuthenticatedUser().getAllRoles().size() > 0);
-		assertEquals(0, Context.getAuthenticatedUser().getPrivileges().size());
-		Context.addProxyPrivilege(PrivilegeConstants.GET_USERS);
-		Collection<User> users = getUsers();
-		Context.removeProxyPrivilege(PrivilegeConstants.GET_USERS);
-		assertEquals(3, users.size());
-		assertTrue(TestUtil.containsId(users, 10004));
-		assertTrue(TestUtil.containsId(users, 10005));
-		assertTrue(TestUtil.containsId(users, 10006));
-	}
-	
-	@Test
-	public void getUsers_shouldExcludeUsersWithProgramPrivilegeForAUserThatHasNoRoles() {
+	public void getUsers_shouldExcludeUsersWithProgramRolesForAUserThatHasNoRoles() {
 		reloginAs("smulemba", "test");
 		assertEquals(0, Context.getAuthenticatedUser().getAllRoles().size());
 		Context.addProxyPrivilege(PrivilegeConstants.GET_USERS);
 		Collection<User> users = getUsers();
 		Context.removeProxyPrivilege(PrivilegeConstants.GET_USERS);
-		assertEquals(3, users.size());
-		assertTrue(TestUtil.containsId(users, 10004));
+		assertEquals(2, users.size());
 		assertTrue(TestUtil.containsId(users, 10005));
 		assertTrue(TestUtil.containsId(users, 10006));
 	}
 	
 	@Test
-	public void getUsers_shouldExcludeUsersWithProgramPrivilegeForAUserThatHasSeveralRolesAndOtherPrivilegesButNoProgramPrivileges() {
+	public void getUsers_shouldExcludeUsersWithProgramRolesForAUserThatHasNoProgramRoles() {
 		reloginAs("tmulemba", "test");
-		assertTrue(Context.getAuthenticatedUser().getAllRoles().size() > 1);
-		Collection<Privilege> userPrivileges = Context.getAuthenticatedUser().getPrivileges();
-		assertTrue(userPrivileges.size() > 0);
-		Collection<String> programPrivileges = AccessUtil.getAllProgramPrivileges();
-		assertEquals(0, userPrivileges.stream().filter(p -> programPrivileges.contains(p.getName()))
-		        .collect(Collectors.toList()).size());
+		Collection<Role> userRoles = Context.getAuthenticatedUser().getAllRoles();
+		assertTrue(userRoles.size() > 0);
+		Collection<String> programRoles = AccessUtil.getAllProgramRoles();
+		assertEquals(0,
+		    userRoles.stream().filter(role -> programRoles.contains(role.getName())).collect(Collectors.toList()).size());
 		Collection<User> users = getUsers();
-		assertEquals(3, users.size());
-		assertTrue(TestUtil.containsId(users, 10004));
+		assertEquals(2, users.size());
 		assertTrue(TestUtil.containsId(users, 10005));
 		assertTrue(TestUtil.containsId(users, 10006));
 	}
@@ -97,16 +81,16 @@ public class UserProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 		assertEquals(expCount, users.size());
 		assertTrue(TestUtil.containsId(users, 10001));
 		assertTrue(TestUtil.containsId(users, 10002));
-		//Should include a user that has at least one role but no privileges
+		//Should include a user working at the same program but in a different uncommon role
 		assertTrue(TestUtil.containsId(users, 10004));
 		//Should include a user with no roles
 		assertTrue(TestUtil.containsId(users, 10005));
-		//Should include a user with some other role(s) but none has a program privilege
+		//Should include a user with some other role(s) but none is a program role
 		assertTrue(TestUtil.containsId(users, 10006));
 		//Should include a user with any of the roles the user has
 		assertTrue(TestUtil.containsId(users, 10007));
 		
-		DataFilterTestUtils.addPrivilege(BaseProgramBasedFilterTest.PRIV_VIEW_PROGRAM_2);
+		service.grantAccess(new Role(ROLE_COORDINATOR_PROG_1), new Program(10002));
 		expCount = 7;
 		users = getUsers();
 		assertEquals(expCount, users.size());

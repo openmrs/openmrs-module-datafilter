@@ -13,7 +13,9 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openmrs.OpenmrsMetadata;
 import org.openmrs.OpenmrsObject;
+import org.openmrs.Privilege;
 import org.openmrs.Role;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
@@ -115,8 +117,8 @@ public class DataFilterServiceImpl extends BaseOpenmrsService implements DataFil
 			entityId = openmrsObject.getId().toString();
 		}
 		catch (UnsupportedOperationException e) {
-			if (openmrsObject instanceof Role) {
-				entityId = openmrsObject.getId().toString();
+			if (openmrsObject instanceof Role || openmrsObject instanceof Privilege) {
+				entityId = ((OpenmrsMetadata) openmrsObject).getName();
 			}
 		}
 		

@@ -9,14 +9,13 @@
  */
 package org.openmrs.module.datafilter.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
 import org.openmrs.Location;
-import org.openmrs.Privilege;
+import org.openmrs.Role;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.datafilter.DataFilterContext;
 import org.openmrs.module.datafilter.DataFilterListener;
@@ -88,23 +87,22 @@ public class ImplDataFilterListener implements DataFilterListener {
 			filterContext.setParameter(ImplConstants.PARAM_NAME_ROLES, roles);
 			
 		} else if (filterContext.getFilterName().startsWith(ImplConstants.PROGRAM_BASED_FILTER_NAME_PREFIX)) {
-			Collection<String> userProgramPrivNames = new HashSet();
-			Collection<String> allProgramPrivNames = AccessUtil.getAllProgramPrivileges();
+			Collection<String> userProgramRoleNames = new HashSet();
+			Collection<String> allProgramRoleNames = AccessUtil.getAllProgramRoles();
 			if (Context.isAuthenticated()) {
-				Collection<Privilege> userProgramPrivs = Context.getAuthenticatedUser().getPrivileges().stream()
-				        .filter(p -> allProgramPrivNames.contains(p.getName())).collect(Collectors.toList());
+				Collection<Role> userProgramRoles = Context.getAuthenticatedUser().getAllRoles().stream()
+				        .filter(r -> allProgramRoleNames.contains(r.getName())).collect(Collectors.toList());
 				
-				userProgramPrivNames = userProgramPrivs.stream().map(r -> r.getName()).collect(Collectors.toSet());
+				userProgramRoleNames = userProgramRoles.stream().map(r -> r.getName()).collect(Collectors.toSet());
 			}
 			
-			filterContext.setParameter(ImplConstants.PARAM_NAME_USER_PROG_PRIVILEGES, userProgramPrivNames);
-			filterContext.setParameter(ImplConstants.PARAM_NAME_ALL_PROG_PRIVILEGES, allProgramPrivNames);
+			filterContext.setParameter(ImplConstants.PARAM_NAME_USER_PROG_ROlES, userProgramRoleNames);
+			filterContext.setParameter(ImplConstants.PARAM_NAME_ALL_PROG_ROlES, allProgramRoleNames);
 			
 			if (filterContext.getFilterName().equals(ImplConstants.PROGRAM_BASED_FILTER_NAME_PROVIDER)) {
-				Collection<String> userProgramRoleNames = new ArrayList();
-				if (Context.isAuthenticated()) {
+				/*if (Context.isAuthenticated()) {
 					userProgramRoleNames = Context.getAuthenticatedUser().getAllRoles().stream().filter(role -> {
-						for (String programPrivilege : allProgramPrivNames) {
+						for (String programPrivilege : allProgramRoleNames) {
 							if (role.hasPrivilege(programPrivilege)) {
 								return true;
 							}
@@ -113,7 +111,7 @@ public class ImplDataFilterListener implements DataFilterListener {
 					}).map(programRole -> programRole.getName()).collect(Collectors.toList());
 				}
 				
-				filterContext.setParameter("userProgramRoleNames", userProgramRoleNames);
+				filterContext.setParameter("userProgramRoleNames", userProgramRoleNames);*/
 			}
 		}
 		

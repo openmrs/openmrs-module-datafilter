@@ -14,7 +14,7 @@ import org.openmrs.module.datafilter.FilterTestUtils;
 
 public abstract class BaseProgramBasedFilterTest extends BaseFilterTest {
 	
-	protected final static String PRIV_VIEW_PROGRAM_2 = "View Program 2";
+	protected final static String ROLE_COORDINATOR_PROG_1 = "Program 1 Coordinator";
 	
 	@Before
 	public void beforeProgramBasedFilterMethod() {

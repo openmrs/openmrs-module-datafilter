@@ -31,9 +31,9 @@ final class ImplConstants {
 	
 	public static final String PARAM_NAME_ROLES = "roles";
 	
-	public static final String PARAM_NAME_USER_PROG_PRIVILEGES = "userProgramPrivileges";
+	public static final String PARAM_NAME_USER_PROG_ROlES = "userProgramRoles";
 	
-	public static final String PARAM_NAME_ALL_PROG_PRIVILEGES = "allProgramPrivileges";
+	public static final String PARAM_NAME_ALL_PROG_ROlES = "allProgramRoles";
 	
 	public static final String LOCATION_BASED_FILTER_NAME_ENCOUNTER = LOCATION_BASED_FILTER_NAME_PREFIX + "EncounterFilter";
 	

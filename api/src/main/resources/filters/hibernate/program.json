@@ -9,31 +9,46 @@
         Goals:
             1- Include users that work in at least one program as the authenticated user
             2- Include users that don't work in any program
-            4- Include users that have zero roles or privileges
+            4- Include users that have zero roles
             3- Otherwise exclude the rest
 
         Assumptions:
             1- filters are applied where there is an authenticated user
 
         Parameters:
-            userProgramPrivileges: The collection of all of the authenticated user's program privileges
-            allProgramPrivileges: The collection of all program privileges in the system
+            userProgramRoles: The collection of all of the authenticated user's program roles
+            allProgramRoles: The collection of all roles linked to programs in the datafilter_entity_basis_map table
 
         */
         "condition": "(
             user_id IN (
-                SELECT DISTINCT ur.user_id FROM user_role ur
-                    WHERE ur.role IN (SELECT DISTINCT rp.role FROM role_privilege rp WHERE rp.privilege IN (:userProgramPrivileges))
-                    OR ur.role NOT IN (SELECT DISTINCT rp.role FROM role_privilege rp WHERE rp.privilege IN (:allProgramPrivileges))
-            ) OR user_id NOT IN (SELECT DISTINCT ur2.user_id FROM user_role ur2)
+                SELECT DISTINCT datafilter_ur.user_id FROM user_role datafilter_ur
+                    WHERE datafilter_ur.role IN (:userProgramRoles)
+                    OR datafilter_ur.role NOT IN (:allProgramRoles)
+            )
+            OR user_id NOT IN (SELECT DISTINCT datafilter_ur2.user_id FROM user_role datafilter_ur2)
+            OR user_id IN (
+            	SELECT DISTINCT datafilter_ur1.user_id FROM user_role datafilter_ur1
+                    WHERE datafilter_ur1.role IN (
+                        SELECT DISTINCT datafilter_ebm.entity_identifier FROM datafilter_entity_basis_map datafilter_ebm
+                            WHERE datafilter_ebm.entity_type = 'org.openmrs.Role'
+                            AND datafilter_ebm.basis_type = 'org.openmrs.Program'
+                            AND datafilter_ebm.basis_identifier IN (
+                                SELECT DISTINCT datafilter_ebm2.basis_identifier FROM datafilter_entity_basis_map datafilter_ebm2
+                                    WHERE datafilter_ebm2.entity_type = 'org.openmrs.Role'
+                                        AND datafilter_ebm2.basis_type = 'org.openmrs.Program'
+                                        AND datafilter_ebm2.entity_identifier IN (:userProgramRoles)
+                            )
+                    )
+            )
         )",
         "parameters": [
             {
-                "name": "userProgramPrivileges",
+                "name": "userProgramRoles",
                 "type": "string"
             },
             {
-                "name": "allProgramPrivileges",
+                "name": "allProgramRoles",
                 "type": "string"
             }
         ]
@@ -54,8 +69,8 @@
                 SELECT us.person_id FROM users us
                     WHERE us.user_id IN (
                         SELECT DISTINCT ur.user_id FROM user_role ur
-                            WHERE ur.role IN (SELECT DISTINCT rp.role FROM role_privilege rp WHERE rp.privilege IN (:userProgramPrivileges))
-                            OR ur.role NOT IN (SELECT DISTINCT rp.role FROM role_privilege rp WHERE rp.privilege IN (:allProgramPrivileges))
+                            WHERE ur.role IN (SELECT DISTINCT rp.role FROM role_privilege rp WHERE rp.privilege IN (:userProgramRoles))
+                            OR ur.role NOT IN (SELECT DISTINCT rp.role FROM role_privilege rp WHERE rp.privilege IN (:allProgramRoles))
                     )
                     OR us.user_id NOT IN (SELECT DISTINCT ur2.user_id FROM user_role ur2)
             )
@@ -70,7 +85,7 @@
                                     WHERE dfebm1.basis_type = 'org.openmrs.Program'
                                     AND dfebm1.entity_type = 'org.openmrs.Privilege'
                                     AND dfebm1.entity_identifier IN (
-                                        SELECT DISTINCT rp1.privilege FROM role_privilege rp1 WHERE rp1.role IN (:userProgramRoleNames)
+                                        SELECT DISTINCT rp1.privilege FROM role_privilege rp1 WHERE rp1.role IN (:userProgramRoles)
                                     )
                                 )
                             )
@@ -83,15 +98,11 @@
         )",
         "parameters": [
             {
-                "name": "userProgramPrivileges",
+                "name": "userProgramRoles",
                 "type": "string"
             },
             {
-                "name": "allProgramPrivileges",
-                "type": "string"
-            },
-            {
-                "name": "userProgramRoleNames",
+                "name": "allProgramRoles",
                 "type": "string"
             }
         ]

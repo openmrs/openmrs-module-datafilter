@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openmrs.Privilege;
 import org.openmrs.Provider;
+import org.openmrs.Role;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.datafilter.FilterTestUtils;
@@ -91,11 +91,11 @@ public class ProviderProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 	public void getProviders_shouldExcludeProvidersWithProgramPrivilegeForAUserThatHasSeveralRolesAndOtherPrivilegesButNoProgramPrivileges() {
 		reloginAs("tmulemba", "test");
 		assertTrue(Context.getAuthenticatedUser().getAllRoles().size() > 1);
-		Collection<Privilege> userPrivileges = Context.getAuthenticatedUser().getPrivileges();
-		assertTrue(userPrivileges.size() > 0);
-		Collection<String> programPrivileges = AccessUtil.getAllProgramPrivileges();
-		assertEquals(0, userPrivileges.stream().filter(p -> programPrivileges.contains(p.getName()))
-		        .collect(Collectors.toList()).size());
+		Collection<Role> userRoles = Context.getAuthenticatedUser().getAllRoles();
+		assertTrue(userRoles.size() > 0);
+		Collection<String> programRoles = AccessUtil.getAllProgramRoles();
+		assertEquals(0,
+		    userRoles.stream().filter(r -> programRoles.contains(r.getName())).collect(Collectors.toList()).size());
 		Context.addProxyPrivilege(PrivilegeConstants.GET_PROVIDERS);
 		Collection<Provider> providers = getProviders();
 		Context.removeProxyPrivilege(PrivilegeConstants.GET_PROVIDERS);
@@ -113,7 +113,6 @@ public class ProviderProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 	public void getProviders_shouldReturnProvidersWithAccessToTheSameProgramsAsTheAuthenticatedUser() {
 		reloginAs("cmulemba", "test");
 		int expCount = 10;
-		Context.addProxyPrivilege(PrivilegeConstants.GET_PROVIDERS);
 		Collection<Provider> providers = getProviders();
 		assertEquals(expCount, providers.size());
 		assertTrue(TestUtil.containsId(providers, 10001));
@@ -134,10 +133,9 @@ public class ProviderProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 		//Should include providers with no person record and no provider role
 		assertTrue(TestUtil.containsId(providers, 10012));
 		
-		DataFilterTestUtils.addPrivilege(BaseProgramBasedFilterTest.PRIV_VIEW_PROGRAM_2);
+		//DataFilterTestUtils.addPrivilege(BaseProgramBasedFilterTest.PRIV_VIEW_PROGRAM_2);
 		expCount = 12;
 		providers = getProviders();
-		Context.removeProxyPrivilege(PrivilegeConstants.GET_PROVIDERS);
 		assertEquals(expCount, providers.size());
 		assertTrue(TestUtil.containsId(providers, 10001));
 		assertTrue(TestUtil.containsId(providers, 10002));

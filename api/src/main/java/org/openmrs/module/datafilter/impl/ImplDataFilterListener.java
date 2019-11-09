@@ -9,6 +9,7 @@
  */
 package org.openmrs.module.datafilter.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -98,6 +99,22 @@ public class ImplDataFilterListener implements DataFilterListener {
 			
 			filterContext.setParameter(ImplConstants.PARAM_NAME_USER_PROG_PRIVILEGES, userProgramPrivNames);
 			filterContext.setParameter(ImplConstants.PARAM_NAME_ALL_PROG_PRIVILEGES, allProgramPrivNames);
+			
+			if (filterContext.getFilterName().equals(ImplConstants.PROGRAM_BASED_FILTER_NAME_PROVIDER)) {
+				Collection<String> userProgramRoleNames = new ArrayList();
+				if (Context.isAuthenticated()) {
+					userProgramRoleNames = Context.getAuthenticatedUser().getAllRoles().stream().filter(role -> {
+						for (String programPrivilege : allProgramPrivNames) {
+							if (role.hasPrivilege(programPrivilege)) {
+								return true;
+							}
+						}
+						return false;
+					}).map(programRole -> programRole.getName()).collect(Collectors.toList());
+				}
+				
+				filterContext.setParameter("userProgramRoleNames", userProgramRoleNames);
+			}
 		}
 		
 		return true;

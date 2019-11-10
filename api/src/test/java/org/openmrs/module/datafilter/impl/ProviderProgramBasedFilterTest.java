@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.Program;
 import org.openmrs.Provider;
 import org.openmrs.Role;
 import org.openmrs.api.ProviderService;
@@ -49,25 +50,7 @@ public class ProviderProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 	}
 	
 	@Test
-	public void getProviders_shouldExcludeProvidersWithProgramPrivilegeForAUserThatHasAtleastOneRoleButNoPrivileges() {
-		reloginAs("jmulemba", "test");
-		assertTrue(Context.getAuthenticatedUser().getAllRoles().size() > 0);
-		assertEquals(0, Context.getAuthenticatedUser().getPrivileges().size());
-		Context.addProxyPrivilege(PrivilegeConstants.GET_PROVIDERS);
-		Collection<Provider> providers = getProviders();
-		Context.removeProxyPrivilege(PrivilegeConstants.GET_PROVIDERS);
-		assertEquals(5, providers.size());
-		assertTrue(TestUtil.containsId(providers, 10004));
-		assertTrue(TestUtil.containsId(providers, 10005));
-		assertTrue(TestUtil.containsId(providers, 10006));
-		//Should include providers with no person record with provider role(s) but none is linked to a program
-		assertTrue(TestUtil.containsId(providers, 10011));
-		//Should include providers with no person record and no provider role
-		assertTrue(TestUtil.containsId(providers, 10012));
-	}
-	
-	@Test
-	public void getProviders_shouldExcludeProvidersWithProgramPrivilegeForAUserThatHasNoRoles() {
+	public void getProviders_shouldExcludeProvidersWithProgramRolesForAUserThatHasNoRoles() {
 		reloginAs("smulemba", "test");
 		assertEquals(0, Context.getAuthenticatedUser().getAllRoles().size());
 		Context.addProxyPrivilege(PrivilegeConstants.GET_PROVIDERS);
@@ -77,8 +60,8 @@ public class ProviderProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 		Context.removeProxyPrivilege(PrivilegeConstants.GET_PROVIDERS);
 		assertEquals(1, userProviderAccounts.size());
 		assertNull(userProviderAccounts.iterator().next().getRole());
-		assertEquals(5, providers.size());
-		assertTrue(TestUtil.containsId(providers, 10004));
+		assertEquals(4, providers.size());
+		//assertTrue(TestUtil.containsId(providers, 10004));
 		assertTrue(TestUtil.containsId(providers, 10005));
 		assertTrue(TestUtil.containsId(providers, 10006));
 		//Should include providers with no person record with provider role(s) but none is linked to a program
@@ -88,19 +71,15 @@ public class ProviderProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 	}
 	
 	@Test
-	public void getProviders_shouldExcludeProvidersWithProgramPrivilegeForAUserThatHasSeveralRolesAndOtherPrivilegesButNoProgramPrivileges() {
+	public void getProviders_shouldExcludeProvidersWithProgramRolesForAUserThatHasNoProgramRoles() {
 		reloginAs("tmulemba", "test");
-		assertTrue(Context.getAuthenticatedUser().getAllRoles().size() > 1);
 		Collection<Role> userRoles = Context.getAuthenticatedUser().getAllRoles();
 		assertTrue(userRoles.size() > 0);
 		Collection<String> programRoles = AccessUtil.getAllProgramRoles();
 		assertEquals(0,
 		    userRoles.stream().filter(r -> programRoles.contains(r.getName())).collect(Collectors.toList()).size());
-		Context.addProxyPrivilege(PrivilegeConstants.GET_PROVIDERS);
 		Collection<Provider> providers = getProviders();
-		Context.removeProxyPrivilege(PrivilegeConstants.GET_PROVIDERS);
-		assertEquals(5, providers.size());
-		assertTrue(TestUtil.containsId(providers, 10004));
+		assertEquals(4, providers.size());
 		assertTrue(TestUtil.containsId(providers, 10005));
 		assertTrue(TestUtil.containsId(providers, 10006));
 		//Should include providers with no person record with provider role(s) but none is linked to a program
@@ -117,13 +96,13 @@ public class ProviderProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 		assertEquals(expCount, providers.size());
 		assertTrue(TestUtil.containsId(providers, 10001));
 		assertTrue(TestUtil.containsId(providers, 10002));
-		//Should include a provider that has at least one role but no privileges
+		//Should include a user working at the same program but in a different uncommon role
 		assertTrue(TestUtil.containsId(providers, 10004));
 		//Should include a provider with no roles
 		assertTrue(TestUtil.containsId(providers, 10005));
-		//Should include a provider with some other role(s) but none has a program privilege
+		//Should include a user with some other role(s) but none is a program role
 		assertTrue(TestUtil.containsId(providers, 10006));
-		//Should include a provider with any of the roles the user has
+		//Should include a user with any of the roles the user has
 		assertTrue(TestUtil.containsId(providers, 10007));
 		//Should include providers with no person record but linked to the same program via a provider role
 		assertTrue(TestUtil.containsId(providers, 10008));
@@ -133,7 +112,7 @@ public class ProviderProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 		//Should include providers with no person record and no provider role
 		assertTrue(TestUtil.containsId(providers, 10012));
 		
-		//DataFilterTestUtils.addPrivilege(BaseProgramBasedFilterTest.PRIV_VIEW_PROGRAM_2);
+		service.grantAccess(new Role(ROLE_COORDINATOR_PROG_1), new Program(10002));
 		expCount = 12;
 		providers = getProviders();
 		assertEquals(expCount, providers.size());

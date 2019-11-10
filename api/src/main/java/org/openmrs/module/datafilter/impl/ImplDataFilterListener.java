@@ -98,21 +98,6 @@ public class ImplDataFilterListener implements DataFilterListener {
 			
 			filterContext.setParameter(ImplConstants.PARAM_NAME_USER_PROG_ROlES, userProgramRoleNames);
 			filterContext.setParameter(ImplConstants.PARAM_NAME_ALL_PROG_ROlES, allProgramRoleNames);
-			
-			if (filterContext.getFilterName().equals(ImplConstants.PROGRAM_BASED_FILTER_NAME_PROVIDER)) {
-				/*if (Context.isAuthenticated()) {
-					userProgramRoleNames = Context.getAuthenticatedUser().getAllRoles().stream().filter(role -> {
-						for (String programPrivilege : allProgramRoleNames) {
-							if (role.hasPrivilege(programPrivilege)) {
-								return true;
-							}
-						}
-						return false;
-					}).map(programRole -> programRole.getName()).collect(Collectors.toList());
-				}
-				
-				filterContext.setParameter("userProgramRoleNames", userProgramRoleNames);*/
-			}
 		}
 		
 		return true;

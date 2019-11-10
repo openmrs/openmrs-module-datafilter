@@ -66,33 +66,45 @@
          */
         "condition": "(
             person_id IN (
-                SELECT us.person_id FROM users us
-                    WHERE us.user_id IN (
-                        SELECT DISTINCT ur.user_id FROM user_role ur
-                            WHERE ur.role IN (SELECT DISTINCT rp.role FROM role_privilege rp WHERE rp.privilege IN (:userProgramRoles))
-                            OR ur.role NOT IN (SELECT DISTINCT rp.role FROM role_privilege rp WHERE rp.privilege IN (:allProgramRoles))
+                SELECT datafilter_us.person_id FROM users datafilter_us
+                    WHERE datafilter_us.user_id IN (
+                        SELECT DISTINCT datafilter_ur.user_id FROM user_role datafilter_ur
+                            WHERE datafilter_ur.role IN (:userProgramRoles)
+                            OR datafilter_ur.role NOT IN (:allProgramRoles)
                     )
-                    OR us.user_id NOT IN (SELECT DISTINCT ur2.user_id FROM user_role ur2)
+                    OR datafilter_us.user_id NOT IN (SELECT DISTINCT datafilter_ur2.user_id FROM user_role datafilter_ur2)
+                    OR datafilter_us.user_id IN (
+                        SELECT DISTINCT datafilter_ur1.user_id FROM user_role datafilter_ur1
+                            WHERE datafilter_ur1.role IN (
+                                SELECT DISTINCT datafilter_ebm.entity_identifier FROM datafilter_entity_basis_map datafilter_ebm
+                                    WHERE datafilter_ebm.entity_type = 'org.openmrs.Role'
+                                    AND datafilter_ebm.basis_type = 'org.openmrs.Program'
+                                    AND datafilter_ebm.basis_identifier IN (
+                                        SELECT DISTINCT datafilter_ebm2.basis_identifier FROM datafilter_entity_basis_map datafilter_ebm2
+                                            WHERE datafilter_ebm2.entity_type = 'org.openmrs.Role'
+                                                AND datafilter_ebm2.basis_type = 'org.openmrs.Program'
+                                                AND datafilter_ebm2.entity_identifier IN (:userProgramRoles)
+                                    )
+                            )
+                    )
             )
             OR (person_id IS NULL AND provider_id IN (
-                SELECT DISTINCT pr.provider_id FROM provider pr
-                    WHERE pr.role_id IS NULL OR pr.role_id IN (
-                        SELECT DISTINCT dfebm.entity_identifier FROM datafilter_entity_basis_map dfebm
-                            WHERE dfebm.entity_type = 'org.openmrs.Concept'
-                            AND dfebm.basis_type = 'org.openmrs.Program'
-                            AND dfebm.basis_identifier IN (
-                                SELECT DISTINCT dfebm1.basis_identifier FROM datafilter_entity_basis_map dfebm1
-                                    WHERE dfebm1.basis_type = 'org.openmrs.Program'
-                                    AND dfebm1.entity_type = 'org.openmrs.Privilege'
-                                    AND dfebm1.entity_identifier IN (
-                                        SELECT DISTINCT rp1.privilege FROM role_privilege rp1 WHERE rp1.role IN (:userProgramRoles)
-                                    )
+                SELECT DISTINCT datafilter_pr.provider_id FROM provider datafilter_pr
+                    WHERE datafilter_pr.role_id IS NULL OR datafilter_pr.role_id IN (
+                        SELECT DISTINCT datafilter_ebm.entity_identifier FROM datafilter_entity_basis_map datafilter_ebm
+                            WHERE datafilter_ebm.entity_type = 'org.openmrs.Concept'
+                            AND datafilter_ebm.basis_type = 'org.openmrs.Program'
+                            AND datafilter_ebm.basis_identifier IN (
+                                SELECT DISTINCT datafilter_ebm1.basis_identifier FROM datafilter_entity_basis_map datafilter_ebm1
+                                    WHERE datafilter_ebm1.basis_type = 'org.openmrs.Program'
+                                    AND datafilter_ebm1.entity_type = 'org.openmrs.Role'
+                                    AND datafilter_ebm1.entity_identifier IN (:userProgramRoles)
                                 )
                             )
-                    OR pr.role_id NOT IN (
-                        SELECT DISTINCT dfebm2.entity_identifier FROM datafilter_entity_basis_map dfebm2
-                            WHERE dfebm2.entity_type = 'org.openmrs.Concept'
-                            AND dfebm2.basis_type = 'org.openmrs.Program')
+                    OR datafilter_pr.role_id NOT IN (
+                        SELECT DISTINCT datafilter_ebm2.entity_identifier FROM datafilter_entity_basis_map datafilter_ebm2
+                            WHERE datafilter_ebm2.entity_type = 'org.openmrs.Concept'
+                            AND datafilter_ebm2.basis_type = 'org.openmrs.Program')
                 )
             )
         )",

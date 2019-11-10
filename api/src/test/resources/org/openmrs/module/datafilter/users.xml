@@ -30,6 +30,7 @@
     <role_privilege role="Program 1 Coordinator" privilege="Get Users" />
     <role_privilege role="Program 1 Coordinator" privilege="Get Providers" />
     <role_privilege role="Some Other Role 1" privilege="Get Users" />
+    <role_privilege role="Some Other Role 1" privilege="Get Providers" />
 
     <user_role user_id="10001" role="Program 1 Coordinator" />
     <user_role user_id="10002" role="Program 1 Coordinator" />

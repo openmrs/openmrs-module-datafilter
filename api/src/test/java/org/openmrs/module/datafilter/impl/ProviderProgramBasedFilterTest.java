@@ -91,7 +91,7 @@ public class ProviderProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 	@Test
 	public void getProviders_shouldReturnProvidersWithAccessToTheSameProgramsAsTheAuthenticatedUser() {
 		reloginAs("cmulemba", "test");
-		int expCount = 10;
+		int expCount = 11;
 		Collection<Provider> providers = getProviders();
 		assertEquals(expCount, providers.size());
 		assertTrue(TestUtil.containsId(providers, 10001));
@@ -104,16 +104,18 @@ public class ProviderProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 		assertTrue(TestUtil.containsId(providers, 10006));
 		//Should include a user with any of the roles the user has
 		assertTrue(TestUtil.containsId(providers, 10007));
-		//Should include providers with no person record but linked to the same program via a provider role
+		//Should include a provider with no person record but linked to the same program via a provider role
 		assertTrue(TestUtil.containsId(providers, 10008));
 		assertTrue(TestUtil.containsId(providers, 10009));
-		//Should include providers with no person record with provider role(s) but none is linked to a program
+		//Should include a provider with no person record with provider role(s) but none is linked to a program
 		assertTrue(TestUtil.containsId(providers, 10011));
-		//Should include providers with no person record and no provider role
+		//Should include provider with no person record and no provider role
 		assertTrue(TestUtil.containsId(providers, 10012));
+		//Should include a provider working at the same program but in a different uncommon role with no person record
+		assertTrue(TestUtil.containsId(providers, 10013));
 		
 		service.grantAccess(new Role(ROLE_COORDINATOR_PROG_1), new Program(10002));
-		expCount = 12;
+		expCount = 13;
 		providers = getProviders();
 		assertEquals(expCount, providers.size());
 		assertTrue(TestUtil.containsId(providers, 10001));
@@ -128,19 +130,20 @@ public class ProviderProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 		assertTrue(TestUtil.containsId(providers, 10010));
 		assertTrue(TestUtil.containsId(providers, 10011));
 		assertTrue(TestUtil.containsId(providers, 10012));
+		assertTrue(TestUtil.containsId(providers, 10013));
 	}
 	
 	@Test
 	public void getProviders_shouldReturnAllProvidersIfTheAuthenticatedUserIsASuperUser() {
 		assertTrue(Context.getAuthenticatedUser().isSuperUser());
-		assertEquals(12, getProviders().size());
+		assertEquals(13, getProviders().size());
 	}
 	
 	@Test
 	public void getProviders_shouldReturnAllProvidersIfTheFilterIsDisabled() {
 		FilterTestUtils.disableFilter(ImplConstants.PROGRAM_BASED_FILTER_NAME_PROVIDER);
 		reloginAs("dyorke", "test");
-		assertEquals(12, getProviders().size());
+		assertEquals(13, getProviders().size());
 	}
 	
 }

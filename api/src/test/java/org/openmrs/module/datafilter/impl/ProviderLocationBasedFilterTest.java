@@ -71,14 +71,14 @@ public class ProviderLocationBasedFilterTest extends BaseFilterTest {
 	@Test
 	public void getProviders_shouldReturnAllProvidersIfTheAuthenticatedProviderIsASuperProvider() {
 		assertTrue(Context.getAuthenticatedUser().isSuperUser());
-		assertEquals(12, getProviders().size());
+		assertEquals(13, getProviders().size());
 	}
 	
 	@Test
 	public void getProviders_shouldReturnAllProvidersIfLocationFilteringIsDisabled() {
 		DataFilterTestUtils.disableLocationFiltering();
 		reloginAs("dyorke", "test");
-		assertEquals(12, getProviders().size());
+		assertEquals(13, getProviders().size());
 	}
 	
 }

@@ -17,22 +17,27 @@ import java.util.EnumSet;
 
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.ServletContextAware;
 
 /**
  * Registers web components that typically are registered via web.xml e.g. filters, servlets and
  * listeners.
  */
 @Component
-public class DataFilterWebComponentRegistrar implements ServletContextAware {
-	
+public class DataFilterWebComponentRegistrar implements ServletContextListener {
 	@Override
-	public void setServletContext(ServletContext servletContext) {
+	public void contextInitialized(ServletContextEvent servletContextEvent) {
+		ServletContext servletContext = servletContextEvent.getServletContext();
 		FilterRegistration filterReg = servletContext.addFilter("datafilter-Filter", new DataFilterWebFilter());
 		//TODO Should ignore static content requests
 		filterReg.addMappingForUrlPatterns(EnumSet.of(ERROR, FORWARD, REQUEST), true, "/*");
 	}
-	
+
+	@Override
+	public void contextDestroyed(ServletContextEvent servletContextEvent) {
+
+	}
 }

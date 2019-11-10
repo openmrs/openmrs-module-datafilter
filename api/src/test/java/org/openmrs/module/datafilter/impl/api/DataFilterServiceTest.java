@@ -10,6 +10,8 @@
 package org.openmrs.module.datafilter.impl.api;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
@@ -22,9 +24,10 @@ import org.openmrs.Location;
 import org.openmrs.OpenmrsObject;
 import org.openmrs.Program;
 import org.openmrs.User;
+import org.openmrs.module.datafilter.DataFilterSessionContext;
 import org.openmrs.module.datafilter.TestConstants;
 import org.openmrs.module.datafilter.impl.BaseFilterTest;
-import org.openmrs.module.datafilter.impl.api.DataFilterService;
+import org.powermock.reflect.Whitebox;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class DataFilterServiceTest extends BaseFilterTest {
@@ -68,7 +71,12 @@ public class DataFilterServiceTest extends BaseFilterTest {
 			assertFalse(service.hasAccess(user, basis));
 		}
 		
+		assertNotNull(((ThreadLocal) Whitebox.getInternalState(DataFilterSessionContext.class, "areFiltersSet")).get());
+		
 		service.grantAccess(user, bases);
+		
+		assertNull(((ThreadLocal) Whitebox.getInternalState(DataFilterSessionContext.class, "areFiltersSet")).get());
+		
 		for (OpenmrsObject basis : bases) {
 			assertTrue(service.hasAccess(user, basis));
 		}
@@ -91,7 +99,12 @@ public class DataFilterServiceTest extends BaseFilterTest {
 			assertTrue(service.hasAccess(user, basis));
 		}
 		
+		assertNotNull(((ThreadLocal) Whitebox.getInternalState(DataFilterSessionContext.class, "areFiltersSet")).get());
+		
 		service.revokeAccess(user, bases);
+		
+		assertNull(((ThreadLocal) Whitebox.getInternalState(DataFilterSessionContext.class, "areFiltersSet")).get());
+		
 		for (OpenmrsObject basis : bases) {
 			assertFalse(service.hasAccess(user, basis));
 		}

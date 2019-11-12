@@ -28,11 +28,19 @@ import org.springframework.web.context.ServletContextAware;
 @Component
 public class DataFilterWebComponentRegistrar implements ServletContextAware {
 	
+	private boolean initialized = false;
+	
 	@Override
 	public void setServletContext(ServletContext servletContext) {
+		if (initialized) {
+			return;
+		}
+		
 		FilterRegistration filterReg = servletContext.addFilter("datafilter-Filter", new DataFilterWebFilter());
 		//TODO Should ignore static content requests
 		filterReg.addMappingForUrlPatterns(EnumSet.of(ERROR, FORWARD, REQUEST), true, "/*");
+		
+		initialized = true;
 	}
 	
 }

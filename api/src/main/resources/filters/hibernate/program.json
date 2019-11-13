@@ -60,9 +60,8 @@
         ],
 
         /*
-         * See the goals, assumptions and condition logic for user filter above, applies for providers too
-         * for persons with a user account. For providers that are not linked to a person record but have no
-         * provider role or they have a provider role linked to the same program, they will be visible
+         * See the goals, assumptions and condition logic for user filter above.
+         * Another assumption is that all providers are linked to user accounts
          */
         "condition": "(
             person_id IN (
@@ -87,25 +86,6 @@
                                     )
                             )
                     )
-            )
-            OR (person_id IS NULL AND provider_id IN (
-                SELECT DISTINCT datafilter_pr.provider_id FROM provider datafilter_pr
-                    WHERE datafilter_pr.role_id IS NULL OR datafilter_pr.role_id IN (
-                        SELECT DISTINCT datafilter_ebm3.entity_identifier FROM datafilter_entity_basis_map datafilter_ebm3
-                            WHERE datafilter_ebm3.entity_type = 'org.openmrs.Concept'
-                            AND datafilter_ebm3.basis_type = 'org.openmrs.Program'
-                            AND datafilter_ebm3.basis_identifier IN (
-                                SELECT DISTINCT datafilter_ebm4.basis_identifier FROM datafilter_entity_basis_map datafilter_ebm4
-                                    WHERE datafilter_ebm4.basis_type = 'org.openmrs.Program'
-                                    AND datafilter_ebm4.entity_type = 'org.openmrs.Role'
-                                    AND datafilter_ebm4.entity_identifier IN (:userProgramRoles)
-                                )
-                            )
-                    OR datafilter_pr.role_id NOT IN (
-                        SELECT DISTINCT datafilter_ebm5.entity_identifier FROM datafilter_entity_basis_map datafilter_ebm5
-                            WHERE datafilter_ebm5.entity_type = 'org.openmrs.Concept'
-                            AND datafilter_ebm5.basis_type = 'org.openmrs.Program')
-                )
             )
         )",
         "parameters": [

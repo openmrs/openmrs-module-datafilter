@@ -13,12 +13,6 @@
 -->
 
 <dataset>
-    <concept concept_id="10001" datatype_id="4" class_id="16" is_set="1" retired="0" creator="1" date_created="2008-08-15 15:27:51.0" uuid="1cbe2ed3-cd5f-4f46-9459-26127c9265ac"/>
-    <concept concept_id="10002" datatype_id="4" class_id="16" is_set="1" retired="0" creator="1" date_created="2008-08-15 15:27:51.0" uuid="2cbe2ed3-cd5f-4f46-9459-26127c9265ac"/>
-    <concept concept_id="10003" datatype_id="4" class_id="16" is_set="1" retired="0" creator="1" date_created="2008-08-15 15:27:51.0" uuid="3cbe2ed3-cd5f-4f46-9459-26127c9265ac"/>
-    <concept concept_id="10004" datatype_id="4" class_id="16" is_set="1" retired="0" creator="1" date_created="2008-08-15 15:27:51.0" uuid="4cbe2ed3-cd5f-4f46-9459-26127c9265ac"/>
-    <concept concept_id="10005" datatype_id="4" class_id="16" is_set="1" retired="0" creator="1" date_created="2008-08-15 15:27:51.0" uuid="5cbe2ed3-cd5f-4f46-9459-26127c9265ac"/>
-
     <provider provider_id="10001" person_id="10001" identifier="mOne" creator="1" date_created="2005-01-01 00:00:00.0" retired="0" uuid="a1e3868a-6b90-11e0-93c3-18a905e044dc" />
     <provider provider_id="10002" person_id="10002" identifier="mTwo" creator="1"  date_created="2005-01-01 00:00:00.0" retired="0" uuid="b1e3868a-6b90-11e0-93c3-18a905e044dc" />
     <provider provider_id="10003" person_id="10003" identifier="mThree" creator="1" date_created="2005-01-01 00:00:00.0" retired="0" uuid="c1e3868a-6b90-11e0-93c3-18a905e044dc" />
@@ -26,17 +20,8 @@
     <provider provider_id="10005" person_id="10005" identifier="mFive" creator="1" date_created="2005-01-01 00:00:00.0" retired="0" uuid="e1e3868a-6b90-11e0-93c3-18a905e044dc" />
     <provider provider_id="10006" person_id="10006" identifier="mSix" creator="1" date_created="2005-01-01 00:00:00.0" retired="0" uuid="f1e3868a-6b90-11e0-93c3-18a905e044dc" />
     <provider provider_id="10007" person_id="10007" identifier="mSeven" creator="1" date_created="2005-01-01 00:00:00.0" retired="0" uuid="g1e3868a-6b90-11e0-93c3-18a905e044dc" />
-    <provider provider_id="10008" identifier="mEight" name="Eight Mulemba" role_id="10001" creator="1" date_created="2005-01-01 00:00:00.0" retired="0" uuid="h1e3868a-6b90-11e0-93c3-18a905e044dc" />
-    <provider provider_id="10009" identifier="mNine" name="Nine Mulemba" role_id="10001" creator="1" date_created="2005-01-01 00:00:00.0" retired="0" uuid="i1e3868a-6b90-11e0-93c3-18a905e044dc" />
-    <provider provider_id="10010" identifier="mTen" name="Ten Mulemba" role_id="10002" creator="1" date_created="2005-01-01 00:00:00.0" retired="0" uuid="j1e3868a-6b90-11e0-93c3-18a905e044dc" />
-    <provider provider_id="10011" identifier="mEleven" name="Eleven Mulemba" role_id="10004" creator="1" date_created="2005-01-01 00:00:00.0" retired="0" uuid="k1e3868a-6b90-11e0-93c3-18a905e044dc" />
-    <provider provider_id="10012" identifier="mTwelve" name="Twelve Mulemba" creator="1" date_created="2005-01-01 00:00:00.0" retired="0" uuid="l1e3868a-6b90-11e0-93c3-18a905e044dc" />
-    <provider provider_id="10013" identifier="mThirteen" name="Thirteen Mulemba" role_id="10005" creator="1" date_created="2005-01-01 00:00:00.0" retired="0" uuid="m1e3868a-6b90-11e0-93c3-18a905e044dc" />
-
+    
     <datafilter_entity_basis_map entity_basis_map_id="20001" entity_identifier="10001" entity_type="org.openmrs.Provider" basis_identifier="4000" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="ae52928c-3bcb-56r4-a4dc-9198f6b2873d" />
     <datafilter_entity_basis_map entity_basis_map_id="20002" entity_identifier="10002" entity_type="org.openmrs.Provider" basis_identifier="4000" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="be52928c-3bcb-56r4-a4dc-9198f6b2873d" />
     <datafilter_entity_basis_map entity_basis_map_id="20003" entity_identifier="10003" entity_type="org.openmrs.Provider" basis_identifier="4001" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="ce52928c-3bcb-56r4-a4dc-9198f6b2873d" />
-    <datafilter_entity_basis_map entity_basis_map_id="20004" entity_identifier="10001" entity_type="org.openmrs.Concept" basis_identifier="10001" basis_type="org.openmrs.Program" creator="1" date_created="2019-05-01 00:00:00.0" uuid="de52928c-3bcb-56r4-a4dc-9198f6b2873d" />
-    <datafilter_entity_basis_map entity_basis_map_id="20005" entity_identifier="10002" entity_type="org.openmrs.Concept" basis_identifier="10002" basis_type="org.openmrs.Program" creator="1" date_created="2019-05-01 00:00:00.0" uuid="ee52928c-3bcb-56r4-a4dc-9198f6b2873d" />
-    <datafilter_entity_basis_map entity_basis_map_id="20006" entity_identifier="10005" entity_type="org.openmrs.Concept" basis_identifier="10001" basis_type="org.openmrs.Program" creator="1" date_created="2019-05-01 00:00:00.0" uuid="fe52928c-3bcb-56r4-a4dc-9198f6b2873d" />
 </dataset>

@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import org.openmrs.Location;
 import org.openmrs.Role;
+import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.datafilter.DataFilterContext;
 import org.openmrs.module.datafilter.DataFilterListener;
@@ -94,6 +95,15 @@ public class ImplDataFilterListener implements DataFilterListener {
 				        .filter(r -> allProgramRoleNames.contains(r.getName())).collect(Collectors.toList());
 				
 				userProgramRoleNames = userProgramRoles.stream().map(r -> r.getName()).collect(Collectors.toSet());
+				
+				if (allProgramRoleNames.isEmpty()) {
+					throw new APIException("No program roles were found");
+				}
+				
+				if (userProgramRoleNames.isEmpty()) {
+					//Avoid a 'select IN ()' would be an invalid query, in theory we expect no role to match #####
+					userProgramRoleNames.add("#####");
+				}
 			}
 			
 			filterContext.setParameter(ImplConstants.PARAM_NAME_USER_PROG_ROlES, userProgramRoleNames);

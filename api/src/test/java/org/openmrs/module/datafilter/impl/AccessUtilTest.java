@@ -106,7 +106,8 @@ public class AccessUtilTest extends BaseFilterTest {
 		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "persons.xml");
 		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "users.xml");
 		Collection<String> privileges = AccessUtil.getAllProgramRoles();
-		assertEquals(4, privileges.size());
+		assertEquals(5, privileges.size());
+		assertTrue(privileges.contains("Some made up role"));
 		assertTrue(privileges.contains("Program 1 Coordinator"));
 		assertTrue(privileges.contains("Program 2 Coordinator"));
 		assertTrue(privileges.contains("Program 3 Coordinator"));

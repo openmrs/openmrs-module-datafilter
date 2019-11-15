@@ -112,8 +112,13 @@ public class DataFilterSessionContext extends SpringSessionContext {
 			Set<String> enabledFilters = new HashSet();
 			try {
 				for (HibernateFilterRegistration registration : Util.getHibernateFilterRegistrations()) {
-					if (!Util.isFilterDisabled(registration.getName())) {
-						enabledFilters.add(registration.getName());
+					boolean hasByPassPriv = false;
+					final String filterName = registration.getName();
+					if (Context.isAuthenticated()) {
+						hasByPassPriv = Context.hasPrivilege(filterName + DataFilterConstants.BYPASS_PRIV_SUFFIX);
+					}
+					if (!Util.isFilterDisabled(filterName) && !hasByPassPriv) {
+						enabledFilters.add(filterName);
 					}
 				}
 			}

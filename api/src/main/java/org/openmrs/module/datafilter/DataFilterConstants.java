@@ -15,6 +15,8 @@ public final class DataFilterConstants {
 	
 	public static final String DISABLED = ".disabled";
 	
+	public static final String BYPASS_PRIV_SUFFIX = "_ByPass";
+	
 	public static final String PRIV_BY_PASS = "ByPass Data Filters";
 	
 }

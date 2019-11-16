@@ -33,7 +33,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 @Component(MODULE_ID + "FullTextQueryCreatedEventListener")
-public class FullTextQueryCreatedEventListener implements ApplicationListener<FullTextQueryCreatedEvent> {
+public class FullTextQueryCreatedEventListener implements FilteringHandler, ApplicationListener<FullTextQueryCreatedEvent> {
 	
 	private static final Logger log = LoggerFactory.getLogger(FullTextQueryCreatedEventListener.class);
 	
@@ -62,7 +62,7 @@ public class FullTextQueryCreatedEventListener implements ApplicationListener<Fu
 		Set<Class> filteredClasses = new HashSet();
 		for (FullTextFilterRegistration registration : Util.getFullTextFilterRegistrations()) {
 			filteredClasses.addAll(registration.getTargetClasses());
-			if (!Util.isFilterDisabled(registration.getName())) {
+			if (!isFilterDisabled(registration.getName())) {
 				enabledFilters.add(registration.getName());
 			}
 		}

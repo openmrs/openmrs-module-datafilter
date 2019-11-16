@@ -63,8 +63,7 @@ public class DataFilterSessionContext extends SpringSessionContext implements Fi
 		//exactly once unless the user logs in or out which is when we have to re-enable/disable filters again
 		if (BooleanUtils.isTrue(areFiltersSet.get())) {
 			if (log.isTraceEnabled()) {
-				log.trace(
-				    "Skipping filter logic because filters are already set on the current thread " + Thread.currentThread());
+				log.trace("Skipping filter logic because filters are already set on the current thread");
 			}
 			
 			return super.currentSession();
@@ -103,7 +102,7 @@ public class DataFilterSessionContext extends SpringSessionContext implements Fi
 			}*/
 			
 			if (log.isDebugEnabled()) {
-				log.debug("Enabling filters on the current session " + Thread.currentThread());
+				log.debug("Enabling filters on the current session");
 			}
 			
 			//When AccessUtil.isFilterDisabled is called, it triggers a call to SessionFactory.getCurrentSession()

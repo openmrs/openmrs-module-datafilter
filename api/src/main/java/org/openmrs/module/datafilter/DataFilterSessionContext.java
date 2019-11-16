@@ -40,7 +40,7 @@ import org.springframework.stereotype.Component;
  *
  * @see DataFilterUserSessionListener
  */
-public class DataFilterSessionContext extends SpringSessionContext implements FilterHandler {
+public class DataFilterSessionContext extends SpringSessionContext implements FilteringHandler {
 	
 	private static final Logger log = LoggerFactory.getLogger(DataFilterSessionContext.class);
 	

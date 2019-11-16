@@ -11,7 +11,7 @@ package org.openmrs.module.datafilter;
 
 import org.openmrs.api.context.Context;
 
-public interface FilterHandler {
+public interface FilteringHandler {
 	
 	/**
 	 * Checks if the specified filter is disabled for the authenticated user.

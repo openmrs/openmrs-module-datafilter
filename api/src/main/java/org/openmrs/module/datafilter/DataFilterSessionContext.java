@@ -40,7 +40,7 @@ import org.springframework.stereotype.Component;
  *
  * @see DataFilterUserSessionListener
  */
-public class DataFilterSessionContext extends SpringSessionContext {
+public class DataFilterSessionContext extends SpringSessionContext implements FilterHandler {
 	
 	private static final Logger log = LoggerFactory.getLogger(DataFilterSessionContext.class);
 	
@@ -112,13 +112,8 @@ public class DataFilterSessionContext extends SpringSessionContext {
 			Set<String> enabledFilters = new HashSet();
 			try {
 				for (HibernateFilterRegistration registration : Util.getHibernateFilterRegistrations()) {
-					boolean hasByPassPriv = false;
-					final String filterName = registration.getName();
-					if (Context.isAuthenticated()) {
-						hasByPassPriv = Context.hasPrivilege(filterName + DataFilterConstants.BYPASS_PRIV_SUFFIX);
-					}
-					if (!Util.isFilterDisabled(filterName) && !hasByPassPriv) {
-						enabledFilters.add(filterName);
+					if (!isFilterDisabled(registration.getName())) {
+						enabledFilters.add(registration.getName());
 					}
 				}
 			}

@@ -135,7 +135,7 @@ public class DataFilterSessionContext extends SpringSessionContext implements Fi
 					try {
 						for (DataFilterListener listener : listeners) {
 							if (listener.supports(registration.getName())) {
-								//In theory, expect l one listener per filter, since we found one, no more will get called.
+								//In theory, expect one listener per filter, since we found one, no more will get called.
 								//TODO During filter registration, check for cases where a filter has multiple listeners
 								boolean enable = listener.onEnableFilter(filterContext);
 								if (!enable) {

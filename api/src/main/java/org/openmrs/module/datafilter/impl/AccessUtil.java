@@ -157,7 +157,7 @@ public class AccessUtil {
 	 * @return the if of the person attribute type
 	 */
 	protected static Integer getPersonAttributeTypeId(Class<?> basisType) {
-		//TODO This method should be moved to a GlobalPropertyListener so that we can cache the ids
+		//TODO This code should be moved to a GlobalPropertyListener so that we can cache the ids
 		List<List<Object>> rows = executeQuery(GP_QUERY);
 		String attribTypeUuids = null;
 		if (!rows.isEmpty()) {

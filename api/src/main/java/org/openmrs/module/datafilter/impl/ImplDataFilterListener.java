@@ -75,6 +75,14 @@ public class ImplDataFilterListener implements DataFilterListener {
 				filterContext.setParameter(ImplConstants.PARAM_NAME_ATTRIB_TYPE_ID, attributeTypeId);
 			}
 			
+			if (filterContext.getFilterName().equals(ImplConstants.LOCATION_BASED_FILTER_NAME_PROVIDER)) {
+				Integer authenticatedPersonId = -1;
+				if (Context.isAuthenticated()) {
+					authenticatedPersonId = Context.getAuthenticatedUser().getPerson().getId();
+				}
+				filterContext.setParameter(ImplConstants.PARAM_NAME_AUTHENTICATED_PERSON_ID, authenticatedPersonId);
+			}
+			
 			filterContext.setParameter(ImplConstants.PARAM_NAME_BASIS_IDS, basisIds);
 			
 		} else if (filterContext.getFilterName().startsWith(ImplConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX)) {
@@ -106,7 +114,8 @@ public class ImplDataFilterListener implements DataFilterListener {
 				}
 			}
 			
-			filterContext.setParameter(ImplConstants.PARAM_NAME_USER_PROG_ROlES, userProgramRoleNames);
+			//filterContext.setParameter(ImplConstants.PARAM_NAME_AUTHENTICATED_PERSON_ID, authenticatedPersonId);
+			filterContext.setParameter(ImplConstants.PARAM_NAME_USER_PROG_ROLES, userProgramRoleNames);
 			filterContext.setParameter(ImplConstants.PARAM_NAME_ALL_PROG_ROlES, allProgramRoleNames);
 		}
 		

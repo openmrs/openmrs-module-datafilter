@@ -31,7 +31,9 @@ final class ImplConstants {
 	
 	public static final String PARAM_NAME_ROLES = "roles";
 	
-	public static final String PARAM_NAME_USER_PROG_ROlES = "userProgramRoles";
+	public static final String PARAM_NAME_AUTHENTICATED_PERSON_ID = "authenticatedPersonId";
+	
+	public static final String PARAM_NAME_USER_PROG_ROLES = "userProgramRoles";
 	
 	public static final String PARAM_NAME_ALL_PROG_ROlES = "allProgramRoles";
 	

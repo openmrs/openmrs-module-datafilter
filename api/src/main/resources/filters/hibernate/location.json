@@ -2,7 +2,11 @@
     {
         "name": "datafilter_locationBasedVisitFilter",
         "targetClasses": ["org.openmrs.Visit"],
-        "condition": "patient_id IN (SELECT DISTINCT pa.person_id FROM person_attribute pa WHERE pa.person_attribute_type_id = :attributeTypeId AND pa.value IN (:basisIds) AND pa.voided = 0)",
+        "condition": "patient_id IN (
+                        SELECT DISTINCT pa.person_id FROM person_attribute pa
+                            WHERE pa.person_attribute_type_id = :attributeTypeId
+                            AND pa.value IN (:basisIds)
+                            AND pa.voided = 0)",
         "parameters": [
             {
                 "name": "attributeTypeId",
@@ -17,7 +21,11 @@
     {
         "name": "datafilter_locationBasedEncounterFilter",
         "targetClasses": ["org.openmrs.Encounter"],
-        "condition": "patient_id IN (SELECT DISTINCT pa.person_id FROM person_attribute pa WHERE pa.person_attribute_type_id = :attributeTypeId AND pa.value IN (:basisIds) AND pa.voided = 0)",
+        "condition": "patient_id IN (
+                        SELECT DISTINCT pa.person_id FROM person_attribute pa
+                            WHERE pa.person_attribute_type_id = :attributeTypeId
+                            AND pa.value IN (:basisIds)
+                            AND pa.voided = 0)",
         "parameters": [
             {
                 "name": "attributeTypeId",
@@ -32,7 +40,10 @@
     {
         "name": "datafilter_locationBasedObsFilter",
         "targetClasses": ["org.openmrs.Obs"],
-        "condition": "person_id IN (SELECT DISTINCT pa.person_id FROM person_attribute pa WHERE pa.person_attribute_type_id = :attributeTypeId AND pa.value IN (:basisIds) AND pa.voided = 0)",
+        "condition": "person_id IN (
+                        SELECT DISTINCT pa.person_id FROM person_attribute pa
+                            WHERE pa.person_attribute_type_id = :attributeTypeId
+                            AND pa.value IN (:basisIds) AND pa.voided = 0)",
         "parameters": [
             {
                 "name": "attributeTypeId",
@@ -47,7 +58,11 @@
     {
         "name": "datafilter_locationBasedPatientFilter",
         "targetClasses": ["org.openmrs.Patient"],
-        "condition": "patient_id IN (SELECT DISTINCT pa.person_id FROM person_attribute pa WHERE pa.person_attribute_type_id = :attributeTypeId AND pa.value IN (:basisIds) AND pa.voided = 0)",
+        "condition": "patient_id IN (
+                        SELECT DISTINCT pa.person_id FROM person_attribute pa
+                            WHERE pa.person_attribute_type_id = :attributeTypeId
+                            AND pa.value IN (:basisIds)
+                            AND pa.voided = 0)",
         "parameters": [
             {
                 "name": "attributeTypeId",
@@ -62,7 +77,11 @@
     {
         "name": "datafilter_locationBasedUserFilter",
         "targetClasses": ["org.openmrs.User"],
-        "condition": "user_id IN (SELECT DISTINCT o.entity_identifier FROM datafilter_entity_basis_map o WHERE o.entity_type = 'org.openmrs.User' AND o.basis_type = 'org.openmrs.Location' AND o.basis_identifier IN (:basisIds))",
+        "condition": "user_id IN (
+                        SELECT DISTINCT o.entity_identifier FROM datafilter_entity_basis_map o
+                            WHERE o.entity_type = 'org.openmrs.User'
+                            AND o.basis_type = 'org.openmrs.Location'
+                            AND o.basis_identifier IN (:basisIds))",
         "parameters": [
             {
                 "name": "basisIds",
@@ -73,8 +92,16 @@
     {
         "name": "datafilter_locationBasedProviderFilter",
         "targetClasses": ["org.openmrs.Provider"],
-        "condition": "provider_id IN (SELECT DISTINCT o.entity_identifier FROM datafilter_entity_basis_map o WHERE o.entity_type = 'org.openmrs.Provider' AND o.basis_type = 'org.openmrs.Location' AND o.basis_identifier IN (:basisIds))",
+        "condition": "person_id = (:authenticatedPersonId) OR provider_id IN (
+                        SELECT DISTINCT o.entity_identifier FROM datafilter_entity_basis_map o
+                            WHERE o.entity_type = 'org.openmrs.Provider'
+                            AND o.basis_type = 'org.openmrs.Location'
+                            AND o.basis_identifier IN (:basisIds))",
         "parameters": [
+            {
+                "name": "authenticatedPersonId",
+                "type": "integer"
+            },
             {
                 "name": "basisIds",
                 "type": "string"

@@ -54,7 +54,7 @@ public class AccessUtil {
 	private final static String UUIDS_PLACEHOLDER = "@uuids";
 	
 	private final static String BASIS_QUERY = "SELECT DISTINCT basis_identifier FROM " + DataFilterConstants.MODULE_ID
-	        + "_entity_basis_map WHERE entity_identifier = " + ENTITY_ID_PLACEHOLDER + " AND entity_type = '"
+	        + "_entity_basis_map WHERE entity_identifier = '" + ENTITY_ID_PLACEHOLDER + "' AND entity_type = '"
 	        + ENTITY_TYPE_PLACEHOLDER + "' AND basis_type = '" + BASIS_TYPE_PLACEHOLDER + "'";
 	
 	private final static String GP_QUERY = "SELECT property_value FROM global_property WHERE property = '"

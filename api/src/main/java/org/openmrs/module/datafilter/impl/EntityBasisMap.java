@@ -34,7 +34,7 @@ import org.openmrs.module.datafilter.DataFilterConstants;
 @Entity
 @Table(name = DataFilterConstants.MODULE_ID
         + "_entity_basis_map", uniqueConstraints = @UniqueConstraint(name = DataFilterConstants.MODULE_ID
-                + "_entity_basis_map", columnNames = { "entity_identifier", "entity_type", "basis_identifier",
+                + "_entity_basis_map_uk", columnNames = { "entity_identifier", "entity_type", "basis_identifier",
                         "basis_type" }))
 public class EntityBasisMap extends BaseOpenmrsObject implements Creatable {
 	

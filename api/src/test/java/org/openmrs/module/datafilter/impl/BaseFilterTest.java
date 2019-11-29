@@ -49,7 +49,7 @@ public abstract class BaseFilterTest extends BaseModuleContextSensitiveTest {
 			gp = new GlobalProperty(ImplConstants.GP_RUN_IN_STRICT_MODE);
 		} else {
 			originalValue = gp.getPropertyValue();
-			if ("true".equalsIgnoreCase(gp.getPropertyValue())) {
+			if (!"false".equalsIgnoreCase(gp.getPropertyValue())) {
 				resetToStrict = true;
 			}
 		}

@@ -52,13 +52,6 @@ public class ImplDataFilterListener implements DataFilterListener {
 		}
 		
 		if (filterContext.getFilterName().startsWith(ImplConstants.LOCATION_BASED_FILTER_NAME_PREFIX)) {
-			Integer attributeTypeId = AccessUtil.getPersonAttributeTypeId(Location.class);
-			//In tests, we can get here because test data is getting setup or flushed to the db
-			if (attributeTypeId == null) {
-				//In theory this should match no attribute type hence no patients
-				attributeTypeId = -1;
-			}
-			
 			Collection<String> basisIds = new HashSet();
 			if (Context.isAuthenticated()) {
 				basisIds.addAll(AccessUtil.getAssignedBasisIds(Location.class));
@@ -68,11 +61,6 @@ public class ImplDataFilterListener implements DataFilterListener {
 				//If the user isn't granted access to patients at any basis, we add -1 because ids are all > 0,
 				//in theory the query will match no records if the user isn't granted access to any basis
 				basisIds = Collections.singleton("-1");
-			}
-			
-			if (!filterContext.getFilterName().endsWith("UserFilter")
-			        || !filterContext.getFilterName().equals(ImplConstants.LOCATION_BASED_FILTER_NAME_PROVIDER)) {
-				filterContext.setParameter(ImplConstants.PARAM_NAME_ATTRIB_TYPE_ID, attributeTypeId);
 			}
 			
 			if (filterContext.getFilterName().equals(ImplConstants.LOCATION_BASED_FILTER_NAME_PROVIDER)) {
@@ -114,7 +102,6 @@ public class ImplDataFilterListener implements DataFilterListener {
 				}
 			}
 			
-			//filterContext.setParameter(ImplConstants.PARAM_NAME_AUTHENTICATED_PERSON_ID, authenticatedPersonId);
 			filterContext.setParameter(ImplConstants.PARAM_NAME_USER_PROG_ROLES, userProgramRoleNames);
 			filterContext.setParameter(ImplConstants.PARAM_NAME_ALL_PROG_ROlES, allProgramRoleNames);
 		}

@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.openmrs.BaseOpenmrsObject;
 import org.openmrs.Location;
 import org.openmrs.Program;
@@ -57,12 +56,6 @@ public class AccessUtil {
 	        + "_entity_basis_map WHERE entity_identifier = '" + ENTITY_ID_PLACEHOLDER + "' AND entity_type = '"
 	        + ENTITY_TYPE_PLACEHOLDER + "' AND basis_type = '" + BASIS_TYPE_PLACEHOLDER + "'";
 	
-	private final static String GP_QUERY = "SELECT property_value FROM global_property WHERE property = '"
-	        + ImplConstants.GP_PERSON_ATTRIBUTE_TYPE_UUIDS + "'";
-	
-	private final static String ATTRIBUTE_TYPE_QUERY = "SELECT person_attribute_type_id, format FROM person_attribute_type WHERE uuid IN ("
-	        + UUIDS_PLACEHOLDER + ")";
-	
 	/**
 	 * Gets the collection of person ids for all the persons associated to the bases of the specified
 	 * type, the basis could be something like Location, Program etc.
@@ -75,16 +68,6 @@ public class AccessUtil {
 			log.debug("Looking up accessible persons for user with Id: " + Context.getAuthenticatedUser().getId());
 		}
 		
-		Integer attributeTypeId = getPersonAttributeTypeId(basisType);
-		
-		if (attributeTypeId == null) {
-			throw new APIException("No person attribute type is configured to support filtering by " + basisType.getName());
-		}
-		
-		if (log.isDebugEnabled()) {
-			log.debug("Filtering by person attribute type with id " + attributeTypeId);
-		}
-		
 		Collection<String> accessibleBasisIds = getAssignedBasisIds(basisType);
 		if (!accessibleBasisIds.isEmpty()) {
 			if (log.isDebugEnabled()) {
@@ -92,9 +75,8 @@ public class AccessUtil {
 				    "Filtering on " + basisType.getSimpleName() + "(s) with id(s): " + String.join(",", accessibleBasisIds));
 			}
 			
-			String personQuery = ImplConstants.PERSON_ID_QUERY
-			        .replace(ImplConstants.ATTRIB_TYPE_ID_PLACEHOLDER, attributeTypeId.toString())
-			        .replace(ImplConstants.BASIS_IDS_PLACEHOLDER, String.join(",", accessibleBasisIds));
+			String personQuery = ImplConstants.PERSON_ID_QUERY.replace(ImplConstants.BASIS_IDS_PLACEHOLDER,
+			    String.join(",", accessibleBasisIds));
 			List<List<Object>> personRows = executeQuery(personQuery);
 			Set<String> personIds = new HashSet();
 			personRows.forEach((List<Object> personRow) -> personIds.add(personRow.get(0).toString()));
@@ -147,45 +129,6 @@ public class AccessUtil {
 	private static List<List<Object>> executeQuery(String query) {
 		AdministrationDAO adminDAO = Context.getRegisteredComponent("adminDAO", AdministrationDAO.class);
 		return adminDAO.executeSQL(query, true);
-	}
-	
-	/**
-	 * Gets the id of the person attribute type that matches any of the uuids configured via the
-	 * {@link ImplConstants#GP_PERSON_ATTRIBUTE_TYPE_UUIDS} for the specified basis type.
-	 * 
-	 * @param basisType the basis type to match
-	 * @return the if of the person attribute type
-	 */
-	protected static Integer getPersonAttributeTypeId(Class<?> basisType) {
-		//TODO This code should be moved to a GlobalPropertyListener so that we can cache the ids
-		List<List<Object>> rows = executeQuery(GP_QUERY);
-		String attribTypeUuids = null;
-		if (!rows.isEmpty()) {
-			if (rows.get(0).get(0) == null) {
-				log.warn(
-				    "The value for the " + ImplConstants.GP_PERSON_ATTRIBUTE_TYPE_UUIDS + " global property is not yet set");
-				throw new APIException("Failed to load accessible persons");
-			}
-			attribTypeUuids = rows.get(0).get(0).toString();
-		}
-		
-		if (StringUtils.isNotBlank(attribTypeUuids)) {
-			List<String> quotedUuids = new ArrayList();
-			for (String uuid : StringUtils.split(attribTypeUuids, ",")) {
-				if (StringUtils.isNotBlank(uuid)) {
-					quotedUuids.add("'" + uuid.trim() + "'");
-				}
-			}
-			String attributeQuery = ATTRIBUTE_TYPE_QUERY.replace(UUIDS_PLACEHOLDER, String.join(",", quotedUuids));
-			List<List<Object>> attributeRows = executeQuery(attributeQuery);
-			for (List<Object> row : attributeRows) {
-				if (basisType.getName().equals(row.get(1))) {
-					return Integer.valueOf(row.get(0).toString());
-				}
-			}
-		}
-		
-		return null;
 	}
 	
 	/**

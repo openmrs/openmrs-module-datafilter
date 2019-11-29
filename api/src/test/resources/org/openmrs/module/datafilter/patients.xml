@@ -25,11 +25,8 @@
     <person_name person_name_id="2503" preferred="1" person_id="1503" given_name="Magidu" family_name="Navuga" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="389f3a7b-6482-487d-94ce-c07bb3ca3cc8" />
     <person_name person_name_id="2504" preferred="1" person_id="1504" given_name="Magidu" family_name="Ssemakula" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="489f3a7b-6482-487d-94ce-c07bb3ca3cc8" />
 
-    <person_attribute person_attribute_id="7501" person_id="1501" value="4000" person_attribute_type_id="6000" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="a869f3da-b692-44b7-a33f-abf2c450474f" />
     <person_attribute person_attribute_id="7511" person_id="1501" value="3173459561" person_attribute_type_id="6501" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="b868f3da-b692-44b7-a33f-abf2c450474f" />
-    <person_attribute person_attribute_id="7502" person_id="1502" value="4001" person_attribute_type_id="6000" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="c868f3da-b692-44b7-a33f-abf2c450474f" />
     <person_attribute person_attribute_id="7512" person_id="1502" value="3175479561" person_attribute_type_id="6501" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="d868f3da-b692-44b7-a33f-abf2c450474f" />
-    <person_attribute person_attribute_id="7503" person_id="1503" value="4000" person_attribute_type_id="6000" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="e868f3da-b692-44b7-a33f-abf2c450474f" />
     <person_attribute person_attribute_id="7513" person_id="1503" value="3176789561" person_attribute_type_id="6501" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="f868f3da-b692-44b7-a33f-abf2c450474f" />
 
     <patient patient_id="1501" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" />
@@ -41,4 +38,7 @@
     <patient_identifier patient_identifier_id="5502" patient_id="1502" identifier="M152" identifier_type="2" preferred="1" location_id="4001" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="bf41939c-3bca-48d9-a4dc-9198f6b2873c" />
     <patient_identifier patient_identifier_id="5503" patient_id="1503" identifier="M153" identifier_type="2" preferred="1" location_id="4000" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="cf41939c-3bca-48d9-a4dc-9198f6b2873c" />
     <patient_identifier patient_identifier_id="5504" patient_id="1504" identifier="M154" identifier_type="2" preferred="1" location_id="4000" creator="1" date_created="2019-06-02 00:00:00.0" voided="0" uuid="df41939c-3bca-48d9-a4dc-9198f6b2873c" />
+    <datafilter_entity_basis_map entity_basis_map_id="30001" entity_identifier="1501" entity_type="org.openmrs.Patient" basis_identifier="4000" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="ae51928c-3bca-56r4-a4dc-9298f6b2873d" />
+    <datafilter_entity_basis_map entity_basis_map_id="30002" entity_identifier="1502" entity_type="org.openmrs.Patient" basis_identifier="4001" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="be51928c-3bca-56r4-a4dc-9298f6b2873d" />
+    <datafilter_entity_basis_map entity_basis_map_id="30003" entity_identifier="1503" entity_type="org.openmrs.Patient" basis_identifier="4000" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="ce51928c-3bca-56r4-a4dc-9298f6b2873d" />
 </dataset>

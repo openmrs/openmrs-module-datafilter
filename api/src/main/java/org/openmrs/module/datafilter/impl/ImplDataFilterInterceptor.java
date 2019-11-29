@@ -42,7 +42,7 @@ import org.springframework.stereotype.Component;
  * implying that the interceptor is enabled by default, also note that the interceptor isn't applied
  * for super and daemon user.
  */
-@Component("dataFilterInterceptor")
+@Component("implDataFilterInterceptor")
 public class ImplDataFilterInterceptor extends EmptyInterceptor {
 	
 	private static final Logger log = LoggerFactory.getLogger(ImplDataFilterInterceptor.class);

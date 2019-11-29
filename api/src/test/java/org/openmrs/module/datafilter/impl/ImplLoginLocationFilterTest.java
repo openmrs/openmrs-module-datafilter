@@ -48,8 +48,7 @@ public class ImplLoginLocationFilterTest {
 		when(AccessUtil.getAssignedBasisIds(eq(Location.class)))
 		        .thenReturn(Stream.of("1", LOCATION_ID.toString()).collect(Collectors.toSet()));
 		when(Context.getAdministrationService()).thenReturn(as);
-		when(as.getGlobalProperty(eq(ImplLoginLocationFilter.GP_LOGIN_LOCATION_USER_PROPERTY)))
-		        .thenReturn("some value");
+		when(as.getGlobalProperty(eq(ImplLoginLocationFilter.GP_LOGIN_LOCATION_USER_PROPERTY))).thenReturn("some value");
 	}
 	
 	@Test
@@ -80,6 +79,8 @@ public class ImplLoginLocationFilterTest {
 	
 	@Test
 	public void accept_shouldReturnTrueIfTheUserLoginLocationPropertyIsNotSet() {
+		when(Context.getAuthenticatedUser()).thenReturn(new User());
+		when(Context.isAuthenticated()).thenReturn(true);
 		when(as.getGlobalProperty(eq(ImplLoginLocationFilter.GP_LOGIN_LOCATION_USER_PROPERTY))).thenReturn(null);
 		assertTrue(filter.accept(new Location(3)));
 	}

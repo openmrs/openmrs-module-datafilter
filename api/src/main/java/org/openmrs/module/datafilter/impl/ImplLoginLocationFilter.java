@@ -30,15 +30,15 @@ public class ImplLoginLocationFilter implements LoginLocationFilter {
 			return true;
 		}
 		
-		if (StringUtils.isBlank(Context.getAdministrationService().getGlobalProperty(GP_LOGIN_LOCATION_USER_PROPERTY))) {
-			return true;
-		}
-		
 		if (!Context.isAuthenticated() || Context.getAuthenticatedUser() == null) {
 			return false;
 		}
 		
 		if (Context.getAuthenticatedUser().isSuperUser()) {
+			return true;
+		}
+		
+		if (StringUtils.isBlank(Context.getAdministrationService().getGlobalProperty(GP_LOGIN_LOCATION_USER_PROPERTY))) {
 			return true;
 		}
 		

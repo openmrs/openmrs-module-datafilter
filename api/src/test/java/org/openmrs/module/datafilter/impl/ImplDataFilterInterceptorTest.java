@@ -22,7 +22,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -56,7 +55,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ AccessUtil.class, Util.class, Context.class, Daemon.class })
-public class ImplInterceptorTest {
+public class ImplDataFilterInterceptorTest {
 	
 	private ImplDataFilterInterceptor interceptor = new ImplDataFilterInterceptor();
 	
@@ -64,9 +63,6 @@ public class ImplInterceptorTest {
 	public ExpectedException ee = ExpectedException.none();
 	
 	private AdministrationService adminService = null;
-	
-	public static final Set<Class<?>> ENC_TYPE_BASED_FILTERED_CLASSES = Stream.of(Encounter.class, Obs.class)
-	        .collect(Collectors.toSet());
 	
 	@Before
 	public void beforeEachMethod() {

@@ -57,9 +57,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ AccessUtil.class, Util.class, Context.class, Daemon.class })
-public class ImplDataFilterInterceptorTest {
+public class AccessInterceptorTest {
 	
-	private ImplDataFilterInterceptor interceptor = new ImplDataFilterInterceptor();
+	private AccessInterceptor interceptor = new AccessInterceptor();
 	
 	@Rule
 	public ExpectedException ee = ExpectedException.none();
@@ -172,7 +172,7 @@ public class ImplDataFilterInterceptorTest {
 		when(Util.isFilterDisabled(startsWith(LOCATION_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
 		when(Util.isFilterDisabled(startsWith(ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX))).thenReturn(true);
 		when(Context.getAuthenticatedUser()).thenReturn(user);
-		for (Class<?> clazz : ImplDataFilterInterceptor.encTypeBasedClassAndFiltersMap.keySet()) {
+		for (Class<?> clazz : AccessInterceptor.encTypeBasedClassAndFiltersMap.keySet()) {
 			interceptor.onLoad(clazz.newInstance(), null, null, null, null);
 		}
 	}

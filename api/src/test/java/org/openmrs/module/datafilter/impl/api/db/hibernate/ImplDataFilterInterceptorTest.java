@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.datafilter.impl;
+package org.openmrs.module.datafilter.impl.api.db.hibernate;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.mockito.Matchers.anyBoolean;
@@ -50,6 +50,8 @@ import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.api.context.Daemon;
 import org.openmrs.module.datafilter.DataFilterConstants;
 import org.openmrs.module.datafilter.Util;
+import org.openmrs.module.datafilter.impl.AccessUtil;
+import org.openmrs.module.datafilter.impl.ImplConstants;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 

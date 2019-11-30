@@ -21,7 +21,7 @@ import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.module.datafilter.DataFilterConstants;
 
-final class ImplConstants {
+public final class ImplConstants {
 	
 	public static final String LOCATION_BASED_FILTER_NAME_PREFIX = MODULE_ID + "_locationBased";
 	

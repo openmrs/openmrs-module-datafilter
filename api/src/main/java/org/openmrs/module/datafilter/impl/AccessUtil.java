@@ -63,7 +63,7 @@ public class AccessUtil {
 	 * @param basisType the type to base on
 	 * @return a set of patient ids
 	 */
-	protected static Collection<String> getAccessiblePersonIds(Class<? extends BaseOpenmrsObject> basisType) {
+	public static Collection<String> getAccessiblePersonIds(Class<? extends BaseOpenmrsObject> basisType) {
 		if (log.isDebugEnabled()) {
 			log.debug("Looking up accessible persons for user with Id: " + Context.getAuthenticatedUser().getId());
 		}
@@ -155,7 +155,7 @@ public class AccessUtil {
 	 * @param encounterTypeId the encounter type id to match
 	 * @return the view privilege for the matched encounter type otherwise null
 	 */
-	protected static String getViewPrivilege(Integer encounterTypeId) {
+	public static String getViewPrivilege(Integer encounterTypeId) {
 		if (encounterTypeId == null) {
 			throw new APIException("Encounter type id is required");
 		}
@@ -173,7 +173,7 @@ public class AccessUtil {
 	 * @param encounterId encounter id to match
 	 * @return the encounter type id for the matched encounter
 	 */
-	protected static Integer getEncounterTypeId(Integer encounterId) {
+	public static Integer getEncounterTypeId(Integer encounterId) {
 		if (encounterId == null) {
 			throw new APIException("Encounter id is required");
 		}

@@ -14,20 +14,24 @@ import static org.hamcrest.Matchers.isA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.openmrs.module.datafilter.DataFilterConstants.MODULE_ID;
+import static org.openmrs.module.datafilter.impl.ImplConstants.GP_PAT_LOC_INTERCEPTOR_ENABLED;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.hibernate.AssertionFailure;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.openmrs.GlobalProperty;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonName;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
@@ -35,6 +39,7 @@ import org.openmrs.api.db.DAOException;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.util.DatabaseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +51,10 @@ public class PatientLocationLinkingInterceptorTest extends BaseModuleContextSens
 	@Autowired
 	private LocationService locationService;
 	
+	@Autowired
+	@Qualifier("adminService")
+	private AdministrationService as;
+	
 	@Rule
 	public ExpectedException ee = ExpectedException.none();
 	
@@ -54,9 +63,22 @@ public class PatientLocationLinkingInterceptorTest extends BaseModuleContextSens
 		//Do nothing
 	}
 	
-	private Patient createTestPatient() {
+	@Before
+	public void setup() {
+		enableInterceptor();
+	}
+	
+	private void enableInterceptor() {
+		setGlobalPropertyValue(true);
+	}
+	
+	private void disableInterceptor() {
+		setGlobalPropertyValue(false);
+	}
+	
+	private Patient createTestPatient(String id) {
 		Patient patient = new Patient();
-		patient.addIdentifier(new PatientIdentifier("123", new PatientIdentifierType(2), new Location(1)));
+		patient.addIdentifier(new PatientIdentifier(id, new PatientIdentifierType(2), new Location(1)));
 		
 		PersonName pName = new PersonName();
 		pName.setGivenName("Lazy");
@@ -94,28 +116,53 @@ public class PatientLocationLinkingInterceptorTest extends BaseModuleContextSens
 		return (Long) rows.get(0).get(0);
 	}
 	
+	private void setGlobalPropertyValue(Boolean enabled) {
+		GlobalProperty gp = as.getGlobalPropertyObject(GP_PAT_LOC_INTERCEPTOR_ENABLED);
+		if (gp == null) {
+			gp = new GlobalProperty(GP_PAT_LOC_INTERCEPTOR_ENABLED, enabled.toString());
+		} else {
+			gp.setPropertyValue(enabled.toString());
+		}
+		as.saveGlobalProperty(gp);
+	}
+	
 	@Test
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public void onSave_shouldCreateAnEntryInTheEntityBasisMapTableBetweenThePatientAndSessionLocation() throws Exception {
-		Patient patient = createTestPatient();
+	public void onSave_shouldCreateAnEntryInTheEntityBasisMapTableBetweenThePatientAndSessionLocation() {
+		Patient patient = createTestPatient("123");
 		final Integer locationId = 1;
 		Context.getUserContext().setLocation(new Location(locationId));
 		long originalCount = getCountOfPatientLocationLinks();
 		patientService.savePatient(patient);
 		
-		List<String> patientLocations = getPatientLocations(patient);
 		assertEquals(++originalCount, getCountOfPatientLocationLinks().intValue());
+		List<String> patientLocations = getPatientLocations(patient);
 		assertEquals(1, patientLocations.size());
 		assertTrue(patientLocations.contains(locationId.toString()));
 	}
 	
-	//@Test
+	@Test
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public void onSave_shouldNotLinkPatientsToLocationsIfTheGpIsNotEnabled() {
+		disableInterceptor();
+		Patient patient = createTestPatient("456");
+		final Integer locationId = 1;
+		Context.getUserContext().setLocation(new Location(locationId));
+		long originalCount = getCountOfPatientLocationLinks();
+		patientService.savePatient(patient);
+		
+		assertEquals(originalCount, getCountOfPatientLocationLinks().intValue());
+		assertEquals(0, getPatientLocations(patient).size());
+	}
+	
+	@Test
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public void onSave_shouldFailIfThereIsNoSessionLocation() {
-		Patient patient = createTestPatient();
+		Patient patient = createTestPatient("789");
 		ee.expect(AssertionFailure.class);
 		ee.expectMessage(containsString(("Unable to perform beforeTransactionCompletion callback")));
 		ee.expectCause(isA(DAOException.class));
+		
 		patientService.savePatient(patient);
 	}
 	

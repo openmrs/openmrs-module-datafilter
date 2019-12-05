@@ -58,6 +58,14 @@
             run in strict mode and only turn this off when running in a non-production environment.
         </description>
     </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.patientLocationLinkingInterceptor.enabled</property>
+        <description>
+            When the value is set to true, whenever a new patient is created, they get linked to the location
+            set on the authenticated user's context i.e. the location the user selects when logging into the
+            reference application.
+        </description>
+    </globalProperty>
 
 </module>
 

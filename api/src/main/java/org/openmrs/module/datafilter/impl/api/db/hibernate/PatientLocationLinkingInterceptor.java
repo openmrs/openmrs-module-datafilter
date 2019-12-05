@@ -23,6 +23,7 @@ import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.db.DAOException;
 import org.openmrs.module.datafilter.impl.EntityBasisMap;
+import org.openmrs.module.datafilter.impl.ImplConstants;
 import org.openmrs.module.datafilter.impl.api.db.DataFilterDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,8 +56,18 @@ public class PatientLocationLinkingInterceptor extends EmptyInterceptor {
 	 */
 	@Override
 	public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
-		//If disabled don't proceed
 		if (!(entity instanceof Patient)) {
+			return super.onSave(entity, id, state, propertyNames, types);
+		}
+		
+		//Hibernate will flush any changes in the current session before querying the DB when fetching
+		//the GP value below and we end up in this method again, therefore we need to disable auto flush
+		if (!"true".equalsIgnoreCase(InterceptorUtil.getGpValueNoFlush(ImplConstants.GP_PAT_LOC_INTERCEPTOR_ENABLED))) {
+			
+			if (log.isTraceEnabled()) {
+				log.trace("Skipping PatientLocationLinkingInterceptor because is it disabled");
+			}
+			
 			return super.onSave(entity, id, state, propertyNames, types);
 		}
 		
@@ -112,7 +123,7 @@ public class PatientLocationLinkingInterceptor extends EmptyInterceptor {
 	 * context, if none exists it throws an exception otherwise sets it in the {@link SessionData}
 	 * instance for the current session.
 	 */
-	private static class SessionLocationDetector implements BeforeTransactionCompletionProcess {
+	private class SessionLocationDetector implements BeforeTransactionCompletionProcess {
 		
 		@Override
 		public void doBeforeTransactionCompletion(SessionImplementor session) {
@@ -137,7 +148,7 @@ public class PatientLocationLinkingInterceptor extends EmptyInterceptor {
 		
 	}
 	
-	private static class SessionData {
+	private class SessionData {
 		
 		private Patient patient;
 		

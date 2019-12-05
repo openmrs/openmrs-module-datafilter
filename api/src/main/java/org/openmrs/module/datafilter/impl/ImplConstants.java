@@ -10,6 +10,7 @@
 package org.openmrs.module.datafilter.impl;
 
 import static org.openmrs.module.datafilter.DataFilterConstants.DISABLED;
+import static org.openmrs.module.datafilter.DataFilterConstants.ENABLED;
 import static org.openmrs.module.datafilter.DataFilterConstants.MODULE_ID;
 
 import java.util.HashSet;
@@ -114,6 +115,8 @@ public final class ImplConstants {
 	public static final String GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS = ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS + DISABLED;
 	
 	public static final String GP_RUN_IN_STRICT_MODE = MODULE_ID + ".runInStrictMode";
+	
+	public static final String GP_PAT_LOC_INTERCEPTOR_ENABLED = MODULE_ID + ".patientLocationLinkingInterceptor" + ENABLED;
 	
 	public static final String ILLEGAL_RECORD_ACCESS_MESSAGE = "Illegal Record Access";
 	

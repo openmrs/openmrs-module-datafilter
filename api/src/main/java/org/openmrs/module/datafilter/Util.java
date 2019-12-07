@@ -18,6 +18,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.FilterDefs;
 import org.hibernate.annotations.Filters;
@@ -43,6 +53,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JavaType;
@@ -60,6 +73,10 @@ public class Util {
 	private static List<HibernateFilterRegistration> hibernateFilterRegistrations;
 	
 	private static List<FullTextFilterRegistration> fullTextFilterRegistrations;
+	
+	private static XPath xpath = XPathFactory.newInstance().newXPath();
+	
+	private static DocumentBuilder documentBuilder;
 	
 	/**
 	 * Checks if the filter matching the specified name is disabled, every filter can be disabled via a
@@ -316,7 +333,7 @@ public class Util {
 		ClassLoader classLoader = OpenmrsClassLoader.getInstance();
 		PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver(classLoader);
 		
-		ObjectMapper mapper = new ObjectMapper ();
+		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
 		mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
 		//Same here, we need to use the openmrs classloader to load the type field in case of module classes
@@ -345,6 +362,66 @@ public class Util {
 		if (log.isDebugEnabled()) {
 			log.debug("Successfully loaded " + (isHibernate ? "hibernate" : "full text") + " filter registrations");
 		}
+	}
+	
+	public static Document parseXmlFile(String filename) throws ParserConfigurationException, IOException, SAXException {
+		if (documentBuilder == null) {
+			documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		}
+		
+		return documentBuilder.parse(OpenmrsClassLoader.getInstance().getResourceAsStream(filename));
+	}
+	
+	public static List<String> getMappingResourcesForClasses(String cfgFilename, List<String> classesMappedWithXml)
+	    throws Exception {
+		
+		List<String> candidateResources = getMappingResources(cfgFilename);
+		List<String> mappingResources = new ArrayList();
+		//Get the package and class name from the hbm file
+		String packageAndClassnameExp = "concat(/hibernate-mapping/@package,'.',/hibernate-mapping/class/@name)";
+		for (String candidate : candidateResources) {
+			String className = readFromXmlFile(packageAndClassnameExp, candidate, null);
+			//For classes that don't have a package attribute value for the hibernate-mapping tag, 
+			//the fully qualified classname starts with a dot, so we need to strip it off
+			if (className.startsWith(".")) {
+				className = className.substring(1);
+			}
+			
+			if (classesMappedWithXml.contains(className)) {
+				mappingResources.add(candidate);
+			}
+		}
+		
+		return mappingResources;
+	}
+	
+	private static <T> T readFromXmlFile(String xpathExpression, String xmlFilename, QName returnType)
+	    throws XPathExpressionException, ParserConfigurationException, IOException, SAXException {
+		
+		Document document = parseXmlFile(xmlFilename);
+		XPathExpression expression = xpath.compile(xpathExpression);
+		if (returnType == null) {
+			return (T) expression.evaluate(document);
+		}
+		
+		return (T) expression.evaluate(document, returnType);
+	}
+	
+	private static List<String> getMappingResources(String cfgFilename)
+	    throws XPathExpressionException, ParserConfigurationException, IOException, SAXException {
+		
+		String xpathExpression = "/hibernate-configuration/session-factory/mapping/@resource";
+		NodeList resourceAttributes = readFromXmlFile(xpathExpression, cfgFilename, XPathConstants.NODESET);
+		List<String> resources = new ArrayList();
+		for (int i = 0; i < resourceAttributes.getLength(); i++) {
+			resources.add(resourceAttributes.item(i).getNodeValue());
+		}
+		
+		if (log.isDebugEnabled()) {
+			log.debug("Discovered hbm files: " + resources);
+		}
+		
+		return resources;
 	}
 	
 }

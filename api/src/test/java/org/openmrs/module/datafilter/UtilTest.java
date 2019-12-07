@@ -14,13 +14,20 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.annotation.Annotation;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.hibernate.annotations.FilterDef;
 import org.junit.Test;
 import org.openmrs.Concept;
+import org.openmrs.EncounterType;
+import org.openmrs.Location;
 import org.openmrs.module.datafilter.annotations.FilterDefAnnotation;
 
 public class UtilTest {
+	
+	private static final String TEST_HIBERNATE_CFG_FILE = "testHibernateCfg.xml";
 	
 	@Test
 	public void addAnnotationToClass_shouldAddTheSpecifiedAnnotationToTheSpecifiedClass()
@@ -42,6 +49,16 @@ public class UtilTest {
 	@Test
 	public void loadFullTextFilterRegistrations_shouldLoadAllFullTextFilterRegistrations() {
 		assertEquals(1, Util.getFullTextFilterRegistrations().size());
+	}
+	
+	@Test
+	public void getMappingResourceNames_shouldReturnAllMappingResourceNames() throws Exception {
+		List<String> classes = Stream.of(Location.class.getName(), EncounterType.class.getName())
+		        .collect(Collectors.toList());
+		List<String> mappingResources = Util.getMappingResourcesForClasses(TEST_HIBERNATE_CFG_FILE, classes);
+		assertEquals(2, mappingResources.size());
+		assertTrue(mappingResources.contains("testLocation.hbm.xml"));
+		assertTrue(mappingResources.contains("testEncounterType.hbm.xml"));
 	}
 	
 }

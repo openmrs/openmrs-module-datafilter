@@ -11,12 +11,10 @@ package org.openmrs.module.datafilter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.annotation.Annotation;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.hibernate.annotations.FilterDef;
 import org.junit.Test;
@@ -52,13 +50,11 @@ public class UtilTest {
 	}
 	
 	@Test
-	public void getMappingResourceNames_shouldReturnAllMappingResourceNames() throws Exception {
-		List<String> classes = Stream.of(Location.class.getName(), EncounterType.class.getName())
-		        .collect(Collectors.toList());
-		List<String> mappingResources = Util.getMappingResourcesForClasses(TEST_HIBERNATE_CFG_FILE, classes);
-		assertEquals(2, mappingResources.size());
-		assertTrue(mappingResources.contains("testLocation.hbm.xml"));
-		assertTrue(mappingResources.contains("testEncounterType.hbm.xml"));
+	public void getMappingResource_shouldTheMappingResourceName() throws Exception {
+		assertEquals("testLocation.hbm.xml", Util.getMappingResource(TEST_HIBERNATE_CFG_FILE, Location.class.getName()));
+		assertEquals("testEncounterType.hbm.xml",
+		    Util.getMappingResource(TEST_HIBERNATE_CFG_FILE, EncounterType.class.getName()));
+		assertNull(Util.getMappingResource(TEST_HIBERNATE_CFG_FILE, Concept.class.getName()));
 	}
 	
 }

@@ -78,6 +78,8 @@ public class Util {
 	
 	private static DocumentBuilder documentBuilder;
 	
+	private static List<String> mappingResources;
+	
 	/**
 	 * Checks if the filter matching the specified name is disabled, every filter can be disabled via a
 	 * global property, the name of the global property is the filter name with the a dot and disabled
@@ -372,27 +374,27 @@ public class Util {
 		return documentBuilder.parse(OpenmrsClassLoader.getInstance().getResourceAsStream(filename));
 	}
 	
-	public static List<String> getMappingResourcesForClasses(String cfgFilename, List<String> classesMappedWithXml)
-	    throws Exception {
+	public static String getMappingResource(String cfgFilename, String classname) throws Exception {
 		
 		List<String> candidateResources = getMappingResources(cfgFilename);
-		List<String> mappingResources = new ArrayList();
+		String mappingResource = null;
 		//Get the package and class name from the hbm file
 		String packageAndClassnameExp = "concat(/hibernate-mapping/@package,'.',/hibernate-mapping/class/@name)";
 		for (String candidate : candidateResources) {
-			String className = readFromXmlFile(packageAndClassnameExp, candidate, null);
+			String candidateClassName = readFromXmlFile(packageAndClassnameExp, candidate, null);
 			//For classes that don't have a package attribute value for the hibernate-mapping tag, 
 			//the fully qualified classname starts with a dot, so we need to strip it off
-			if (className.startsWith(".")) {
-				className = className.substring(1);
+			if (candidateClassName.startsWith(".")) {
+				candidateClassName = candidateClassName.substring(1);
 			}
 			
-			if (classesMappedWithXml.contains(className)) {
-				mappingResources.add(candidate);
+			if (classname.equals(candidateClassName)) {
+				mappingResource = candidate;
+				break;
 			}
 		}
 		
-		return mappingResources;
+		return mappingResource;
 	}
 	
 	private static <T> T readFromXmlFile(String xpathExpression, String xmlFilename, QName returnType)
@@ -410,18 +412,22 @@ public class Util {
 	private static List<String> getMappingResources(String cfgFilename)
 	    throws XPathExpressionException, ParserConfigurationException, IOException, SAXException {
 		
+		if (mappingResources != null) {
+			return mappingResources;
+		}
+		
 		String xpathExpression = "/hibernate-configuration/session-factory/mapping/@resource";
 		NodeList resourceAttributes = readFromXmlFile(xpathExpression, cfgFilename, XPathConstants.NODESET);
-		List<String> resources = new ArrayList();
+		mappingResources = new ArrayList();
 		for (int i = 0; i < resourceAttributes.getLength(); i++) {
-			resources.add(resourceAttributes.item(i).getNodeValue());
+			mappingResources.add(resourceAttributes.item(i).getNodeValue());
 		}
 		
 		if (log.isDebugEnabled()) {
-			log.debug("Discovered hbm files: " + resources);
+			log.debug("Discovered hbm files: " + mappingResources);
 		}
 		
-		return resources;
+		return mappingResources;
 	}
 	
 }

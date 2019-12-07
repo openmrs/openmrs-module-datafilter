@@ -366,15 +366,28 @@ public class Util {
 		}
 	}
 	
-	public static Document parseXmlFile(String filename) throws ParserConfigurationException, IOException, SAXException {
+	public static Document parseXmlFile(String filename) {
 		if (documentBuilder == null) {
-			documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			try {
+				documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			}
+			catch (ParserConfigurationException e) {
+				throw new RuntimeException(e);
+			}
 		}
 		
-		return documentBuilder.parse(OpenmrsClassLoader.getInstance().getResourceAsStream(filename));
+		try {
+			return documentBuilder.parse(OpenmrsClassLoader.getInstance().getResourceAsStream(filename));
+		}
+		catch (SAXException e) {
+			throw new RuntimeException(e);
+		}
+		catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
-	public static String getMappingResource(String cfgFilename, String classname) throws Exception {
+	public static String getMappingResource(String cfgFilename, String classname) {
 		
 		List<String> candidateResources = getMappingResources(cfgFilename);
 		String mappingResource = null;
@@ -397,20 +410,23 @@ public class Util {
 		return mappingResource;
 	}
 	
-	private static <T> T readFromXmlFile(String xpathExpression, String xmlFilename, QName returnType)
-	    throws XPathExpressionException, ParserConfigurationException, IOException, SAXException {
+	private static <T> T readFromXmlFile(String xpathExpression, String xmlFilename, QName returnType) {
 		
 		Document document = parseXmlFile(xmlFilename);
-		XPathExpression expression = xpath.compile(xpathExpression);
-		if (returnType == null) {
-			return (T) expression.evaluate(document);
+		try {
+			XPathExpression expression = xpath.compile(xpathExpression);
+			if (returnType == null) {
+				return (T) expression.evaluate(document);
+			}
+			
+			return (T) expression.evaluate(document, returnType);
 		}
-		
-		return (T) expression.evaluate(document, returnType);
+		catch (XPathExpressionException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
-	private static List<String> getMappingResources(String cfgFilename)
-	    throws XPathExpressionException, ParserConfigurationException, IOException, SAXException {
+	private static List<String> getMappingResources(String cfgFilename) {
 		
 		if (mappingResources != null) {
 			return mappingResources;

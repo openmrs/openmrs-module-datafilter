@@ -31,6 +31,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -77,6 +78,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 public class Util {
 	
@@ -501,9 +503,19 @@ public class Util {
 			StreamResult result = new StreamResult(out);
 			transformer.transform(new DOMSource(hbmDoc), result);
 		}
-		catch (Exception e) {
+		catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+		catch (TransformerException e) {
+			throw new RuntimeException(e);
+		}
+		catch (TemplateException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public static String getAttribute(Object document, String path, String attribute) throws XPathExpressionException {
+		return xpath.compile(path + "/@" + attribute).evaluate(document);
 	}
 	
 }

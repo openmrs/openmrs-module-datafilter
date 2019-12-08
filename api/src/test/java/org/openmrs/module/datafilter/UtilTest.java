@@ -14,12 +14,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.lang.annotation.Annotation;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.hibernate.annotations.FilterDef;
@@ -30,6 +34,7 @@ import org.openmrs.Location;
 import org.openmrs.module.datafilter.annotations.FilterDefAnnotation;
 import org.openmrs.module.datafilter.registration.HibernateFilterParameter;
 import org.openmrs.module.datafilter.registration.HibernateFilterRegistration;
+import org.w3c.dom.Document;
 
 public class UtilTest {
 	
@@ -37,7 +42,19 @@ public class UtilTest {
 	
 	private static final String TEST_LOCATION_HBM_FILE = "testLocation.hbm.xml";
 	
+	private static final String PATH_FILTER_DEF = "/hibernate-mapping/filter-def";
+	
+	private static final String PATH_FILTER = "/hibernate-mapping/class/filter";
+	
 	private static XPath xpath = XPathFactory.newInstance().newXPath();
+	
+	public static boolean elementExists(Object doc, String path) throws XPathExpressionException {
+		return getCount(doc, path) > 0;
+	}
+	
+	public static int getCount(Object doc, String path) throws XPathExpressionException {
+		return Integer.valueOf(xpath.compile("count(" + path + ")").evaluate(doc));
+	}
 	
 	@Test
 	public void addAnnotationToClass_shouldAddTheSpecifiedAnnotationToTheSpecifiedClass()
@@ -70,7 +87,7 @@ public class UtilTest {
 	}
 	
 	@Test
-	public void addFilterToMappingResource_shouldAddTheFilterToTheMappingResourceName() {
+	public void addFilterToMappingResource_shouldAddTheFilterToTheMappingResourceName() throws Exception {
 		final String filterName = "myFilterName";
 		final String defaultCondition = "voided = 0";
 		final String condition = "location_id > 5";
@@ -87,6 +104,14 @@ public class UtilTest {
 		filterReg.setParameters(Stream.of(param1, param2).collect(Collectors.toList()));
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		Util.addFilterToMappingResource(TEST_LOCATION_HBM_FILE, out, filterReg);
+		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		Document updatedResource = builder.parse(new ByteArrayInputStream(out.toByteArray()));
+		assertTrue(elementExists(updatedResource, PATH_FILTER_DEF));
+		assertTrue(elementExists(updatedResource, PATH_FILTER));
+		assertEquals(filterName, Util.getAttribute(updatedResource, PATH_FILTER_DEF, "name"));
+		assertEquals(defaultCondition, Util.getAttribute(updatedResource, PATH_FILTER_DEF, "condition"));
+		assertEquals(filterName, Util.getAttribute(updatedResource, PATH_FILTER, "name"));
+		assertEquals(condition, Util.getAttribute(updatedResource, PATH_FILTER, "condition"));
 	}
 	
 }

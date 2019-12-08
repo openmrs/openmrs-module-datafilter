@@ -14,7 +14,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
 import java.lang.annotation.Annotation;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
 
 import org.hibernate.annotations.FilterDef;
 import org.junit.Test;
@@ -22,10 +28,16 @@ import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.module.datafilter.annotations.FilterDefAnnotation;
+import org.openmrs.module.datafilter.registration.HibernateFilterParameter;
+import org.openmrs.module.datafilter.registration.HibernateFilterRegistration;
 
 public class UtilTest {
 	
 	private static final String TEST_HIBERNATE_CFG_FILE = "testHibernateCfg.xml";
+	
+	private static final String TEST_LOCATION_HBM_FILE = "testLocation.hbm.xml";
+	
+	private static XPath xpath = XPathFactory.newInstance().newXPath();
 	
 	@Test
 	public void addAnnotationToClass_shouldAddTheSpecifiedAnnotationToTheSpecifiedClass()
@@ -50,11 +62,31 @@ public class UtilTest {
 	}
 	
 	@Test
-	public void getMappingResource_shouldTheMappingResourceName() throws Exception {
-		assertEquals("testLocation.hbm.xml", Util.getMappingResource(TEST_HIBERNATE_CFG_FILE, Location.class.getName()));
+	public void getMappingResource_shouldTheMappingResourceName() {
+		assertEquals(TEST_LOCATION_HBM_FILE, Util.getMappingResource(TEST_HIBERNATE_CFG_FILE, Location.class.getName()));
 		assertEquals("testEncounterType.hbm.xml",
 		    Util.getMappingResource(TEST_HIBERNATE_CFG_FILE, EncounterType.class.getName()));
 		assertNull(Util.getMappingResource(TEST_HIBERNATE_CFG_FILE, Concept.class.getName()));
+	}
+	
+	@Test
+	public void addFilterToMappingResource_shouldAddTheFilterToTheMappingResourceName() {
+		final String filterName = "myFilterName";
+		final String defaultCondition = "voided = 0";
+		final String condition = "location_id > 5";
+		HibernateFilterRegistration filterReg = new HibernateFilterRegistration();
+		filterReg.setName(filterName);
+		filterReg.setDefaultCondition(defaultCondition);
+		filterReg.setCondition(condition);
+		HibernateFilterParameter param1 = new HibernateFilterParameter();
+		param1.setName("param1");
+		param1.setType("string");
+		HibernateFilterParameter param2 = new HibernateFilterParameter();
+		param2.setName("param2");
+		param2.setType("integer");
+		filterReg.setParameters(Stream.of(param1, param2).collect(Collectors.toList()));
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		Util.addFilterToMappingResource(TEST_LOCATION_HBM_FILE, out, filterReg);
 	}
 	
 }

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+
+    <xsl:variable name="filterName">${filterName}</xsl:variable>
+    <xsl:variable name="defaultCondition">${default}</xsl:variable>
+    <xsl:variable name="condition">${condition}</xsl:variable>
+
+    <xsl:template match="@* | node()">
+        <xsl:copy>
+            <xsl:apply-templates select="@* | node()"/>
+        </xsl:copy>
+    </xsl:template>
+
+    <xsl:template match="/hibernate-mapping">
+        <xsl:copy>
+            <xsl:element name="filter-def">
+                <xsl:attribute name="name">
+                    <xsl:value-of select="$filterName" />
+                </xsl:attribute>
+                <xsl:if test="$defaultCondition != ''">
+                    <xsl:attribute name="condition">
+                        <xsl:value-of select="$defaultCondition" />
+                    </xsl:attribute>
+                </xsl:if>
+            </xsl:element>
+            <xsl:apply-templates select="@* | node()"/>
+        </xsl:copy>
+    </xsl:template>
+
+    <xsl:template match="/hibernate-mapping/class">
+        <xsl:copy>
+            <xsl:apply-templates select="@* | node()"/>
+            <xsl:element name="filter">
+                <xsl:attribute name="name">
+                    <xsl:value-of select="$filterName" />
+                </xsl:attribute>
+                <xsl:if test="$condition != ''">
+                    <xsl:attribute name="condition">
+                        <xsl:value-of select="$condition" />
+                    </xsl:attribute>
+                </xsl:if>
+            </xsl:element>
+        </xsl:copy>
+    </xsl:template>
+
+</xsl:stylesheet>

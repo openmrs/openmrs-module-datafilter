@@ -50,6 +50,7 @@
 		<openMRSVersion>2.3.0-SNAPSHOT</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <appframeworkVersion>2.14.0-SNAPSHOT</appframeworkVersion>
+        <freemarkerVersion>2.3.29</freemarkerVersion>
 	</properties>
 
 	<dependencyManagement>
@@ -65,6 +66,11 @@
                 <artifactId>appframework-api</artifactId>
                 <version>${appframeworkVersion}</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.freemarker</groupId>
+                <artifactId>freemarker</artifactId>
+                <version>${freemarkerVersion}</version>
             </dependency>
 
             <!-- Test dependencies -->

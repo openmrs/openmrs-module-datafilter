@@ -9,12 +9,19 @@
  */
 package org.openmrs.module.datafilter;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +29,12 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -62,6 +75,9 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+
 public class Util {
 	
 	private static final Logger log = LoggerFactory.getLogger(Util.class);
@@ -70,15 +86,33 @@ public class Util {
 	
 	private static final String FILTER_PATH_SUFFIX = "/*.json";
 	
+	private static final String ADD_ENTITY_FILTER_XSLT_TEMPLATE = "add-entity-filter-xslt-template.xml";
+	
 	private static List<HibernateFilterRegistration> hibernateFilterRegistrations;
 	
 	private static List<FullTextFilterRegistration> fullTextFilterRegistrations;
 	
 	private static XPath xpath = XPathFactory.newInstance().newXPath();
 	
+	private static TransformerFactory transformerFactory = TransformerFactory.newInstance();
+	
 	private static DocumentBuilder documentBuilder;
 	
 	private static List<String> mappingResources;
+	
+	private static Template addEntityFilterXsltTemplate;
+	
+	static {
+		Configuration cfg = new Configuration(Configuration.VERSION_2_3_29);
+		cfg.setDefaultEncoding(StandardCharsets.UTF_8.name());
+		cfg.setClassLoaderForTemplateLoading(OpenmrsClassLoader.getInstance(), "");
+		try {
+			addEntityFilterXsltTemplate = cfg.getTemplate(ADD_ENTITY_FILTER_XSLT_TEMPLATE);
+		}
+		catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 	
 	/**
 	 * Checks if the filter matching the specified name is disabled, every filter can be disabled via a
@@ -444,6 +478,32 @@ public class Util {
 		}
 		
 		return mappingResources;
+	}
+	
+	public static void addFilterToMappingResource(String resourceName, OutputStream out,
+	                                              HibernateFilterRegistration filterReg) {
+		
+		try {
+			Map model = new HashMap();
+			model.put("filterName", filterReg.getName());
+			model.put("default", filterReg.getDefaultCondition() == null ? "" : filterReg.getDefaultCondition());
+			model.put("condition", filterReg.getCondition() == null ? "" : filterReg.getCondition());
+			ByteArrayOutputStream xsltOut = new ByteArrayOutputStream();
+			OutputStreamWriter writer = new OutputStreamWriter(xsltOut);
+			//Generate the final xslt to apply to the mapping resource for this filter registration
+			addEntityFilterXsltTemplate.process(model, writer);
+			
+			InputStream xslt = new ByteArrayInputStream(xsltOut.toByteArray());
+			Transformer transformer = transformerFactory.newTransformer(new StreamSource(xslt));
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty(OutputKeys.ENCODING, StandardCharsets.UTF_8.name());
+			Document hbmDoc = parseXmlFile(resourceName);
+			StreamResult result = new StreamResult(out);
+			transformer.transform(new DOMSource(hbmDoc), result);
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 }

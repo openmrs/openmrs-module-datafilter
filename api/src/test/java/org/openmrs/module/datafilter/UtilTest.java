@@ -27,6 +27,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.FilterDef;
 import org.junit.Test;
 import org.openmrs.Concept;
@@ -125,6 +126,24 @@ public class UtilTest {
 		assertTrue(elementExists(updatedResource, PATH_FILTER_DEF_PARAM, "type", param1.getType()));
 		assertTrue(elementExists(updatedResource, PATH_FILTER_DEF_PARAM, "name", param2.getName()));
 		assertTrue(elementExists(updatedResource, PATH_FILTER_DEF_PARAM, "type", param2.getType()));
+	}
+	
+	@Test
+	public void addFilterToMappingResource_shouldAddTheFiltersIgnoringNullConditionsAndParameters() throws Exception {
+		final String filterName = "myFilterName";
+		HibernateFilterRegistration filterReg = new HibernateFilterRegistration();
+		filterReg.setName(filterName);
+		filterReg.setCondition(" ");
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		Util.addFilterToMappingResource(TEST_LOCATION_HBM_FILE, out, filterReg);
+		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		Document updatedResource = builder.parse(new ByteArrayInputStream(out.toByteArray()));
+		assertTrue(elementExists(updatedResource, PATH_FILTER_DEF));
+		assertTrue(elementExists(updatedResource, PATH_FILTER));
+		assertEquals(filterName, getAttribute(updatedResource, PATH_FILTER_DEF, "name"));
+		assertTrue(StringUtils.isBlank(getAttribute(updatedResource, PATH_FILTER_DEF, "condition")));
+		assertEquals(filterName, getAttribute(updatedResource, PATH_FILTER, "name"));
+		assertTrue(StringUtils.isBlank(getAttribute(updatedResource, PATH_FILTER, "condition")));
 	}
 	
 }

@@ -13,6 +13,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.openmrs.module.datafilter.Util.getAttribute;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -44,6 +45,8 @@ public class UtilTest {
 	
 	private static final String PATH_FILTER_DEF = "/hibernate-mapping/filter-def";
 	
+	private static final String PATH_FILTER_DEF_PARAM = PATH_FILTER_DEF + "/filter-param";
+	
 	private static final String PATH_FILTER = "/hibernate-mapping/class/filter";
 	
 	private static XPath xpath = XPathFactory.newInstance().newXPath();
@@ -54,6 +57,11 @@ public class UtilTest {
 	
 	public static int getCount(Object doc, String path) throws XPathExpressionException {
 		return Integer.valueOf(xpath.compile("count(" + path + ")").evaluate(doc));
+	}
+	
+	public static boolean elementExists(Object doc, String path, String attribName, String attribValue)
+	    throws XPathExpressionException {
+		return getCount(doc, path + "[@" + attribName + "='" + attribValue + "']") > 0;
 	}
 	
 	@Test
@@ -108,10 +116,15 @@ public class UtilTest {
 		Document updatedResource = builder.parse(new ByteArrayInputStream(out.toByteArray()));
 		assertTrue(elementExists(updatedResource, PATH_FILTER_DEF));
 		assertTrue(elementExists(updatedResource, PATH_FILTER));
-		assertEquals(filterName, Util.getAttribute(updatedResource, PATH_FILTER_DEF, "name"));
-		assertEquals(defaultCondition, Util.getAttribute(updatedResource, PATH_FILTER_DEF, "condition"));
-		assertEquals(filterName, Util.getAttribute(updatedResource, PATH_FILTER, "name"));
-		assertEquals(condition, Util.getAttribute(updatedResource, PATH_FILTER, "condition"));
+		assertEquals(filterName, getAttribute(updatedResource, PATH_FILTER_DEF, "name"));
+		assertEquals(defaultCondition, getAttribute(updatedResource, PATH_FILTER_DEF, "condition"));
+		assertEquals(filterName, getAttribute(updatedResource, PATH_FILTER, "name"));
+		assertEquals(condition, getAttribute(updatedResource, PATH_FILTER, "condition"));
+		assertEquals(2, getCount(updatedResource, PATH_FILTER_DEF_PARAM));
+		assertTrue(elementExists(updatedResource, PATH_FILTER_DEF_PARAM, "name", param1.getName()));
+		assertTrue(elementExists(updatedResource, PATH_FILTER_DEF_PARAM, "type", param1.getType()));
+		assertTrue(elementExists(updatedResource, PATH_FILTER_DEF_PARAM, "name", param2.getName()));
+		assertTrue(elementExists(updatedResource, PATH_FILTER_DEF_PARAM, "type", param2.getType()));
 	}
 	
 }

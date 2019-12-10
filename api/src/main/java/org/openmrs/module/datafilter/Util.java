@@ -21,7 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -486,14 +486,10 @@ public class Util {
 	                                              HibernateFilterRegistration filterReg) {
 		
 		try {
-			Map model = new HashMap();
-			model.put("filterName", filterReg.getName());
-			model.put("default", filterReg.getDefaultCondition() == null ? "" : filterReg.getDefaultCondition());
-			model.put("condition", filterReg.getCondition() == null ? "" : filterReg.getCondition());
 			ByteArrayOutputStream xsltOut = new ByteArrayOutputStream();
 			OutputStreamWriter writer = new OutputStreamWriter(xsltOut);
 			//Generate the final xslt to apply to the mapping resource for this filter registration
-			addEntityFilterXsltTemplate.process(model, writer);
+			addEntityFilterXsltTemplate.process(Collections.singletonMap("filterReg", filterReg), writer);
 			
 			InputStream xslt = new ByteArrayInputStream(xsltOut.toByteArray());
 			Transformer transformer = transformerFactory.newTransformer(new StreamSource(xslt));

@@ -13,10 +13,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+import static org.openmrs.module.datafilter.DataFilterConstants.MODULE_ID;
 import static org.openmrs.module.datafilter.Util.getAttribute;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.lang.annotation.Annotation;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -30,17 +33,28 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.FilterDef;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.module.datafilter.annotations.FilterDefAnnotation;
 import org.openmrs.module.datafilter.registration.HibernateFilterParameter;
 import org.openmrs.module.datafilter.registration.HibernateFilterRegistration;
+import org.openmrs.util.OpenmrsUtil;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.w3c.dom.Document;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(OpenmrsUtil.class)
 public class UtilTest {
 	
 	private static final String TEST_HIBERNATE_CFG_FILE = "testHibernateCfg.xml";
+	
+	private static final String TEST_ENC_TYPE_HBM_FILE = "testEncounterType.hbm.xml";
 	
 	private static final String TEST_LOCATION_HBM_FILE = "testLocation.hbm.xml";
 	
@@ -49,6 +63,8 @@ public class UtilTest {
 	private static final String PATH_FILTER_DEF_PARAM = PATH_FILTER_DEF + "/filter-param";
 	
 	private static final String PATH_FILTER = "/hibernate-mapping/class/filter";
+	
+	private static final String PATH_MAPPING = "/hibernate-configuration/session-factory/mapping";
 	
 	private static XPath xpath = XPathFactory.newInstance().newXPath();
 	
@@ -112,6 +128,7 @@ public class UtilTest {
 		param2.setType("integer");
 		filterReg.setParameters(Stream.of(param1, param2).collect(Collectors.toList()));
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		
 		Util.addFilterToMappingResource(TEST_LOCATION_HBM_FILE, out, filterReg);
 		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		Document updatedResource = builder.parse(new ByteArrayInputStream(out.toByteArray()));
@@ -135,6 +152,7 @@ public class UtilTest {
 		filterReg.setName(filterName);
 		filterReg.setCondition(" ");
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		
 		Util.addFilterToMappingResource(TEST_LOCATION_HBM_FILE, out, filterReg);
 		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		Document updatedResource = builder.parse(new ByteArrayInputStream(out.toByteArray()));
@@ -144,6 +162,25 @@ public class UtilTest {
 		assertTrue(StringUtils.isBlank(getAttribute(updatedResource, PATH_FILTER_DEF, "condition")));
 		assertEquals(filterName, getAttribute(updatedResource, PATH_FILTER, "name"));
 		assertTrue(StringUtils.isBlank(getAttribute(updatedResource, PATH_FILTER, "condition")));
+	}
+	
+	@Test
+	public void updateResourceLocation_shouldReplaceMappingResourceLocationsWithFileLocations() throws Exception {
+		PowerMockito.mockStatic(OpenmrsUtil.class);
+		String expectedFilePath = "/some/path/" + MODULE_ID;
+		File mockResourceFile = Mockito.mock(File.class);
+		when(mockResourceFile.getAbsolutePath()).thenReturn(expectedFilePath);
+		when(OpenmrsUtil.getDirectoryInApplicationDataDirectory(Matchers.eq(MODULE_ID))).thenReturn(mockResourceFile);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		
+		Util.updateResourceLocation(TEST_HIBERNATE_CFG_FILE, TEST_LOCATION_HBM_FILE, out);
+		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		Document updatedCfg = builder.parse(new ByteArrayInputStream(out.toByteArray()));
+		assertEquals(expectedFilePath + "/" + TEST_LOCATION_HBM_FILE, getAttribute(updatedCfg, PATH_MAPPING, "file"));
+		assertFalse(elementExists(updatedCfg, PATH_MAPPING, "resource", TEST_LOCATION_HBM_FILE));
+		//The other mapping resources should not have been updated
+		assertTrue(elementExists(updatedCfg, PATH_MAPPING, "resource", TEST_ENC_TYPE_HBM_FILE));
+		assertFalse(elementExists(updatedCfg, PATH_MAPPING, "file", expectedFilePath + "/" + TEST_ENC_TYPE_HBM_FILE));
 	}
 	
 }

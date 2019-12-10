@@ -11,6 +11,7 @@ package org.openmrs.module.datafilter;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -20,8 +21,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -63,6 +67,7 @@ import org.openmrs.module.datafilter.registration.FullTextFilterRegistration;
 import org.openmrs.module.datafilter.registration.HibernateFilterParameter;
 import org.openmrs.module.datafilter.registration.HibernateFilterRegistration;
 import org.openmrs.util.OpenmrsClassLoader;
+import org.openmrs.util.OpenmrsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -90,6 +95,8 @@ public class Util {
 	
 	private static final String ADD_ENTITY_FILTER_XSLT_TEMPLATE = "add-entity-filter-xslt-template.xml";
 	
+	private static final String UPDATE_MAPPING_LOC_XSLT_TEMPLATE = "update-mapping-loc-xslt-template.xml";
+	
 	private static List<HibernateFilterRegistration> hibernateFilterRegistrations;
 	
 	private static List<FullTextFilterRegistration> fullTextFilterRegistrations;
@@ -104,12 +111,15 @@ public class Util {
 	
 	private static Template addEntityFilterXsltTemplate;
 	
+	private static Template updateMappingLocXsltTemplate;
+	
 	static {
 		Configuration cfg = new Configuration(Configuration.VERSION_2_3_29);
 		cfg.setDefaultEncoding(StandardCharsets.UTF_8.name());
 		cfg.setClassLoaderForTemplateLoading(OpenmrsClassLoader.getInstance(), "");
 		try {
 			addEntityFilterXsltTemplate = cfg.getTemplate(ADD_ENTITY_FILTER_XSLT_TEMPLATE);
+			updateMappingLocXsltTemplate = cfg.getTemplate(UPDATE_MAPPING_LOC_XSLT_TEMPLATE);
 		}
 		catch (IOException e) {
 			throw new RuntimeException(e);
@@ -482,20 +492,18 @@ public class Util {
 		return mappingResources;
 	}
 	
-	public static void addFilterToMappingResource(String resourceName, OutputStream out,
-	                                              HibernateFilterRegistration filterReg) {
-		
+	public static void applyXslt(String filename, Template xsltTemplate, OutputStream out, Map model) {
 		try {
 			ByteArrayOutputStream xsltOut = new ByteArrayOutputStream();
 			OutputStreamWriter writer = new OutputStreamWriter(xsltOut);
 			//Generate the final xslt to apply to the mapping resource for this filter registration
-			addEntityFilterXsltTemplate.process(Collections.singletonMap("filterReg", filterReg), writer);
+			xsltTemplate.process(model, writer);
 			
 			InputStream xslt = new ByteArrayInputStream(xsltOut.toByteArray());
 			Transformer transformer = transformerFactory.newTransformer(new StreamSource(xslt));
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			transformer.setOutputProperty(OutputKeys.ENCODING, StandardCharsets.UTF_8.name());
-			Document hbmDoc = parseXmlFile(resourceName);
+			Document hbmDoc = parseXmlFile(filename);
 			StreamResult result = new StreamResult(out);
 			transformer.transform(new DOMSource(hbmDoc), result);
 		}
@@ -510,8 +518,24 @@ public class Util {
 		}
 	}
 	
+	public static void addFilterToMappingResource(String resourceName, OutputStream out,
+	                                              HibernateFilterRegistration filterReg) {
+		
+		applyXslt(resourceName, addEntityFilterXsltTemplate, out, Collections.singletonMap("filterReg", filterReg));
+	}
+	
 	public static String getAttribute(Object document, String path, String attribute) throws XPathExpressionException {
 		return xpath.compile(path + "/@" + attribute).evaluate(document);
+	}
+	
+	public static void updateResourceLocation(String hibernateCfgFile, String resourceName, OutputStream out) {
+		
+		File hbmFileRepo = OpenmrsUtil.getDirectoryInApplicationDataDirectory(DataFilterConstants.MODULE_ID);
+		Path resourcePath = Paths.get(hbmFileRepo.getAbsolutePath(), resourceName);
+		Map model = new HashMap();
+		model.put("resourceName", resourceName);
+		model.put("resourceFilename", resourcePath.toString());
+		applyXslt(hibernateCfgFile, updateMappingLocXsltTemplate, out, model);
 	}
 	
 }

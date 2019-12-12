@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 import javax.persistence.Entity;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.openmrs.module.datafilter.registration.HibernateFilterRegistration;
 import org.openmrs.util.OpenmrsClassLoader;
 import org.slf4j.Logger;
@@ -116,19 +115,14 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 			InputStream in = OpenmrsClassLoader.getInstance().getResourceAsStream(hbmResourceName);
 			ByteArrayOutputStream outFinal = null;
 			
-			try {
-				for (HibernateFilterRegistration filterReg : entry.getValue()) {
-					if (outFinal != null) {
-						in = new ByteArrayInputStream(outFinal.toByteArray());
-					}
-					
-					ByteArrayOutputStream outTemp = new ByteArrayOutputStream();
-					Util.addFilterToMappingResource(in, outTemp, filterReg);
-					outFinal = outTemp;
+			for (HibernateFilterRegistration filterReg : entry.getValue()) {
+				if (outFinal != null) {
+					in = new ByteArrayInputStream(outFinal.toByteArray());
 				}
-			}
-			finally {
-				IOUtils.closeQuietly(in);
+				
+				ByteArrayOutputStream outTemp = new ByteArrayOutputStream();
+				Util.addFilterToMappingResource(in, outTemp, filterReg);
+				outFinal = outTemp;
 			}
 			
 			String hbmFilename = hbmResourceName;
@@ -153,19 +147,14 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 		InputStream in = OpenmrsClassLoader.getInstance().getResourceAsStream(CORE_HIBERNATE_CFG_FILE);
 		ByteArrayOutputStream outFinal = null;
 		
-		try {
-			for (Map.Entry<String, String> entry : oldAndNewResourceFileMap.entrySet()) {
-				if (outFinal != null) {
-					in = new ByteArrayInputStream(outFinal.toByteArray());
-				}
-				
-				ByteArrayOutputStream outTemp = new ByteArrayOutputStream();
-				Util.updateResourceLocation(in, entry.getKey(), entry.getValue(), outTemp);
-				outFinal = outTemp;
+		for (Map.Entry<String, String> entry : oldAndNewResourceFileMap.entrySet()) {
+			if (outFinal != null) {
+				in = new ByteArrayInputStream(outFinal.toByteArray());
 			}
-		}
-		finally {
-			IOUtils.closeQuietly(in);
+			
+			ByteArrayOutputStream outTemp = new ByteArrayOutputStream();
+			Util.updateResourceLocation(in, entry.getKey(), entry.getValue(), outTemp);
+			outFinal = outTemp;
 		}
 		
 		File newCfgFile = FileUtils.getFile(FileUtils.getTempDirectory(), MODULE_ID, timestamp,

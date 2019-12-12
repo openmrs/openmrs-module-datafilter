@@ -33,8 +33,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPath;
@@ -44,6 +44,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.hibernate.annotations.FilterDefs;
 import org.hibernate.annotations.Filters;
 import org.hibernate.annotations.ParamDef;
@@ -80,7 +81,6 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import freemarker.template.TemplateException;
 
 public class Util {
 	
@@ -183,7 +183,7 @@ public class Util {
 					if (!clazz.isAnnotationPresent(Entity.class)) {
 						continue;
 					}
-
+					
 					registerFilter(clazz,
 					    new FilterDefAnnotation(registration.getName(), registration.getDefaultCondition(), paramDefs),
 					    new FilterAnnotation(registration.getName(), registration.getCondition()));
@@ -504,23 +504,21 @@ public class Util {
 			Transformer transformer = transformerFactory.newTransformer(new StreamSource(xslt));
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            DocumentType doctype = parseXmlFile(cfg?"hibernate.cfg.xml":"org/openmrs/api/db/hibernate/Location.hbm.xml").getDoctype();
-            if (doctype != null) {
-                transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, doctype.getPublicId());
-                transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, doctype.getSystemId());
-            }
+			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in);
+			DocumentType doctype = doc.getDoctype();
+			if (doctype != null) {
+				transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, doctype.getPublicId());
+				transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, doctype.getSystemId());
+			}
 			transformer.setOutputProperty(OutputKeys.ENCODING, StandardCharsets.UTF_8.name());
 			StreamResult result = new StreamResult(out);
-			transformer.transform(new StreamSource(in), result);
+			transformer.transform(new DOMSource(doc), result);
 		}
-		catch (IOException e) {
+		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		catch (TransformerException e) {
-			throw new RuntimeException(e);
-		}
-		catch (TemplateException e) {
-			throw new RuntimeException(e);
+		finally {
+			IOUtils.closeQuietly(in);
 		}
 	}
 	

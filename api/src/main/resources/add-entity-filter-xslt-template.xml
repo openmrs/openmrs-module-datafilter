@@ -24,6 +24,7 @@
 
     <xsl:template match="/hibernate-mapping">
         <xsl:copy>
+            <xsl:apply-templates select="@* | node()"/>
             <xsl:element name="filter-def">
                 <xsl:attribute name="name">
                     <xsl:value-of select="$filterName" />
@@ -39,7 +40,6 @@
                     </#list>
                 </#if>
             </xsl:element>
-            <xsl:apply-templates select="@* | node()"/>
         </xsl:copy>
     </xsl:template>
 

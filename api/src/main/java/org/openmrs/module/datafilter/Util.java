@@ -11,7 +11,6 @@ package org.openmrs.module.datafilter;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -21,14 +20,13 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Entity;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -37,7 +35,6 @@ import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPath;
@@ -67,12 +64,12 @@ import org.openmrs.module.datafilter.registration.FullTextFilterRegistration;
 import org.openmrs.module.datafilter.registration.HibernateFilterParameter;
 import org.openmrs.module.datafilter.registration.HibernateFilterRegistration;
 import org.openmrs.util.OpenmrsClassLoader;
-import org.openmrs.util.OpenmrsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentType;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -183,6 +180,10 @@ public class Util {
 				}
 				
 				for (Class clazz : registration.getTargetClasses()) {
+					if (!clazz.isAnnotationPresent(Entity.class)) {
+						continue;
+					}
+
 					registerFilter(clazz,
 					    new FilterDefAnnotation(registration.getName(), registration.getDefaultCondition(), paramDefs),
 					    new FilterAnnotation(registration.getName(), registration.getCondition()));
@@ -492,7 +493,7 @@ public class Util {
 		return mappingResources;
 	}
 	
-	public static void applyXslt(String filename, Template xsltTemplate, OutputStream out, Map model) {
+	public static void applyXslt(InputStream in, Template xsltTemplate, OutputStream out, Map model, boolean cfg) {
 		try {
 			ByteArrayOutputStream xsltOut = new ByteArrayOutputStream();
 			OutputStreamWriter writer = new OutputStreamWriter(xsltOut);
@@ -502,10 +503,15 @@ public class Util {
 			InputStream xslt = new ByteArrayInputStream(xsltOut.toByteArray());
 			Transformer transformer = transformerFactory.newTransformer(new StreamSource(xslt));
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            DocumentType doctype = parseXmlFile(cfg?"hibernate.cfg.xml":"org/openmrs/api/db/hibernate/Location.hbm.xml").getDoctype();
+            if (doctype != null) {
+                transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, doctype.getPublicId());
+                transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, doctype.getSystemId());
+            }
 			transformer.setOutputProperty(OutputKeys.ENCODING, StandardCharsets.UTF_8.name());
-			Document hbmDoc = parseXmlFile(filename);
 			StreamResult result = new StreamResult(out);
-			transformer.transform(new DOMSource(hbmDoc), result);
+			transformer.transform(new StreamSource(in), result);
 		}
 		catch (IOException e) {
 			throw new RuntimeException(e);
@@ -518,24 +524,23 @@ public class Util {
 		}
 	}
 	
-	public static void addFilterToMappingResource(String resourceName, OutputStream out,
-	                                              HibernateFilterRegistration filterReg) {
+	public static void addFilterToMappingResource(InputStream in, OutputStream out, HibernateFilterRegistration filterReg) {
 		
-		applyXslt(resourceName, addEntityFilterXsltTemplate, out, Collections.singletonMap("filterReg", filterReg));
+		applyXslt(in, addEntityFilterXsltTemplate, out, Collections.singletonMap("filterReg", filterReg), false);
 	}
 	
 	public static String getAttribute(Object document, String path, String attribute) throws XPathExpressionException {
 		return xpath.compile(path + "/@" + attribute).evaluate(document);
 	}
 	
-	public static void updateResourceLocation(String hibernateCfgFile, String resourceName, OutputStream out) {
+	public static void updateResourceLocation(InputStream in, String resourceName, String resourceFilename,
+	                                          OutputStream out) {
 		
-		File hbmFileRepo = OpenmrsUtil.getDirectoryInApplicationDataDirectory(DataFilterConstants.MODULE_ID);
-		Path resourcePath = Paths.get(hbmFileRepo.getAbsolutePath(), resourceName);
 		Map model = new HashMap();
 		model.put("resourceName", resourceName);
-		model.put("resourceFilename", resourcePath.toString());
-		applyXslt(hibernateCfgFile, updateMappingLocXsltTemplate, out, model);
+		model.put("resourceFilename", resourceFilename);
+		
+		applyXslt(in, updateMappingLocXsltTemplate, out, model, true);
 	}
 	
 }

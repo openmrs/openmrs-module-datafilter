@@ -529,7 +529,7 @@ public class Util {
 	 * 
 	 * @param in the {@link InputStream} for the xml payload
 	 * @param xsltTemplate the freemarker {@link Template} of the xslt
-	 * @param out the {@link OutputStream} to which to add the transformed xml
+	 * @param out the {@link OutputStream} to which to add the transformed bytes
 	 * @param model a map of data to use to evaluate the freemarker template
 	 */
 	public static void applyXslt(InputStream in, Template xsltTemplate, OutputStream out, Map model) {
@@ -565,7 +565,8 @@ public class Util {
 	 * Adds a filter to an an hbm mapping file.
 	 * 
 	 * @param in the {@link InputStream} of the hbm mapping resource to add the filter
-	 * @param out the {@link OutputStream} of the new mapping resource after the filters have been added
+	 * @param out the {@link OutputStream} to which to write the transformed mapping resource bytes
+	 *            after the filters have been added
 	 * @param filterReg the {@link org.openmrs.module.datafilter.registration.FilterRegistration} object
 	 */
 	public static void addFilterToMappingResource(InputStream in, OutputStream out, HibernateFilterRegistration filterReg) {
@@ -581,8 +582,8 @@ public class Util {
 	 * @param resourceName the name of the resource for the entity i.e. the resource attribute value of
 	 *            the mapping tag for the entity class
 	 * @param resourceFilename the absolute path of the file to switch to
-	 * @param out the {@link OutputStream} to which to write the new hibernate cfg contents after
-	 *            switching the mapping location
+	 * @param out the {@link OutputStream} to which to write the new hibernate cfg bytes after switching
+	 *            the mapping location
 	 */
 	public static void updateResourceLocation(InputStream in, String resourceName, String resourceFilename,
 	                                          OutputStream out) {

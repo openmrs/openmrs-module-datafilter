@@ -113,9 +113,9 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 		
 		final String timestamp = new Long(System.currentTimeMillis()).toString();
 		
-		Map<String, String> oldAndNewMappingFiles = createNewMappingFiles(classFiltersMap, timestamp);
+		Map<String, String> oldAndTransformedMappingFiles = createTransformedMappingFiles(classFiltersMap, timestamp);
 		
-		String newCfgFilePath = createNewHibernateCfgFile(oldAndNewMappingFiles, timestamp);
+		String newCfgFilePath = createTransformedHibernateCfgFile(oldAndTransformedMappingFiles, timestamp);
 		
 		configLocations.remove(candidate.get());
 		configLocations.add(new TypedStringValue("file:" + newCfgFilePath));
@@ -153,17 +153,19 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 	}
 	
 	/**
-	 * Creates a new hibernate cfg file.
+	 * Creates a new transformed hibernate cfg file.
 	 * 
-	 * @param oldAndNewMappingFiles map of previous and respective absolute paths of their new hbm file.
+	 * @param oldAndTransformedMappingFiles map of previous and respective absolute paths of their new
+	 *            hbm file.
 	 * @param timestamp the timestamp to use for the output directory name
 	 * @return the absolute path of the new hibernate cfg file
 	 */
-	private static String createNewHibernateCfgFile(Map<String, String> oldAndNewMappingFiles, String timestamp) {
+	private static String createTransformedHibernateCfgFile(Map<String, String> oldAndTransformedMappingFiles,
+	                                                        String timestamp) {
 		InputStream in = OpenmrsClassLoader.getInstance().getResourceAsStream(CORE_HIBERNATE_CFG_FILE);
 		ByteArrayOutputStream outFinal = null;
 		
-		for (Map.Entry<String, String> entry : oldAndNewMappingFiles.entrySet()) {
+		for (Map.Entry<String, String> entry : oldAndTransformedMappingFiles.entrySet()) {
 			if (outFinal != null) {
 				in = new ByteArrayInputStream(outFinal.toByteArray());
 			}
@@ -181,22 +183,22 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 			FileUtils.writeByteArrayToFile(newCfgFile, outFinal.toByteArray());
 		}
 		catch (IOException e) {
-			throw new BeanCreationException("Failed to create hibernate cfg file ", e);
+			throw new BeanCreationException("Failed to create transformed hibernate cfg file", e);
 		}
 		
 		return newCfgFile.getAbsolutePath();
 	}
 	
 	/**
-	 * Creates new hbm files that contain our filters
+	 * Creates new transformed hbm files that contain our filters
 	 *
 	 * @param classFiltersMap map of classes and their filter registrations
 	 * @param timestamp the timestamp to use for the output directory name
 	 * @return map of previous and respective absolute paths of their new hbm file.
 	 */
-	private static Map<String, String> createNewMappingFiles(Map<Class, List<HibernateFilterRegistration>> classFiltersMap,
-	                                                         String timestamp) {
-		Map<String, String> oldAndNewMappingFiles = new HashMap();
+	private static Map<String, String> createTransformedMappingFiles(Map<Class, List<HibernateFilterRegistration>> classFiltersMap,
+	                                                                 String timestamp) {
+		Map<String, String> oldAndTransformedMappingFiles = new HashMap();
 		for (Map.Entry<Class, List<HibernateFilterRegistration>> entry : classFiltersMap.entrySet()) {
 			//TODO parse the hibernate cfg file once outside of this method and reuse it everywhere,
 			//Same for the individual hbm files, Util.getMappingResource should return name and resource map
@@ -231,14 +233,14 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 					log.debug("Mapping file in use for " + entry.getKey() + ": " + newMappingFile.getAbsolutePath());
 				}
 				FileUtils.writeByteArrayToFile(newMappingFile, outFinal.toByteArray());
-				oldAndNewMappingFiles.put(hbmResourceName, newMappingFile.getAbsolutePath());
+				oldAndTransformedMappingFiles.put(hbmResourceName, newMappingFile.getAbsolutePath());
 			}
 			catch (IOException e) {
-				throw new BeanCreationException("Failed to create new mapping file for " + entry.getKey(), e);
+				throw new BeanCreationException("Failed to create transformed mapping file for " + entry.getKey(), e);
 			}
 		}
 		
-		return oldAndNewMappingFiles;
+		return oldAndTransformedMappingFiles;
 	}
 	
 }

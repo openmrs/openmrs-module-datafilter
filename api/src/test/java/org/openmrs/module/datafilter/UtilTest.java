@@ -14,7 +14,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.openmrs.module.datafilter.DataFilterConstants.MODULE_ID;
-import static org.openmrs.module.datafilter.Util.getAttribute;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -65,6 +64,10 @@ public class UtilTest {
 	private static final String PATH_MAPPING = "/hibernate-configuration/session-factory/mapping";
 	
 	private static XPath xpath = XPathFactory.newInstance().newXPath();
+	
+	public static String getAttribute(Object document, String path, String attribute) throws XPathExpressionException {
+		return xpath.compile(path + "/@" + attribute).evaluate(document);
+	}
 	
 	public static boolean elementExists(Object doc, String path) throws XPathExpressionException {
 		return getCount(doc, path) > 0;

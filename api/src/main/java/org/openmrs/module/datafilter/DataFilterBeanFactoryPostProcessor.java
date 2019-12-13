@@ -41,22 +41,23 @@ import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.stereotype.Component;
 
 /**
- * Custom BeanFactoryPostProcessor that registers filters to HBM files by doing the following for
- * all filtered entities mapped via xml.
+ * Custom BeanFactoryPostProcessor that registers filters to hbm files by doing the following for
+ * all filtered entities mapped using xml.
  * 
  * <pre>
  * <ul>
- * <li>Load the existing hbm files for all filtered entities</li>
- * <li>Parse the xml in the hbm files to add the filter tags</li>
- * <li>Write the mutated xml contents with the added filter tags to new hbm files in the module's
- * config directory</li>
+ * <li>Find all filtered entities that are mapped using xml and load the contents of their hbm
+ * files</li>
+ * <li>Apply an xslt to all their hbm files to add the filter tags</li>
+ * <li>Write the transformed contents of the hbm files to the temp directory</li>
  * <li>Load OpenMRS core's hibernate.cfg.xml file</li>
- * <li>Parse the xml in hibernate.cfg.xml file and switch each mapping entry for any filtered entity
- * to point to the respective new hbm file created above</li>
- * <li>Write the mutated hibernate.cfg.xml contents to a new cfg file in the module's config
- * directory</li>
- * <li>Get the session factory bean and change the configLocations property to point to our new
- * mutated hibernate.cfg.xml file that references the new hbm files containing our filters</li>
+ * <li>Apply an xslt to the core hibernate.cfg.xml file to switch each mapping entry for any
+ * filtered entity to point to their respective paths of the transformed hbm files created
+ * above</li>
+ * <li>Write the transformed contents of the hibernate.cfg.xml file to the temp directory</li>
+ * <li>Get the session factory bean and change the configLocations property to point to the location
+ * of our transformed hibernate.cfg.xml file that references the transformed hbm files containing
+ * our filters</li>
  * <ul/>
  * 
  * <pre/>
@@ -77,12 +78,65 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		log.info("In datafilter's BeanFactoryPostProcessor");
 		
-		List<HibernateFilterRegistration> filterRegistrations = Util.getHibernateFilterRegistrations();
-		if (filterRegistrations.isEmpty()) {
+		Map<Class, List<HibernateFilterRegistration>> classFiltersMap = getClassFiltersMap();
+		if (classFiltersMap.isEmpty()) {
 			return;
 		}
 		
+		if (log.isDebugEnabled()) {
+			log.debug("Filtered classes with hbm files: " + classFiltersMap.keySet());
+		}
+		
+		log.info("Reconfiguring the sessionFactory bean's configLocations");
+		
+		final BeanDefinition beanDefinition = beanFactory.getBeanDefinition(SESSION_FACTORY_BEAN_NAME);
+		
+		ManagedList<TypedStringValue> configLocations = (ManagedList) beanDefinition.getPropertyValues()
+		        .get(CFG_LOC_PROP_NAME);
+		
+		Optional candidate = configLocations.stream()
+		        .filter(loc -> ("classpath:" + CORE_HIBERNATE_CFG_FILE).equals(loc.getValue())).findFirst();
+		
+		if (!candidate.isPresent()) {
+			//What? Was the file renamed in core?
+			Class<?> beanClass;
+			try {
+				beanClass = OpenmrsClassLoader.getInstance().loadClass(beanDefinition.getBeanClassName());
+			}
+			catch (ClassNotFoundException e) {
+				throw new BeanCreationException("Failed to reconfigure sessionFactory bean", e);
+			}
+			
+			throw new InvalidPropertyException(beanClass, CFG_LOC_PROP_NAME,
+			        CORE_HIBERNATE_CFG_FILE + " entry not found among configLocations");
+		}
+		
+		final String timestamp = new Long(System.currentTimeMillis()).toString();
+		
+		Map<String, String> oldAndNewMappingFiles = createNewMappingFiles(classFiltersMap, timestamp);
+		
+		String newCfgFilePath = createNewHibernateCfgFile(oldAndNewMappingFiles, timestamp);
+		
+		configLocations.remove(candidate.get());
+		configLocations.add(new TypedStringValue("file:" + newCfgFilePath));
+		
+		log.info("Successfully reconfigured the sessionFactory bean's configLocations to: " + configLocations.stream()
+		        .map(typedStringValue -> typedStringValue.getValue()).collect(Collectors.toList()));
+	}
+	
+	/**
+	 * Get all the classes mapped via hbm files that we need to add filters to along with their filter
+	 * registrations
+	 * 
+	 * @return a map of classes and their filter registrations
+	 */
+	private static Map<Class, List<HibernateFilterRegistration>> getClassFiltersMap() {
 		Map<Class, List<HibernateFilterRegistration>> classFiltersMap = new HashMap();
+		
+		List<HibernateFilterRegistration> filterRegistrations = Util.getHibernateFilterRegistrations();
+		if (filterRegistrations.isEmpty()) {
+			return classFiltersMap;
+		}
 		
 		for (HibernateFilterRegistration filterReg : filterRegistrations) {
 			for (Class clazz : filterReg.getTargetClasses()) {
@@ -95,18 +149,58 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 			}
 		}
 		
-		if (classFiltersMap.isEmpty()) {
-			return;
+		return classFiltersMap;
+	}
+	
+	/**
+	 * Creates a new hibernate cfg file.
+	 * 
+	 * @param oldAndNewMappingFiles map of previous and respective absolute paths of their new hbm file.
+	 * @param timestamp the timestamp to use for the output directory name
+	 * @return the absolute path of the new hibernate cfg file
+	 */
+	private static String createNewHibernateCfgFile(Map<String, String> oldAndNewMappingFiles, String timestamp) {
+		InputStream in = OpenmrsClassLoader.getInstance().getResourceAsStream(CORE_HIBERNATE_CFG_FILE);
+		ByteArrayOutputStream outFinal = null;
+		
+		for (Map.Entry<String, String> entry : oldAndNewMappingFiles.entrySet()) {
+			if (outFinal != null) {
+				in = new ByteArrayInputStream(outFinal.toByteArray());
+			}
+			
+			ByteArrayOutputStream outTemp = new ByteArrayOutputStream();
+			Util.updateResourceLocation(in, entry.getKey(), entry.getValue(), outTemp);
+			outFinal = outTemp;
 		}
 		
-		if (log.isDebugEnabled()) {
-			log.debug("Filtered classes with hbm files: " + classFiltersMap.keySet());
+		File newCfgFile = FileUtils.getFile(FileUtils.getTempDirectory(), MODULE_ID, timestamp,
+		    DATAFILTER_HIBERNATE_CFG_FILE);
+		
+		try {
+			log.info("Hibernate cfg file in use: " + newCfgFile.getAbsolutePath());
+			FileUtils.writeByteArrayToFile(newCfgFile, outFinal.toByteArray());
+		}
+		catch (IOException e) {
+			throw new BeanCreationException("Failed to create hibernate cfg file ", e);
 		}
 		
-		Map<String, String> oldAndNewResourceFileMap = new HashMap();
-		String timestamp = new Long(System.currentTimeMillis()).toString();
-		
+		return newCfgFile.getAbsolutePath();
+	}
+	
+	/**
+	 * Creates new hbm files that contain our filters
+	 *
+	 * @param classFiltersMap map of classes and their filter registrations
+	 * @param timestamp the timestamp to use for the output directory name
+	 * @return map of previous and respective absolute paths of their new hbm file.
+	 */
+	private static Map<String, String> createNewMappingFiles(Map<Class, List<HibernateFilterRegistration>> classFiltersMap,
+	                                                         String timestamp) {
+		Map<String, String> oldAndNewMappingFiles = new HashMap();
 		for (Map.Entry<Class, List<HibernateFilterRegistration>> entry : classFiltersMap.entrySet()) {
+			//TODO parse the hibernate cfg file once outside of this method and reuse it everywhere,
+			//Same for the individual hbm files, Util.getMappingResource should return name and resource map
+			//So that we don't have to parse each file again when adding filters.
 			String hbmResourceName = Util.getMappingResource(CORE_HIBERNATE_CFG_FILE, entry.getKey().getName());
 			if (hbmResourceName == null) {
 				throw new BeanCreationException("Failed to find hbm file for: " + entry.getKey());
@@ -137,66 +231,14 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 					log.debug("Mapping file in use for " + entry.getKey() + ": " + newMappingFile.getAbsolutePath());
 				}
 				FileUtils.writeByteArrayToFile(newMappingFile, outFinal.toByteArray());
-				oldAndNewResourceFileMap.put(hbmResourceName, newMappingFile.getAbsolutePath());
+				oldAndNewMappingFiles.put(hbmResourceName, newMappingFile.getAbsolutePath());
 			}
 			catch (IOException e) {
 				throw new BeanCreationException("Failed to create new mapping file for " + entry.getKey(), e);
 			}
 		}
 		
-		InputStream in = OpenmrsClassLoader.getInstance().getResourceAsStream(CORE_HIBERNATE_CFG_FILE);
-		ByteArrayOutputStream outFinal = null;
-		
-		for (Map.Entry<String, String> entry : oldAndNewResourceFileMap.entrySet()) {
-			if (outFinal != null) {
-				in = new ByteArrayInputStream(outFinal.toByteArray());
-			}
-			
-			ByteArrayOutputStream outTemp = new ByteArrayOutputStream();
-			Util.updateResourceLocation(in, entry.getKey(), entry.getValue(), outTemp);
-			outFinal = outTemp;
-		}
-		
-		File newCfgFile = FileUtils.getFile(FileUtils.getTempDirectory(), MODULE_ID, timestamp,
-		    DATAFILTER_HIBERNATE_CFG_FILE);
-		
-		try {
-			log.info("Hibernate cfg file in use: " + newCfgFile.getAbsolutePath());
-			FileUtils.writeByteArrayToFile(newCfgFile, outFinal.toByteArray());
-		}
-		catch (IOException e) {
-			throw new BeanCreationException("Failed to create hibernate cfg file ", e);
-		}
-		
-		log.info("Reconfiguring the sessionFactory bean's configLocations");
-		
-		BeanDefinition beanDefinition = beanFactory.getBeanDefinition(SESSION_FACTORY_BEAN_NAME);
-		
-		ManagedList<TypedStringValue> configLocations = (ManagedList) beanDefinition.getPropertyValues()
-		        .get(CFG_LOC_PROP_NAME);
-		
-		Optional candidate = configLocations.stream()
-		        .filter(loc -> ("classpath:" + CORE_HIBERNATE_CFG_FILE).equals(loc.getValue())).findFirst();
-		
-		if (!candidate.isPresent()) {
-			//What? Was the file renamed in core?
-			Class<?> beanClass;
-			try {
-				beanClass = OpenmrsClassLoader.getInstance().loadClass(beanDefinition.getBeanClassName());
-			}
-			catch (ClassNotFoundException e) {
-				throw new BeanCreationException("Failed to reconfigure sessionFactory bean", e);
-			}
-			
-			throw new InvalidPropertyException(beanClass, CFG_LOC_PROP_NAME,
-			        CORE_HIBERNATE_CFG_FILE + " entry not found among configLocations");
-		}
-		
-		configLocations.remove(candidate.get());
-		configLocations.add(new TypedStringValue("file:" + newCfgFile.getAbsolutePath()));
-		
-		log.info("Successfully reconfigured the sessionFactory bean's configLocations to: " + configLocations.stream()
-		        .map(typedStringValue -> typedStringValue.getValue()).collect(Collectors.toList()));
+		return oldAndNewMappingFiles;
 	}
 	
 }

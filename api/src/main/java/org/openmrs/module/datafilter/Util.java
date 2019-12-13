@@ -413,7 +413,13 @@ public class Util {
 		}
 	}
 	
-	public static Document parseXmlFile(String filename) {
+	/**
+	 * Parses the contents of the specified xml file
+	 * 
+	 * @param xmlFilename teh file name to parses
+	 * @return a {@link Document} obecjt
+	 */
+	public static Document parseXmlFile(String xmlFilename) {
 		if (documentBuilder == null) {
 			try {
 				documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -424,7 +430,7 @@ public class Util {
 		}
 		
 		try {
-			return documentBuilder.parse(OpenmrsClassLoader.getInstance().getResourceAsStream(filename));
+			return documentBuilder.parse(OpenmrsClassLoader.getInstance().getResourceAsStream(xmlFilename));
 		}
 		catch (SAXException e) {
 			throw new RuntimeException(e);
@@ -434,6 +440,15 @@ public class Util {
 		}
 	}
 	
+	/**
+	 * Gets the hbm resource name for the class with the specified name from the specified hibernate cfg
+	 * file, the returned value is actually the value of the resource attribute of the mapping for the
+	 * class
+	 * 
+	 * @param cfgFilename the hibernate cfg file to search
+	 * @param classname the fully qualified java class name to match
+	 * @return the resource name
+	 */
 	public static String getMappingResource(String cfgFilename, String classname) {
 		
 		List<String> candidateResources = getMappingResources(cfgFilename);
@@ -457,6 +472,15 @@ public class Util {
 		return mappingResource;
 	}
 	
+	/**
+	 * Evaluates the specified xpath expression against the specified xml and returns the value file.
+	 * 
+	 * @param xpathExpression the xpath expression to evaluate
+	 * @param xmlFilename the name of the xml file to read from
+	 * @param returnType the return type of the value
+	 * @param <T>
+	 * @return the evaluated value
+	 */
 	private static <T> T readFromXmlFile(String xpathExpression, String xmlFilename, QName returnType) {
 		
 		Document document = parseXmlFile(xmlFilename);
@@ -473,6 +497,12 @@ public class Util {
 		}
 	}
 	
+	/**
+	 * Gets all the resource names of the mapping entries from the specified hibernate cfg file
+	 * 
+	 * @param cfgFilename the hibernate cfg file to search
+	 * @return a list of all the resource names
+	 */
 	private static List<String> getMappingResources(String cfgFilename) {
 		
 		if (mappingResources != null) {
@@ -493,7 +523,16 @@ public class Util {
 		return mappingResources;
 	}
 	
-	public static void applyXslt(InputStream in, Template xsltTemplate, OutputStream out, Map model, boolean cfg) {
+	/**
+	 * Processes the the specified freemarker xslt template and applies the resulting xslt to an xml
+	 * {@link InputStream} and adds the transformed bytes to the specified {@link OutputStream}.
+	 * 
+	 * @param in the {@link InputStream} for the xml payload
+	 * @param xsltTemplate the freemarker {@link Template} of the xslt
+	 * @param out the {@link OutputStream} to which to add the transformed xml
+	 * @param model a map of data to use to evaluate the freemarker template
+	 */
+	public static void applyXslt(InputStream in, Template xsltTemplate, OutputStream out, Map model) {
 		try {
 			ByteArrayOutputStream xsltOut = new ByteArrayOutputStream();
 			OutputStreamWriter writer = new OutputStreamWriter(xsltOut);
@@ -522,15 +561,29 @@ public class Util {
 		}
 	}
 	
+	/**
+	 * Adds a filter to an an hbm mapping file.
+	 * 
+	 * @param in the {@link InputStream} of the hbm mapping resource to add the filter
+	 * @param out the {@link OutputStream} of the new mapping resource after the filters have been added
+	 * @param filterReg the {@link org.openmrs.module.datafilter.registration.FilterRegistration} object
+	 */
 	public static void addFilterToMappingResource(InputStream in, OutputStream out, HibernateFilterRegistration filterReg) {
 		
-		applyXslt(in, addEntityFilterXsltTemplate, out, Collections.singletonMap("filterReg", filterReg), false);
+		applyXslt(in, addEntityFilterXsltTemplate, out, Collections.singletonMap("filterReg", filterReg));
 	}
 	
-	public static String getAttribute(Object document, String path, String attribute) throws XPathExpressionException {
-		return xpath.compile(path + "/@" + attribute).evaluate(document);
-	}
-	
+	/**
+	 * Changes the location of the mapping file for a persistent entity in a hibernate cfg file by
+	 * replacing the resource attribute with a file attribute.
+	 * 
+	 * @param in the {@link InputStream} of the hibernate cfg file
+	 * @param resourceName the name of the resource for the entity i.e. the resource attribute value of
+	 *            the mapping tag for the entity class
+	 * @param resourceFilename the absolute path of the file to switch to
+	 * @param out the {@link OutputStream} to which to write the new hibernate cfg contents after
+	 *            switching the mapping location
+	 */
 	public static void updateResourceLocation(InputStream in, String resourceName, String resourceFilename,
 	                                          OutputStream out) {
 		
@@ -538,7 +591,7 @@ public class Util {
 		model.put("resourceName", resourceName);
 		model.put("resourceFilename", resourceFilename);
 		
-		applyXslt(in, updateMappingLocXsltTemplate, out, model, true);
+		applyXslt(in, updateMappingLocXsltTemplate, out, model);
 	}
 	
 }

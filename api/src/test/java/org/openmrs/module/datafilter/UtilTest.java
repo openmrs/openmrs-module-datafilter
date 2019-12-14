@@ -14,6 +14,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.openmrs.module.datafilter.DataFilterConstants.MODULE_ID;
+import static org.openmrs.module.datafilter.Util.getDocumentBuilder;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -22,8 +23,6 @@ import java.lang.annotation.Annotation;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
@@ -129,11 +128,11 @@ public class UtilTest {
 		param2.setType("integer");
 		filterReg.setParameters(Stream.of(param1, param2).collect(Collectors.toList()));
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		
 		InputStream in = OpenmrsClassLoader.getInstance().getResourceAsStream(TEST_LOCATION_HBM_FILE);
+		
 		Util.addFilterToMappingResource(in, out, filterReg);
-		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		Document updatedResource = builder.parse(new ByteArrayInputStream(out.toByteArray()));
+		
+		Document updatedResource = getDocumentBuilder().parse(new ByteArrayInputStream(out.toByteArray()));
 		assertTrue(elementExists(updatedResource, PATH_FILTER_DEF));
 		assertTrue(elementExists(updatedResource, PATH_FILTER));
 		assertEquals(filterName, getAttribute(updatedResource, PATH_FILTER_DEF, "name"));
@@ -154,11 +153,11 @@ public class UtilTest {
 		filterReg.setName(filterName);
 		filterReg.setCondition(" ");
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		
 		InputStream in = OpenmrsClassLoader.getInstance().getResourceAsStream(TEST_LOCATION_HBM_FILE);
+		
 		Util.addFilterToMappingResource(in, out, filterReg);
-		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		Document updatedResource = builder.parse(new ByteArrayInputStream(out.toByteArray()));
+		
+		Document updatedResource = getDocumentBuilder().parse(new ByteArrayInputStream(out.toByteArray()));
 		assertTrue(elementExists(updatedResource, PATH_FILTER_DEF));
 		assertTrue(elementExists(updatedResource, PATH_FILTER));
 		assertEquals(filterName, getAttribute(updatedResource, PATH_FILTER_DEF, "name"));
@@ -172,11 +171,11 @@ public class UtilTest {
 		PowerMockito.mockStatic(FileUtils.class);
 		String expectedFilePath = "/tmp/path/" + MODULE_ID + "/" + TEST_LOCATION_HBM_FILE;
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		
 		InputStream in = OpenmrsClassLoader.getInstance().getResourceAsStream(TEST_HIBERNATE_CFG_FILE);
+		
 		Util.updateResourceLocation(in, TEST_LOCATION_HBM_FILE, expectedFilePath, out);
-		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		Document updatedCfg = builder.parse(new ByteArrayInputStream(out.toByteArray()));
+		
+		Document updatedCfg = getDocumentBuilder().parse(new ByteArrayInputStream(out.toByteArray()));
 		assertEquals(1, getCount(updatedCfg, PATH_MAPPING + "[@file]"));
 		assertEquals(expectedFilePath, getAttribute(updatedCfg, PATH_MAPPING, "file"));
 		assertFalse(elementExists(updatedCfg, PATH_MAPPING, "resource", TEST_LOCATION_HBM_FILE));

@@ -49,6 +49,7 @@ import org.hibernate.annotations.FilterDefs;
 import org.hibernate.annotations.Filters;
 import org.hibernate.annotations.ParamDef;
 import org.hibernate.cfg.Environment;
+import org.hibernate.internal.util.xml.DTDEntityResolver;
 import org.hibernate.search.annotations.FullTextFilterDefs;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
@@ -111,6 +112,14 @@ public class Util {
 	private static Template updateMappingLocXsltTemplate;
 	
 	static {
+		try {
+			documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			documentBuilder.setEntityResolver(new DTDEntityResolver());
+		}
+		catch (ParserConfigurationException e) {
+			throw new RuntimeException(e);
+		}
+		
 		Configuration cfg = new Configuration(Configuration.VERSION_2_3_29);
 		cfg.setDefaultEncoding(StandardCharsets.UTF_8.name());
 		cfg.setClassLoaderForTemplateLoading(OpenmrsClassLoader.getInstance(), "");
@@ -121,6 +130,15 @@ public class Util {
 		catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	/**
+	 * Gets the documentBuilder
+	 *
+	 * @return the documentBuilder
+	 */
+	public static DocumentBuilder getDocumentBuilder() {
+		return documentBuilder;
 	}
 	
 	/**
@@ -420,15 +438,6 @@ public class Util {
 	 * @return a {@link Document} obecjt
 	 */
 	public static Document parseXmlFile(String xmlFilename) {
-		if (documentBuilder == null) {
-			try {
-				documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			}
-			catch (ParserConfigurationException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		
 		try {
 			return documentBuilder.parse(OpenmrsClassLoader.getInstance().getResourceAsStream(xmlFilename));
 		}
@@ -543,11 +552,11 @@ public class Util {
 			Transformer transformer = transformerFactory.newTransformer(new StreamSource(xslt));
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in);
-			DocumentType doctype = doc.getDoctype();
-			if (doctype != null) {
-				transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, doctype.getPublicId());
-				transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, doctype.getSystemId());
+			Document doc = documentBuilder.parse(in);
+			DocumentType docType = doc.getDoctype();
+			if (docType != null) {
+				transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, docType.getPublicId());
+				transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, docType.getSystemId());
 			}
 			transformer.setOutputProperty(OutputKeys.ENCODING, StandardCharsets.UTF_8.name());
 			StreamResult result = new StreamResult(out);

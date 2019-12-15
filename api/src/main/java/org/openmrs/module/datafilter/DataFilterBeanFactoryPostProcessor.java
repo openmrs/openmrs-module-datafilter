@@ -113,9 +113,24 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 		
 		final String timestamp = new Long(System.currentTimeMillis()).toString();
 		
-		Map<String, String> oldAndTransformedMappingFiles = createTransformedMappingFiles(classFiltersMap, timestamp);
-		
-		String newCfgFilePath = createTransformedHibernateCfgFile(oldAndTransformedMappingFiles, timestamp);
+		String newCfgFilePath;
+		try {
+			
+			Map<String, String> oldAndTransformedMappingFiles = createTransformedMappingFiles(classFiltersMap, timestamp);
+			
+			newCfgFilePath = createTransformedHibernateCfgFile(oldAndTransformedMappingFiles, timestamp);
+		}
+		finally {
+			File transformedFilesDir = FileUtils.getFile(FileUtils.getTempDirectory(), MODULE_ID);
+			if (transformedFilesDir.exists()) {
+				try {
+					FileUtils.forceDeleteOnExit(transformedFilesDir);
+				}
+				catch (IOException e) {
+					//Ignore since it is in the temp dir anyways
+				}
+			}
+		}
 		
 		configLocations.remove(candidate.get());
 		configLocations.add(new TypedStringValue("file:" + newCfgFilePath));
@@ -179,7 +194,10 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 		    DATAFILTER_HIBERNATE_CFG_FILE);
 		
 		try {
-			log.info("Hibernate cfg file in use: " + newCfgFile.getAbsolutePath());
+			if (log.isDebugEnabled()) {
+				log.debug("Hibernate cfg file in use: " + newCfgFile.getAbsolutePath());
+			}
+			
 			FileUtils.writeByteArrayToFile(newCfgFile, outFinal.toByteArray());
 		}
 		catch (IOException e) {
@@ -230,8 +248,9 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 			
 			try {
 				if (log.isDebugEnabled()) {
-					log.debug("Mapping file in use for " + entry.getKey() + ": " + newMappingFile.getAbsolutePath());
+					log.debug("Mapping fuse for " + entry.getKey() + ": " + newMappingFile.getAbsolutePath());
 				}
+				
 				FileUtils.writeByteArrayToFile(newMappingFile, outFinal.toByteArray());
 				oldAndTransformedMappingFiles.put(hbmResourceName, newMappingFile.getAbsolutePath());
 			}

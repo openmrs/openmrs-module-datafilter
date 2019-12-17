@@ -16,14 +16,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import javax.persistence.Entity;
 
 import org.apache.commons.io.FileUtils;
 import org.openmrs.module.datafilter.registration.HibernateFilterRegistration;
@@ -78,7 +75,7 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		log.info("In datafilter's BeanFactoryPostProcessor");
 		
-		Map<Class, List<HibernateFilterRegistration>> classFiltersMap = getClassFiltersMap();
+		Map<Class, List<HibernateFilterRegistration>> classFiltersMap = Util.getClassFiltersMap();
 		if (classFiltersMap.isEmpty()) {
 			return;
 		}
@@ -140,34 +137,6 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 	}
 	
 	/**
-	 * Get all the classes mapped via hbm files that we need to add filters to along with their filter
-	 * registrations
-	 * 
-	 * @return a map of classes and their filter registrations
-	 */
-	private static Map<Class, List<HibernateFilterRegistration>> getClassFiltersMap() {
-		Map<Class, List<HibernateFilterRegistration>> classFiltersMap = new HashMap();
-		
-		List<HibernateFilterRegistration> filterRegistrations = Util.getHibernateFilterRegistrations();
-		if (filterRegistrations.isEmpty()) {
-			return classFiltersMap;
-		}
-		
-		for (HibernateFilterRegistration filterReg : filterRegistrations) {
-			for (Class clazz : filterReg.getTargetClasses()) {
-				if (!clazz.isAnnotationPresent(Entity.class)) {
-					if (classFiltersMap.get(clazz) == null) {
-						classFiltersMap.put(clazz, new ArrayList());
-					}
-					classFiltersMap.get(clazz).add(filterReg);
-				}
-			}
-		}
-		
-		return classFiltersMap;
-	}
-	
-	/**
 	 * Creates a new transformed hibernate cfg file.
 	 * 
 	 * @param oldAndTransformedMappingFiles map of previous and respective absolute paths of their new
@@ -177,6 +146,7 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 	 */
 	private static String createTransformedHibernateCfgFile(Map<String, String> oldAndTransformedMappingFiles,
 	                                                        String timestamp) {
+		
 		InputStream in = OpenmrsClassLoader.getInstance().getResourceAsStream(CORE_HIBERNATE_CFG_FILE);
 		ByteArrayOutputStream outFinal = null;
 		
@@ -216,7 +186,10 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 	 */
 	private static Map<String, String> createTransformedMappingFiles(Map<Class, List<HibernateFilterRegistration>> classFiltersMap,
 	                                                                 String timestamp) {
+		
+		File transformedResourcesRepo = FileUtils.getFile(FileUtils.getTempDirectory(), MODULE_ID, timestamp);
 		Map<String, String> oldAndTransformedMappingFiles = new HashMap();
+		
 		for (Map.Entry<Class, List<HibernateFilterRegistration>> entry : classFiltersMap.entrySet()) {
 			//TODO parse the hibernate cfg file once outside of this method and reuse it everywhere,
 			//Same for the individual hbm files, Util.getMappingResource should return name and resource map
@@ -226,32 +199,13 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 				throw new BeanCreationException("Failed to find hbm file for: " + entry.getKey());
 			}
 			
-			InputStream in = OpenmrsClassLoader.getInstance().getResourceAsStream(hbmResourceName);
-			ByteArrayOutputStream outFinal = null;
-			
-			for (HibernateFilterRegistration filterReg : entry.getValue()) {
-				if (outFinal != null) {
-					in = new ByteArrayInputStream(outFinal.toByteArray());
-				}
-				
-				ByteArrayOutputStream outTemp = new ByteArrayOutputStream();
-				Util.addFilterToMappingResource(in, outTemp, filterReg);
-				outFinal = outTemp;
-			}
-			
-			String hbmFilename = hbmResourceName;
-			if (hbmFilename.indexOf("/") > 0) {
-				hbmFilename = hbmFilename.substring(hbmFilename.lastIndexOf("/"));
-			}
-			
-			File newMappingFile = FileUtils.getFile(FileUtils.getTempDirectory(), MODULE_ID, timestamp, hbmFilename);
-			
 			try {
+				File newMappingFile = Util.createNewMappingFile(hbmResourceName, entry.getValue(), transformedResourcesRepo);
+				
 				if (log.isDebugEnabled()) {
-					log.debug("Mapping fuse for " + entry.getKey() + ": " + newMappingFile.getAbsolutePath());
+					log.debug("Mapping file in use for " + entry.getKey() + ": " + newMappingFile.getAbsolutePath());
 				}
 				
-				FileUtils.writeByteArrayToFile(newMappingFile, outFinal.toByteArray());
 				oldAndTransformedMappingFiles.put(hbmResourceName, newMappingFile.getAbsolutePath());
 			}
 			catch (IOException e) {

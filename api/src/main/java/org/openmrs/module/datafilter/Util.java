@@ -11,6 +11,7 @@ package org.openmrs.module.datafilter;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -43,6 +44,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.hibernate.annotations.FilterDefs;
@@ -607,6 +609,72 @@ public class Util {
 		model.put("resourceFilename", resourceFilename);
 		
 		applyXslt(in, updateMappingLocXsltTemplate, out, model);
+	}
+	
+	/**
+	 * Creates a new mapping file after adding the filters
+	 * 
+	 * @param hbmResourceName the name of the original mapping resource
+	 * @param filterRegistrations list of FilterRegistrations to add to the mapping file
+	 * @param outputDir the directory where to create the new files
+	 * @return the new mapping file
+	 * @throws IOException
+	 */
+	public static File createNewMappingFile(String hbmResourceName, List<HibernateFilterRegistration> filterRegistrations,
+	                                        File outputDir)
+	    throws IOException {
+		
+		InputStream in = OpenmrsClassLoader.getInstance().getResourceAsStream(hbmResourceName);
+		ByteArrayOutputStream outFinal = null;
+		
+		for (HibernateFilterRegistration filterReg : filterRegistrations) {
+			if (outFinal != null) {
+				in = new ByteArrayInputStream(outFinal.toByteArray());
+			}
+			
+			ByteArrayOutputStream outTemp = new ByteArrayOutputStream();
+			Util.addFilterToMappingResource(in, outTemp, filterReg);
+			outFinal = outTemp;
+		}
+		
+		String hbmFilename = hbmResourceName;
+		if (hbmFilename.indexOf("/") > 0) {
+			hbmFilename = hbmFilename.substring(hbmFilename.lastIndexOf("/"));
+		}
+		
+		File newMappingFile = FileUtils.getFile(outputDir, hbmFilename);
+		
+		FileUtils.writeByteArrayToFile(newMappingFile, outFinal.toByteArray());
+		
+		return newMappingFile;
+	}
+	
+	/**
+	 * Get all the classes mapped via hbm files that we need to add filters to along with their filter
+	 * registrations
+	 *
+	 * @return a map of classes and their filter registrations
+	 */
+	protected static Map<Class, List<HibernateFilterRegistration>> getClassFiltersMap() {
+		Map<Class, List<HibernateFilterRegistration>> classFiltersMap = new HashMap();
+		
+		List<HibernateFilterRegistration> filterRegistrations = Util.getHibernateFilterRegistrations();
+		if (filterRegistrations.isEmpty()) {
+			return classFiltersMap;
+		}
+		
+		for (HibernateFilterRegistration filterReg : filterRegistrations) {
+			for (Class clazz : filterReg.getTargetClasses()) {
+				if (!clazz.isAnnotationPresent(Entity.class)) {
+					if (classFiltersMap.get(clazz) == null) {
+						classFiltersMap.put(clazz, new ArrayList());
+					}
+					classFiltersMap.get(clazz).add(filterReg);
+				}
+			}
+		}
+		
+		return classFiltersMap;
 	}
 	
 }

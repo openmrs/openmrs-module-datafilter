@@ -13,6 +13,6 @@
         "name": "datafilter_CareSettingFilter",
         "defaultCondition": "1=1",
         "targetClasses": ["org.openmrs.CareSetting"],
-        "condition": "1=1"
+        "condition": "0 < 1"
     }
 ]

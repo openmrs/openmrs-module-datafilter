@@ -12,9 +12,9 @@
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
-    <xsl:variable name="filterName">${filterReg.name}</xsl:variable>
-    <xsl:variable name="defaultCondition"><#if filterReg.defaultCondition??>${filterReg.defaultCondition}</#if></xsl:variable>
-    <xsl:variable name="condition"><#if filterReg.condition??>${filterReg.condition}</#if></xsl:variable>
+    <xsl:variable name="filterName">${filterName}</xsl:variable>
+    <xsl:variable name="defaultCondition"><#if defaultCondition??>${defaultCondition}</#if></xsl:variable>
+    <xsl:variable name="condition"><#if condition??>${condition}</#if></xsl:variable>
 
     <xsl:template match="@* | node()">
         <xsl:copy>
@@ -34,8 +34,8 @@
                         <xsl:value-of select="$defaultCondition" />
                     </xsl:attribute>
                 </xsl:if>
-                <#if filterReg.parameters??>
-                    <#list filterReg.parameters as param>
+                <#if parameters??>
+                    <#list parameters as param>
                     <filter-param name="${param.name}" type="${param.type}" />
                     </#list>
                 </#if>

@@ -21,7 +21,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +44,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.hibernate.annotations.FilterDefs;
 import org.hibernate.annotations.Filters;
 import org.hibernate.annotations.ParamDef;
@@ -579,8 +579,13 @@ public class Util {
 	 * @param filterReg the {@link org.openmrs.module.datafilter.registration.FilterRegistration} object
 	 */
 	public static void addFilterToMappingResource(InputStream in, OutputStream out, HibernateFilterRegistration filterReg) {
+		Map model = new HashMap();
+		model.put("filterName", filterReg.getName());
+		model.put("defaultCondition", StringEscapeUtils.escapeXml(filterReg.getDefaultCondition()));
+		model.put("condition", StringEscapeUtils.escapeXml(filterReg.getCondition()));
+		model.put("parameters", filterReg.getParameters());
 		
-		applyXslt(in, addEntityFilterXsltTemplate, out, Collections.singletonMap("filterReg", filterReg));
+		applyXslt(in, addEntityFilterXsltTemplate, out, model);
 	}
 	
 	/**

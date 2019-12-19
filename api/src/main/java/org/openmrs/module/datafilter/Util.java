@@ -47,6 +47,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.FilterDefs;
 import org.hibernate.annotations.Filters;
 import org.hibernate.annotations.ParamDef;
@@ -464,16 +465,8 @@ public class Util {
 		
 		List<String> candidateResources = getMappingResources(cfgFilename);
 		String mappingResource = null;
-		//Get the package and class name from the hbm file
-		String packageAndClassnameExp = "concat(/hibernate-mapping/@package,'.',/hibernate-mapping/class/@name)";
 		for (String candidate : candidateResources) {
-			String candidateClassName = readFromXmlFile(packageAndClassnameExp, candidate, null);
-			//For classes that don't have a package attribute value for the hibernate-mapping tag, 
-			//the fully qualified classname starts with a dot, so we need to strip it off
-			if (candidateClassName.startsWith(".")) {
-				candidateClassName = candidateClassName.substring(1);
-			}
-			
+			String candidateClassName = getMappedClassName(candidate);
 			if (classname.equals(candidateClassName)) {
 				mappingResource = candidate;
 				break;
@@ -481,6 +474,43 @@ public class Util {
 		}
 		
 		return mappingResource;
+	}
+	
+	/**
+	 * Gets the fully qualified java class name of the mapped class from the specified hbm file
+	 * 
+	 * @param hbmFilename the hbm file to search
+	 * @return the name of the mapped class
+	 */
+	public static String getMappedClassName(String hbmFilename) {
+		String className = readFromXmlFile("/hibernate-mapping/class/@name", hbmFilename, null);
+		if (StringUtils.isBlank(className)) {
+			//All sorts of crazy things are happening in modules
+			if (log.isDebugEnabled()) {
+				log.debug("Skipping " + hbmFilename + " because it is either empty or contains a subclass mapping");
+			}
+			
+			return null;
+		}
+		
+		if (className.indexOf('.') > 0) {
+			//This is a fully qualified className, no need to get the package, some weird modules set the package
+			//attribute value and still use a fully qualified class name and we would end with a bad classname
+			return className;
+		}
+		
+		String packageName = readFromXmlFile("/hibernate-mapping/@package", hbmFilename, null);
+		
+		if (StringUtils.isBlank(packageName)) {
+			//Class not in a package? Warned you, module have all kinds of crazy stuff
+			if (log.isDebugEnabled()) {
+				log.debug(hbmFilename + " contains mapped class without a package");
+			}
+			
+			return className;
+		}
+		
+		return packageName + "." + className;
 	}
 	
 	/**

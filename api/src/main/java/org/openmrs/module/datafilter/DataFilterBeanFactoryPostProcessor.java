@@ -109,11 +109,13 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 		}
 		
 		final String timestamp = new Long(System.currentTimeMillis()).toString();
+		Map<String, String> oldAndTransformedMappingFiles = createTransformedMappingFiles(classFiltersMap, timestamp);
+		if (oldAndTransformedMappingFiles.isEmpty()) {
+			return;
+		}
 		
 		String newCfgFilePath;
 		try {
-			
-			Map<String, String> oldAndTransformedMappingFiles = createTransformedMappingFiles(classFiltersMap, timestamp);
 			
 			newCfgFilePath = createTransformedHibernateCfgFile(oldAndTransformedMappingFiles, timestamp);
 		}
@@ -131,6 +133,11 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 		
 		configLocations.remove(candidate.get());
 		configLocations.add(new TypedStringValue("file:" + newCfgFilePath));
+		
+		File transformedResourcesRepo = FileUtils.getFile(FileUtils.getTempDirectory(), MODULE_ID, timestamp);
+		beanDefinition.getPropertyValues().addPropertyValue("filteredResourcesLocation",
+		    transformedResourcesRepo.getAbsolutePath());
+		beanDefinition.setBeanClassName(DataFilterSessionFactoryBean.class.getName());
 		
 		log.info("Successfully reconfigured the sessionFactory bean's configLocations to: " + configLocations.stream()
 		        .map(typedStringValue -> typedStringValue.getValue()).collect(Collectors.toList()));
@@ -196,7 +203,9 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 			//So that we don't have to parse each file again when adding filters.
 			String hbmResourceName = Util.getMappingResource(CORE_HIBERNATE_CFG_FILE, entry.getKey().getName());
 			if (hbmResourceName == null) {
-				throw new BeanCreationException("Failed to find hbm file for: " + entry.getKey());
+				//This is most likely a filter to be added to a module resource
+				//TODO keep track of skipped module resources so we can actually catch bad filter registrations 
+				continue;
 			}
 			
 			try {

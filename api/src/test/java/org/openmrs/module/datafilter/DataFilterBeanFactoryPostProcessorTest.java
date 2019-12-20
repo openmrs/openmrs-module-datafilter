@@ -9,31 +9,59 @@
  */
 package org.openmrs.module.datafilter;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.openmrs.module.datafilter.DataFilterBeanFactoryPostProcessor.CFG_LOC_PROP_NAME;
+import static org.openmrs.module.datafilter.DataFilterBeanFactoryPostProcessor.CORE_HIBERNATE_CFG_FILE;
+import static org.openmrs.module.datafilter.DataFilterBeanFactoryPostProcessor.DATAFILTER_HIBERNATE_CFG_FILE;
+import static org.openmrs.module.datafilter.DataFilterBeanFactoryPostProcessor.SESSION_FACTORY_BEAN_NAME;
 
-import java.util.Set;
+import java.util.Optional;
 
-import org.hibernate.SessionFactory;
+import org.junit.Before;
 import org.junit.Test;
-import org.openmrs.module.datafilter.impl.BaseFilterTest;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.beans.MutablePropertyValues;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.TypedStringValue;
+import org.springframework.beans.factory.support.ManagedList;
 
-public class DataFilterBeanFactoryPostProcessorTest extends BaseFilterTest {
+public class DataFilterBeanFactoryPostProcessorTest {
 	
-	private static final String[] testXMlFilters = new String[] { "datafilter_locationFilter1", "datafilter_locationFilter2",
-	        "datafilter_CareSettingFilter" };
+	private DataFilterBeanFactoryPostProcessor processor;
 	
-	@Autowired
-	private SessionFactory sessionFactory;
+	@Mock
+	private ConfigurableListableBeanFactory mockFactory;
+	
+	@Mock
+	private BeanDefinition mockBeanDefinition;
+	
+	@Before
+	public void setup() {
+		MockitoAnnotations.initMocks(this);
+		when(mockFactory.getBeanDefinition(SESSION_FACTORY_BEAN_NAME)).thenReturn(mockBeanDefinition);
+		processor = new DataFilterBeanFactoryPostProcessor();
+	}
 	
 	@Test
-	public void postProcessBeanFactory_shouldRegisterFiltersToHbmFiles() {
-		assertEquals(14, Util.getHibernateFilterRegistrations().size());
-		Set<String> registeredFilters = sessionFactory.getDefinedFilterNames();
-		assertEquals(13, registeredFilters.size());
-		for (String filterName : testXMlFilters) {
-			registeredFilters.contains(filterName);
-		}
+	public void postProcessBeanFactory_shouldRegisterFiltersToMappingResourceFiles() {
+		ManagedList<TypedStringValue> configLocations = new ManagedList();
+		configLocations.add(new TypedStringValue("classpath:" + CORE_HIBERNATE_CFG_FILE));
+		MutablePropertyValues propertyValues = new MutablePropertyValues();
+		propertyValues.add(CFG_LOC_PROP_NAME, configLocations);
+		when(mockBeanDefinition.getPropertyValues()).thenReturn(propertyValues);
+		
+		processor.postProcessBeanFactory(mockFactory);
+		
+		Optional<TypedStringValue> dataFilterConfigLocation = configLocations.stream()
+		        .filter(loc -> (loc.getValue()).contains(DATAFILTER_HIBERNATE_CFG_FILE)).findFirst();
+		assertNotNull(dataFilterConfigLocation.get().getValue());
+		assertNotNull(propertyValues.getPropertyValue("filteredResourcesLocation"));
+		verify(mockBeanDefinition, times(1)).setBeanClassName(DataFilterSessionFactoryBean.class.getName());
 	}
 	
 }

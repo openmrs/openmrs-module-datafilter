@@ -650,8 +650,8 @@ public class Util {
 	 * @return the new mapping file
 	 * @throws IOException
 	 */
-	public static File createNewMappingFile(String hbmResourceName, List<HibernateFilterRegistration> filterRegistrations,
-	                                        File outputDir)
+	protected static File createNewMappingFile(String hbmResourceName, List<HibernateFilterRegistration> filterRegistrations,
+	                                           File outputDir)
 	    throws IOException {
 		
 		InputStream in = OpenmrsClassLoader.getInstance().getResourceAsStream(hbmResourceName);

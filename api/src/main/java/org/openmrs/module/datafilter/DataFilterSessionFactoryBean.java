@@ -55,12 +55,13 @@ public class DataFilterSessionFactoryBean extends HibernateSessionFactoryBean {
 		
 		List<String> nonFilteredModuleResources = new ArrayList();
 		List<String> filteredModuleHbmFiles = new ArrayList();
+		File outputDir = new File(filteredResourcesLocation);
 		
 		for (int i = 0; i < moduleMappingResourcesToAdd.length; i++) {
-			File outputDir = new File(filteredResourcesLocation);
 			String resource = moduleMappingResourcesToAdd[i];
 			String classname = Util.getMappedClassName(resource);
 			if (classname == null) {
+				//Some module hbm files are actually empty
 				nonFilteredModuleResources.add(resource);
 				continue;
 			}

@@ -10,7 +10,6 @@
 package org.openmrs.module.datafilter.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
@@ -32,16 +31,6 @@ public class AccessUtilTest extends BaseFilterTest {
 	@Before
 	public void beforeTestMethod() {
 		executeDataSet(TestConstants.MODULE_TEST_DATASET_XML);
-	}
-	
-	@Test
-	public void getPersonAttributeTypeId_shouldReturnNullIfNoUuidIsConfiguredForTheBasisType() {
-		assertNull(AccessUtil.getPersonAttributeTypeId(Program.class));
-	}
-	
-	@Test
-	public void getPersonAttributeTypeId_shouldReturnTheIdForPersonAttributeTypeForTheBasisType() {
-		assertEquals(6000, AccessUtil.getPersonAttributeTypeId(Location.class).intValue());
 	}
 	
 	@Test

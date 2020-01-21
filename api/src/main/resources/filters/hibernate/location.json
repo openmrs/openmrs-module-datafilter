@@ -3,15 +3,11 @@
         "name": "datafilter_locationBasedVisitFilter",
         "targetClasses": ["org.openmrs.Visit"],
         "condition": "patient_id IN (
-                        SELECT DISTINCT pa.person_id FROM person_attribute pa
-                            WHERE pa.person_attribute_type_id = :attributeTypeId
-                            AND pa.value IN (:basisIds)
-                            AND pa.voided = 0)",
+                        SELECT DISTINCT datafilter_ebm.entity_identifier FROM datafilter_entity_basis_map datafilter_ebm
+                            WHERE datafilter_ebm.entity_type = 'org.openmrs.Patient'
+                            AND datafilter_ebm.basis_type = 'org.openmrs.Location'
+                            AND datafilter_ebm.basis_identifier IN (:basisIds))",
         "parameters": [
-            {
-                "name": "attributeTypeId",
-                "type": "integer"
-            },
             {
                 "name": "basisIds",
                 "type": "string"
@@ -22,15 +18,11 @@
         "name": "datafilter_locationBasedEncounterFilter",
         "targetClasses": ["org.openmrs.Encounter"],
         "condition": "patient_id IN (
-                        SELECT DISTINCT pa.person_id FROM person_attribute pa
-                            WHERE pa.person_attribute_type_id = :attributeTypeId
-                            AND pa.value IN (:basisIds)
-                            AND pa.voided = 0)",
+                        SELECT DISTINCT datafilter_ebm.entity_identifier FROM datafilter_entity_basis_map datafilter_ebm
+                            WHERE datafilter_ebm.entity_type = 'org.openmrs.Patient'
+                            AND datafilter_ebm.basis_type = 'org.openmrs.Location'
+                            AND datafilter_ebm.basis_identifier IN (:basisIds))",
         "parameters": [
-            {
-                "name": "attributeTypeId",
-                "type": "integer"
-            },
             {
                 "name": "basisIds",
                 "type": "string"
@@ -41,14 +33,11 @@
         "name": "datafilter_locationBasedObsFilter",
         "targetClasses": ["org.openmrs.Obs"],
         "condition": "person_id IN (
-                        SELECT DISTINCT pa.person_id FROM person_attribute pa
-                            WHERE pa.person_attribute_type_id = :attributeTypeId
-                            AND pa.value IN (:basisIds) AND pa.voided = 0)",
+                        SELECT DISTINCT datafilter_ebm.entity_identifier FROM datafilter_entity_basis_map datafilter_ebm
+                            WHERE datafilter_ebm.entity_type = 'org.openmrs.Patient'
+                            AND datafilter_ebm.basis_type = 'org.openmrs.Location'
+                            AND datafilter_ebm.basis_identifier IN (:basisIds))",
         "parameters": [
-            {
-                "name": "attributeTypeId",
-                "type": "integer"
-            },
             {
                 "name": "basisIds",
                 "type": "string"
@@ -59,15 +48,11 @@
         "name": "datafilter_locationBasedPatientFilter",
         "targetClasses": ["org.openmrs.Patient"],
         "condition": "patient_id IN (
-                        SELECT DISTINCT pa.person_id FROM person_attribute pa
-                            WHERE pa.person_attribute_type_id = :attributeTypeId
-                            AND pa.value IN (:basisIds)
-                            AND pa.voided = 0)",
+                        SELECT DISTINCT datafilter_ebm.entity_identifier FROM datafilter_entity_basis_map datafilter_ebm
+                            WHERE datafilter_ebm.entity_type = 'org.openmrs.Patient'
+                            AND datafilter_ebm.basis_type = 'org.openmrs.Location'
+                            AND datafilter_ebm.basis_identifier IN (:basisIds))",
         "parameters": [
-            {
-                "name": "attributeTypeId",
-                "type": "integer"
-            },
             {
                 "name": "basisIds",
                 "type": "string"

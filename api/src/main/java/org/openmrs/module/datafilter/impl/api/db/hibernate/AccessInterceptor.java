@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.datafilter.impl;
+package org.openmrs.module.datafilter.impl.api.db.hibernate;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -15,9 +15,6 @@ import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.EmptyInterceptor;
-import org.hibernate.FlushMode;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.type.Type;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
@@ -27,11 +24,12 @@ import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.User;
 import org.openmrs.Visit;
-import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.api.context.Daemon;
 import org.openmrs.module.datafilter.Util;
+import org.openmrs.module.datafilter.impl.AccessUtil;
+import org.openmrs.module.datafilter.impl.ImplConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -42,10 +40,10 @@ import org.springframework.stereotype.Component;
  * implying that the interceptor is enabled by default, also note that the interceptor isn't applied
  * for super and daemon user.
  */
-@Component("implDataFilterInterceptor")
-public class ImplDataFilterInterceptor extends EmptyInterceptor {
+@Component("accessInterceptor")
+public class AccessInterceptor extends EmptyInterceptor {
 	
-	private static final Logger log = LoggerFactory.getLogger(ImplDataFilterInterceptor.class);
+	private static final Logger log = LoggerFactory.getLogger(AccessInterceptor.class);
 	
 	protected static final Map<Class<?>, String> locationBasedClassAndFiltersMap;
 	
@@ -69,18 +67,18 @@ public class ImplDataFilterInterceptor extends EmptyInterceptor {
 	@Override
 	public boolean onLoad(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
 		if (Daemon.isDaemonThread()) {
-			if (log.isDebugEnabled()) {
-				log.trace("Skipping DataFilterInterceptor for daemon thread");
+			if (log.isTraceEnabled()) {
+				log.trace("Skipping AccessInterceptor for daemon thread");
 			}
 		} else {
 			User user = Context.getAuthenticatedUser();
 			if (user != null && user.isSuperUser()) {
-				if (log.isDebugEnabled()) {
-					log.trace("Skipping DataFilterInterceptor for super user");
+				if (log.isTraceEnabled()) {
+					log.trace("Skipping AccessInterceptor for super user");
 				}
 			} /* else if (Context.isAuthenticated() && user.hasPrivilege(DataFilterConstants.PRIV_BY_PASS)) {
 			  if (log.isTraceEnabled()) {
-			  	log.trace("Skipping DataFilterInterceptor for user with bypass privilege");
+			  	log.trace("Skipping AccessInterceptor for user with bypass privilege");
 			  }
 			  }*/ else {
 				boolean filteredByLoc = locationBasedClassAndFiltersMap.keySet().contains(entity.getClass());
@@ -89,33 +87,23 @@ public class ImplDataFilterInterceptor extends EmptyInterceptor {
 				//should reject vs accept when loading a filtered type, some sort of callback and pass them the
 				//entity and state.
 				if (filteredByLoc || filteredByEnc) {
-					Session session = Context.getRegisteredComponents(SessionFactory.class).get(0).getCurrentSession();
 					//Hibernate will flush any changes in the current session before querying the DB when fetching
 					//the GP value below and we end up in this method again, therefore we need to disable auto flush
-					final FlushMode flushMode = session.getFlushMode();
-					session.setFlushMode(FlushMode.MANUAL);
-					try {
-						AdministrationService as = Context.getAdministrationService();
-						String strictModeStr = as.getGlobalProperty(ImplConstants.GP_RUN_IN_STRICT_MODE);
-						if ("false".equalsIgnoreCase(strictModeStr)) {
-							if (log.isDebugEnabled()) {
-								log.trace("Skipping DataFilterInterceptor because the module is not running in strict mode");
-							}
-						} else {
-							if (filteredByLoc) {
-								checkIfHasLocationBasedAccess(entity, id, state, propertyNames, user,
-								    locationBasedClassAndFiltersMap);
-							}
-							
-							if (filteredByEnc) {
-								checkIfHasEncounterTypeBasedAccess(entity, state, propertyNames, user,
-								    encTypeBasedClassAndFiltersMap);
-							}
+					String strictModeStr = InterceptorUtil.getGpValueNoFlush(ImplConstants.GP_RUN_IN_STRICT_MODE);
+					if ("false".equalsIgnoreCase(strictModeStr)) {
+						if (log.isTraceEnabled()) {
+							log.trace("Skipping AccessInterceptor because the module is not running in strict mode");
 						}
-					}
-					finally {
-						//reset
-						session.setFlushMode(flushMode);
+					} else {
+						if (filteredByLoc) {
+							checkIfHasLocationBasedAccess(entity, id, state, propertyNames, user,
+							    locationBasedClassAndFiltersMap);
+						}
+						
+						if (filteredByEnc) {
+							checkIfHasEncounterTypeBasedAccess(entity, state, propertyNames, user,
+							    encTypeBasedClassAndFiltersMap);
+						}
 					}
 				}
 			}

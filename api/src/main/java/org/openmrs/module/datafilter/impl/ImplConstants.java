@@ -10,6 +10,7 @@
 package org.openmrs.module.datafilter.impl;
 
 import static org.openmrs.module.datafilter.DataFilterConstants.DISABLED;
+import static org.openmrs.module.datafilter.DataFilterConstants.ENABLED;
 import static org.openmrs.module.datafilter.DataFilterConstants.MODULE_ID;
 
 import java.util.HashSet;
@@ -17,15 +18,17 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-final class ImplConstants {
+import org.openmrs.Location;
+import org.openmrs.Patient;
+import org.openmrs.module.datafilter.DataFilterConstants;
+
+public final class ImplConstants {
 	
 	public static final String LOCATION_BASED_FILTER_NAME_PREFIX = MODULE_ID + "_locationBased";
 	
 	public static final String PROGRAM_BASED_FILTER_NAME_PREFIX = MODULE_ID + "_programBased";
 	
 	public static final String ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX = MODULE_ID + "_encTypePrivBased";
-	
-	public static final String PARAM_NAME_ATTRIB_TYPE_ID = "attributeTypeId";
 	
 	public static final String PARAM_NAME_BASIS_IDS = "basisIds";
 	
@@ -81,15 +84,11 @@ final class ImplConstants {
 	public static final String LOCATION_BASED_FULL_TEXT_FILTER_NAME_PATIENT = MODULE_ID
 	        + "_locationBasedPatientFullTextFilter";
 	
-	public final static String ATTRIB_TYPE_ID_PLACEHOLDER = ":" + PARAM_NAME_ATTRIB_TYPE_ID;
-	
 	public final static String BASIS_IDS_PLACEHOLDER = ":" + PARAM_NAME_BASIS_IDS;
 	
-	public static final String PERSON_ID_QUERY = "SELECT DISTINCT pa.person_id FROM person_attribute pa WHERE "
-	        + "pa.person_attribute_type_id = " + ATTRIB_TYPE_ID_PLACEHOLDER + " AND pa.value IN (" + BASIS_IDS_PLACEHOLDER
-	        + ") AND pa.voided = 0";
-	
-	public static final String GP_PERSON_ATTRIBUTE_TYPE_UUIDS = MODULE_ID + ".personAttributeTypeUuids";
+	public static final String PERSON_ID_QUERY = "SELECT DISTINCT entity_identifier FROM " + DataFilterConstants.MODULE_ID
+	        + "_entity_basis_map WHERE entity_type = '" + Patient.class.getName() + "' AND basis_type = '"
+	        + Location.class.getName() + "' AND basis_identifier IN (" + BASIS_IDS_PLACEHOLDER + ")";
 	
 	public static final String GP_LOCATION_BASED_FILTER_NAME_ENCOUNTER = LOCATION_BASED_FILTER_NAME_ENCOUNTER + DISABLED;
 	
@@ -116,6 +115,8 @@ final class ImplConstants {
 	public static final String GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS = ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS + DISABLED;
 	
 	public static final String GP_RUN_IN_STRICT_MODE = MODULE_ID + ".runInStrictMode";
+	
+	public static final String GP_PAT_LOC_INTERCEPTOR_ENABLED = MODULE_ID + ".patientLocationLinkingInterceptor" + ENABLED;
 	
 	public static final String ILLEGAL_RECORD_ACCESS_MESSAGE = "Illegal Record Access";
 	

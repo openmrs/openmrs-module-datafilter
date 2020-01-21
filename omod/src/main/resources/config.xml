@@ -50,23 +50,20 @@
      -->
     <!-- Global properties -->
     <globalProperty>
-        <property>${project.parent.artifactId}.personAttributeTypeUuids</property>
-        <description>
-            A comma separated list of uuids for the person attribute types to use as the basis for filtering,
-            The format property of the matching person attribute type(s) MUST match valid java class names and
-            should match values in the basis_type column in the ${project.parent.artifactId}_user_basis_map table.
-            E.g. if you want to add location based filtering, you would filter by Location meaning the format
-            of the person attribute type with the uuid to set here would be org.openmrs.Location.
-        </description>
-    </globalProperty>
-
-    <globalProperty>
         <property>${project.parent.artifactId}.runInStrictMode</property>
         <description>
             When the value is set to false, the user can view a record that they don't have access,
             this can arise if they have a filtered record's unique identifier or a link to it since
             filters are not applied when looking up records by id, it's highly recommended to always
             run in strict mode and only turn this off when running in a non-production environment.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.patientLocationLinkingInterceptor.enabled</property>
+        <description>
+            When the value is set to true, whenever a new patient is created, they get linked to the location
+            set on the authenticated user's context i.e. the location the user selects when logging into the
+            reference application.
         </description>
     </globalProperty>
 

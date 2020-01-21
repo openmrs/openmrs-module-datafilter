@@ -10,6 +10,7 @@
 package org.openmrs.module.datafilter.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
@@ -66,6 +67,22 @@ public class ProviderLocationBasedFilterTest extends BaseFilterTest {
 		assertTrue(TestUtil.containsId(providers, 10001));
 		assertTrue(TestUtil.containsId(providers, 10002));
 		assertTrue(TestUtil.containsId(providers, 10003));
+	}
+
+	@Test
+	public void getProvidersByUuid_shouldReturnProvider() {
+		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "users.xml");
+		reloginAs("cmulemba", "test");
+
+		//This Works fine
+		String providerUuidForLoggedInUser = "a1e3868a-6b90-11e0-93c3-18a905e044dc";
+		Provider providerByUuid = providerService.getProviderByUuid(providerUuidForLoggedInUser);
+
+		//This throws an exception.
+		String providerUuidForOtherUser ="b1e3868a-6b90-11e0-93c3-18a905e044dc";
+		providerByUuid = providerService.getProviderByUuid(providerUuidForOtherUser);
+
+		assertNotNull(providerByUuid);
 	}
 	
 	@Test

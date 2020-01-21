@@ -163,7 +163,30 @@ public class ImplDataFilterInterceptorTest {
 		interceptor.onLoad(new Encounter(), encounterId, new Object[] { encType }, new String[] { "encounterType" },
 		    new Type[] { new ManyToOneType(null, null) });
 	}
-	
+
+	@Test
+	public void shouldByPass_whenLoggedInUser_hasEncounterBypassPrivilegeButNotSpecificEncounterViewPrivilege() {
+		final Integer userId = 3;
+		final Integer encounterId = 987;
+		User user = mock(User.class);
+		user.setId(userId);
+
+		when(Context.getAuthenticatedUser()).thenReturn(user);
+		when(Util.isFilterDisabled("datafilter_locationBasedEncounterFilter")).thenReturn(true);
+
+		final String encounterViewPrivilege = "Specific Encounter View Privilege";
+		final Integer encounterTypeId = 32;
+		when(AccessUtil.getViewPrivilege(Matchers.eq(encounterTypeId))).thenReturn(encounterViewPrivilege);
+		when(user.hasPrivilege(Matchers.eq(encounterViewPrivilege))).thenReturn(false);
+
+		when(user.hasPrivilege("datafilter_encTypePrivBasedEncounterFilter" + DataFilterConstants.BYPASS_PRIV_SUFFIX)).thenReturn(true);
+
+		EncounterType encType = new EncounterType();
+		encType.setId(encounterTypeId);
+		interceptor.onLoad(new Encounter(), encounterId, new Object[] { encType }, new String[] { "encounterType" },
+				new Type[] { new ManyToOneType(null, null) });
+	}
+
 	@Test
 	public void onLoad_shouldPassIfAllEncounterTypeViewPrivilegeBasedFiltersAreDisabled() throws Exception {
 		User user = mock(User.class);

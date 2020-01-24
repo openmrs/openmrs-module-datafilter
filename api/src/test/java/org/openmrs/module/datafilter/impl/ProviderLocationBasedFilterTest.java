@@ -14,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Location;
@@ -79,6 +80,16 @@ public class ProviderLocationBasedFilterTest extends BaseFilterTest {
 		DataFilterTestUtils.disableLocationFiltering();
 		reloginAs("dyorke", "test");
 		assertEquals(7, getProviders().size());
+	}
+	
+	@Test
+	public void getProviderByUuid_shouldReturnTheProviderThatMatchesTheSpecifiedUuid() {
+		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "users.xml");
+		reloginAs("cmulemba", "test");
+		
+		Provider provider = providerService.getProviderByUuid("b1e3868a-6b90-11e0-93c3-18a905e044dc");
+		Assert.assertNotNull(provider);
+		assertEquals(10002, provider.getProviderId().intValue());
 	}
 	
 }

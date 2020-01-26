@@ -14,11 +14,16 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.Person;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.datafilter.DataFilterConstants;
@@ -35,6 +40,9 @@ public class PatientLocationBasedFilterTest extends BaseFilterTest {
 	
 	@Autowired
 	private DataFilterService service;
+	
+	@Autowired
+	private SessionFactory sf;
 	
 	private static final String PATIENT_NAME = "Magidu";
 	
@@ -241,6 +249,21 @@ public class PatientLocationBasedFilterTest extends BaseFilterTest {
 		
 		assertEquals(expCount, patientService.getCountOfPatients(IDENTIFIER_PREFIX).intValue());
 		assertEquals(expCount, patientService.getPatients(IDENTIFIER_PREFIX).size());
+	}
+	
+	@Test
+	public void patientFilter_shouldNotFilterPersonsThatAreNotPatients() {
+		executeDataSet("otherPersonsThatAreNotPatients.xml");
+		reloginAs("dyorke", "test");
+		int expCount = 2;
+		Session session = sf.getCurrentSession();
+		Criteria criteria = session.createCriteria(Person.class);
+		criteria.createAlias("names", "name");
+		criteria.add(Restrictions.eq("name.familyName", "Katende"));
+		Collection<Person> persons = criteria.list();
+		assertEquals(expCount, persons.size());
+		assertTrue(TestUtil.containsId(persons, 500001));
+		assertTrue(TestUtil.containsId(persons, 500002));
 	}
 	
 }

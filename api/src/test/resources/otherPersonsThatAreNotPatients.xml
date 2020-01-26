@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+
+    This Source Code Form is subject to the terms of the Mozilla Public License,
+    v. 2.0. If a copy of the MPL was not distributed with this file, You can
+    obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+    the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+
+    Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+    graphic logo is a trademark of OpenMRS Inc.
+
+-->
+
+<dataset>
+    <person person_id="500001" gender="M" birthdate="2011-01-01 00:00:00.0" birthdate_estimated="0" dead="0" creator="1" date_created="2019-05-02 00:00:00.0" voided="0" uuid="eb1a19c3-3ed6-4f63-b8c0-f762dc8d7561" />
+    <person person_id="500002" gender="M" birthdate="2016-01-01 00:00:00.0" birthdate_estimated="0" dead="0" creator="1" date_created="2019-05-24 00:00:00.0" voided="0" uuid="eb1a19c3-3ed6-4f63-b8c0-f762dc8d7562" />
+
+    <person_name person_name_id="600001" preferred="1" person_id="500001" given_name="Peter" family_name="Katende" creator="1" date_created="2019-05-02 00:00:00.0" voided="0" uuid="179e3b7b-6482-487d-94ce-c07bb3ca3cc1" />
+    <person_name person_name_id="600002" preferred="1" person_id="500002" given_name="John" family_name="Katende" creator="1" date_created="2019-05-02 00:00:00.0" voided="0" uuid="279e3b7b-6482-487d-94ce-c07bb3ca3cc2" />
+</dataset>

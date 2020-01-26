@@ -46,12 +46,13 @@
     },
     {
         "name": "datafilter_locationBasedPatientFilter",
-        "targetClasses": ["org.openmrs.Patient"],
-        "condition": "patient_id IN (
-                        SELECT DISTINCT datafilter_ebm.entity_identifier FROM datafilter_entity_basis_map datafilter_ebm
-                            WHERE datafilter_ebm.entity_type = 'org.openmrs.Patient'
-                            AND datafilter_ebm.basis_type = 'org.openmrs.Location'
-                            AND datafilter_ebm.basis_identifier IN (:basisIds))",
+        "targetClasses": ["org.openmrs.Person"],
+        "condition": "(person_id NOT IN (SELECT datafilter_ebm1.patient_id FROM patient datafilter_ebm1)
+                        OR (person_id IN (
+                            SELECT DISTINCT datafilter_ebm.entity_identifier FROM datafilter_entity_basis_map datafilter_ebm
+                                WHERE datafilter_ebm.entity_type = 'org.openmrs.Patient'
+                                AND datafilter_ebm.basis_type = 'org.openmrs.Location'
+                                AND datafilter_ebm.basis_identifier IN (:basisIds))))",
         "parameters": [
             {
                 "name": "basisIds",
@@ -78,7 +79,7 @@
         "name": "datafilter_locationBasedProviderFilter",
         "targetClasses": ["org.openmrs.Provider"],
         "condition": "(person_id = (:authenticatedPersonId) OR provider_id IN (
-                        SELECT DISTINCT o.entity_identifier FROM datafilter_entity_basis_map o
+                       SELECT DISTINCT o.entity_identifier FROM datafilter_entity_basis_map o
                             WHERE o.entity_type = 'org.openmrs.Provider'
                             AND o.basis_type = 'org.openmrs.Location'
                             AND o.basis_identifier IN (:basisIds)))",

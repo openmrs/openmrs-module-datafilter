@@ -79,6 +79,7 @@ public class AccessInterceptorTest {
 		SessionFactory sf = mock(SessionFactory.class);
 		when(sf.getCurrentSession()).thenReturn(mock(Session.class));
 		when(Context.getRegisteredComponents(eq(SessionFactory.class))).thenReturn(Collections.singletonList(sf));
+		when(Util.skipFilter(anyString())).thenCallRealMethod();
 		when(Util.isFilterDisabled(anyString())).thenReturn(false);
 		when(adminService.getGlobalPropertyValue(eq(ImplConstants.GP_RUN_IN_STRICT_MODE), anyBoolean())).thenReturn(true);
 	}

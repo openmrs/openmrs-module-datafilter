@@ -27,7 +27,6 @@ import org.openmrs.Visit;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.api.context.Daemon;
-import org.openmrs.module.datafilter.FilteringHandler;
 import org.openmrs.module.datafilter.Util;
 import org.openmrs.module.datafilter.impl.AccessUtil;
 import org.openmrs.module.datafilter.impl.ImplConstants;
@@ -42,7 +41,7 @@ import org.springframework.stereotype.Component;
  * for super and daemon user.
  */
 @Component("accessInterceptor")
-public class AccessInterceptor extends EmptyInterceptor implements FilteringHandler {
+public class AccessInterceptor extends EmptyInterceptor {
 	
 	private static final Logger log = LoggerFactory.getLogger(AccessInterceptor.class);
 	
@@ -116,7 +115,7 @@ public class AccessInterceptor extends EmptyInterceptor implements FilteringHand
 	private void checkIfHasLocationBasedAccess(Object entity, Serializable id, Object[] state, String[] propertyNames,
 	                                           User user, String filterName) {
 		
-		boolean check = !isFilterDisabled(filterName);
+		boolean check = !Util.skipFilter(filterName);
 		if (check) {
 			Object personId = id;
 			if (entity instanceof Visit || entity instanceof Encounter || entity instanceof Obs) {
@@ -134,7 +133,7 @@ public class AccessInterceptor extends EmptyInterceptor implements FilteringHand
 	private void checkIfHasEncounterTypeBasedAccess(Object entity, Object[] state, String[] propertyNames, User user,
 	                                                String filterName) {
 		
-		boolean check = !isFilterDisabled(filterName);
+		boolean check = !Util.skipFilter(filterName);
 		if (check) {
 			Integer encounterTypeId = null;
 			boolean isEncounterLessObs = false;

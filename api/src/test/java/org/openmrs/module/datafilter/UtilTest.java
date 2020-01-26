@@ -13,13 +13,20 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.when;
+import static org.openmrs.module.datafilter.DataFilterConstants.BYPASS_PRIV_SUFFIX;
 import static org.openmrs.module.datafilter.DataFilterConstants.MODULE_ID;
 import static org.openmrs.module.datafilter.Util.getDocumentBuilder;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,11 +37,16 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.FilterDef;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
+import org.openmrs.api.context.Context;
+import org.openmrs.api.db.AdministrationDAO;
 import org.openmrs.module.datafilter.annotations.FilterDefAnnotation;
 import org.openmrs.module.datafilter.registration.HibernateFilterParameter;
 import org.openmrs.module.datafilter.registration.HibernateFilterRegistration;
@@ -45,7 +57,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.w3c.dom.Document;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(FileUtils.class)
+@PrepareForTest({ Context.class, FileUtils.class })
 public class UtilTest {
 	
 	private static final String TEST_HIBERNATE_CFG_FILE = "testHibernateCfg.xml";
@@ -64,6 +76,9 @@ public class UtilTest {
 	
 	private static XPath xpath = XPathFactory.newInstance().newXPath();
 	
+	@Mock
+	private AdministrationDAO adminDAO;
+	
 	public static String getAttribute(Object document, String path, String attribute) throws XPathExpressionException {
 		return xpath.compile(path + "/@" + attribute).evaluate(document);
 	}
@@ -79,6 +94,12 @@ public class UtilTest {
 	public static boolean elementExists(Object doc, String path, String attribName, String attribValue)
 	    throws XPathExpressionException {
 		return getCount(doc, path + "[@" + attribName + "='" + attribValue + "']") > 0;
+	}
+	
+	@Before
+	public void setup() {
+		MockitoAnnotations.initMocks(this);
+		mockStatic(Context.class);
 	}
 	
 	@Test
@@ -168,7 +189,7 @@ public class UtilTest {
 	
 	@Test
 	public void updateResourceLocation_shouldReplaceMappingResourceLocationsWithFileLocations() throws Exception {
-		PowerMockito.mockStatic(FileUtils.class);
+		mockStatic(FileUtils.class);
 		String expectedFilePath = "/tmp/path/" + MODULE_ID + "/" + TEST_LOCATION_HBM_FILE;
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		InputStream in = OpenmrsClassLoader.getInstance().getResourceAsStream(TEST_HIBERNATE_CFG_FILE);
@@ -181,6 +202,53 @@ public class UtilTest {
 		assertFalse(elementExists(updatedCfg, PATH_MAPPING, "resource", TEST_LOCATION_HBM_FILE));
 		//The other mapping resources should not have been updated
 		assertTrue(elementExists(updatedCfg, PATH_MAPPING, "resource", TEST_ENC_TYPE_HBM_FILE));
+	}
+	
+	@Test
+	public void isFilterDisabled_shouldReturnFalseIfTheDisableGPForTheFilterIsNotSet() {
+		when(Context.getRegisteredComponent("adminDAO", AdministrationDAO.class)).thenReturn(adminDAO);
+		when(adminDAO.executeSQL(anyString(), eq(true))).thenReturn(Collections.emptyList());
+		assertFalse(Util.isFilterDisabled("someFilter"));
+	}
+	
+	@Test
+	public void isFilterDisabled_shouldReturnFalseIfTheDisableGPForTheFilterIsSetToFalse() {
+		when(Context.getRegisteredComponent("adminDAO", AdministrationDAO.class)).thenReturn(adminDAO);
+		List<List<Object>> expectedRows = Collections.singletonList(Collections.singletonList("false"));
+		when(adminDAO.executeSQL(anyString(), eq(true))).thenReturn(expectedRows);
+		assertFalse(Util.isFilterDisabled("someFilter"));
+	}
+	
+	@Test
+	public void isFilterDisabled_shouldReturnTrueIfTheDisableGPForTheFilterISetToTrue() {
+		when(Context.getRegisteredComponent("adminDAO", AdministrationDAO.class)).thenReturn(adminDAO);
+		List<List<Object>> expectedRows = Collections.singletonList(Collections.singletonList("true"));
+		when(adminDAO.executeSQL(anyString(), eq(true))).thenReturn(expectedRows);
+		assertTrue(Util.isFilterDisabled("someFilter"));
+	}
+	
+	@Test
+	public void skipFilter_shouldReturnFalseIfTheFilterIsNotDisabledAndTheUserHasNoByPassPrivilege() {
+		when(Context.getRegisteredComponent("adminDAO", AdministrationDAO.class)).thenReturn(adminDAO);
+		assertFalse(Util.skipFilter("someFilter"));
+	}
+	
+	@Test
+	public void skipFilter_shouldReturnTrueIfTheFilterIsDisabled() {
+		when(Context.getRegisteredComponent("adminDAO", AdministrationDAO.class)).thenReturn(adminDAO);
+		List<List<Object>> expectedRows = Collections.singletonList(Collections.singletonList("true"));
+		when(adminDAO.executeSQL(anyString(), eq(true))).thenReturn(expectedRows);
+		final String filterName = "someFilter";
+		assertTrue(Util.skipFilter(filterName));
+	}
+	
+	@Test
+	public void skipFilter_shouldReturnTrueIfTheUserHasTheIndividualFilterByPassPrivilege() {
+		when(Context.getRegisteredComponent("adminDAO", AdministrationDAO.class)).thenReturn(adminDAO);
+		final String filterName = "someFilter";
+		PowerMockito.when(Context.isAuthenticated()).thenReturn(true);
+		PowerMockito.when(Context.hasPrivilege(filterName + BYPASS_PRIV_SUFFIX)).thenReturn(true);
+		assertTrue(Util.skipFilter("someFilter"));
 	}
 	
 }

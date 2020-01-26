@@ -9,10 +9,12 @@
  */
 package org.openmrs.module.datafilter;
 
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.util.Collections;
@@ -24,7 +26,6 @@ import org.hibernate.search.FullTextQuery;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
@@ -59,9 +60,10 @@ public class FullTextQueryCreatedEventListenerTest {
 		filterReg2.setName(filter2);
 		filterReg2.setTargetClasses(Collections.singletonList(clazz));
 		List<FullTextFilterRegistration> filters = Stream.of(filterReg1, filterReg2).collect(Collectors.toList());
-		Mockito.when(Util.getFullTextFilterRegistrations()).thenReturn(filters);
-		Mockito.when(Context.isAuthenticated()).thenReturn(true);
-		Mockito.when(Context.hasPrivilege(eq(filter1 + DataFilterConstants.BYPASS_PRIV_SUFFIX))).thenReturn(true);
+		when(Util.getFullTextFilterRegistrations()).thenReturn(filters);
+		when(Util.skipFilter(anyString())).thenCallRealMethod();
+		when(Context.isAuthenticated()).thenReturn(true);
+		when(Context.hasPrivilege(eq(filter1 + DataFilterConstants.BYPASS_PRIV_SUFFIX))).thenReturn(true);
 		
 		new FullTextQueryCreatedEventListener()
 		        .onApplicationEvent(new FullTextQueryCreatedEvent(new FullTextQueryAndEntityClass(fullTextQuery, clazz)));

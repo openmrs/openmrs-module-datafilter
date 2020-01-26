@@ -707,4 +707,19 @@ public class Util {
 		return classFiltersMap;
 	}
 	
+	/**
+	 * Checks if the specified filter should be skipped for the authenticated user.
+	 *
+	 * @param filterName the name of the filter to check
+	 * @return true if the filter should be skipped for the user otherwise false
+	 */
+	public static boolean skipFilter(String filterName) {
+		boolean hasByPassPriv = false;
+		if (Context.isAuthenticated()) {
+			hasByPassPriv = Context.hasPrivilege(filterName + DataFilterConstants.BYPASS_PRIV_SUFFIX);
+		}
+		
+		return isFilterDisabled(filterName) || hasByPassPriv;
+	}
+	
 }

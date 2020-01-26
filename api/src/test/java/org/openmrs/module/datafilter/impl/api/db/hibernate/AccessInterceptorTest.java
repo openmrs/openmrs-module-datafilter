@@ -15,7 +15,10 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.mock;
+import static org.openmrs.module.datafilter.DataFilterConstants.BYPASS_PRIV_SUFFIX;
+import static org.openmrs.module.datafilter.impl.ImplConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER;
 import static org.openmrs.module.datafilter.impl.ImplConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX;
+import static org.openmrs.module.datafilter.impl.ImplConstants.LOCATION_BASED_FILTER_NAME_ENCOUNTER;
 import static org.openmrs.module.datafilter.impl.ImplConstants.LOCATION_BASED_FILTER_NAME_PREFIX;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
@@ -271,6 +274,14 @@ public class AccessInterceptorTest {
 		when(Context.getAuthenticatedUser()).thenReturn(new User());
 		when(AccessUtil.getAccessiblePersonIds(eq(Location.class))).thenReturn(accessiblePatientIds);
 		interceptor.onLoad(new Obs(), null, new Object[] { new Patient(patientId) }, new String[] { "person" }, null);
+	}
+	
+	@Test
+	public void onLoad_shouldPassForAnyUserWithTheIndividualFilterByPassPrivileges() {
+		when(Context.isAuthenticated()).thenReturn(true);
+		when(Context.hasPrivilege(LOCATION_BASED_FILTER_NAME_ENCOUNTER + BYPASS_PRIV_SUFFIX)).thenReturn(true);
+		when(Context.hasPrivilege(ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER + BYPASS_PRIV_SUFFIX)).thenReturn(true);
+		interceptor.onLoad(new Encounter(), null, null, null, null);
 	}
 	
 }

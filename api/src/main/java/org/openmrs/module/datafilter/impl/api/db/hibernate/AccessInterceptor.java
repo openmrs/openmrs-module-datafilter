@@ -27,6 +27,7 @@ import org.openmrs.Visit;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.api.context.Daemon;
+import org.openmrs.module.datafilter.FilteringHandler;
 import org.openmrs.module.datafilter.Util;
 import org.openmrs.module.datafilter.impl.AccessUtil;
 import org.openmrs.module.datafilter.impl.ImplConstants;
@@ -41,7 +42,7 @@ import org.springframework.stereotype.Component;
  * for super and daemon user.
  */
 @Component("accessInterceptor")
-public class AccessInterceptor extends EmptyInterceptor {
+public class AccessInterceptor extends EmptyInterceptor implements FilteringHandler {
 	
 	private static final Logger log = LoggerFactory.getLogger(AccessInterceptor.class);
 	
@@ -96,13 +97,13 @@ public class AccessInterceptor extends EmptyInterceptor {
 						}
 					} else {
 						if (filteredByLoc) {
-							checkIfHasLocationBasedAccess(entity, id, state, propertyNames, user,
-							    locationBasedClassAndFiltersMap);
+							String filterName = locationBasedClassAndFiltersMap.get(entity.getClass());
+							checkIfHasLocationBasedAccess(entity, id, state, propertyNames, user, filterName);
 						}
 						
 						if (filteredByEnc) {
-							checkIfHasEncounterTypeBasedAccess(entity, state, propertyNames, user,
-							    encTypeBasedClassAndFiltersMap);
+							String filterName = encTypeBasedClassAndFiltersMap.get(entity.getClass());
+							checkIfHasEncounterTypeBasedAccess(entity, state, propertyNames, user, filterName);
 						}
 					}
 				}
@@ -113,9 +114,9 @@ public class AccessInterceptor extends EmptyInterceptor {
 	}
 	
 	private void checkIfHasLocationBasedAccess(Object entity, Serializable id, Object[] state, String[] propertyNames,
-	                                           User user, Map<Class<?>, String> filtersMap) {
+	                                           User user, String filterName) {
 		
-		boolean check = !Util.isFilterDisabled(filtersMap.get(entity.getClass()));
+		boolean check = !isFilterDisabled(filterName);
 		if (check) {
 			Object personId = id;
 			if (entity instanceof Visit || entity instanceof Encounter || entity instanceof Obs) {
@@ -131,9 +132,9 @@ public class AccessInterceptor extends EmptyInterceptor {
 	}
 	
 	private void checkIfHasEncounterTypeBasedAccess(Object entity, Object[] state, String[] propertyNames, User user,
-	                                                Map<Class<?>, String> filtersMap) {
+	                                                String filterName) {
 		
-		boolean check = !Util.isFilterDisabled(filtersMap.get(entity.getClass()));
+		boolean check = !isFilterDisabled(filterName);
 		if (check) {
 			Integer encounterTypeId = null;
 			boolean isEncounterLessObs = false;

@@ -13,6 +13,8 @@
 -->
 
 <dataset>
+    <global_property property="datafilter.runInStrictMode" property_value="true" uuid="836b173e-fe10-4693-8aff-f53c0f1f3825" />
+
     <location location_id="4000" name="Trinidad" description="Trinidad Clinic" creator="1" date_created="2019-05-01 00:00:00.0" retired="false" uuid="1d6c993e-c2cc-11de-8d13-0010c6dffd0e" />
     <location location_id="4001" name="England" description="England Clinic" creator="1" date_created="2019-05-01 00:00:00.0" retired="false" uuid="2d6c993e-c2cc-11de-8d13-0010c6dffd0e" />
     <location location_id="4002" name="Uganda" description="Uganda Clinic" creator="1" date_created="2019-05-01 00:00:00.0" retired="false" parent_location="4001" uuid="3d6c993e-c2cc-11de-8d13-0010c6dffd0e" />

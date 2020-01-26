@@ -40,7 +40,6 @@ public abstract class BaseFilterTest extends BaseModuleContextSensitiveTest {
 	@Override
 	public void updateSearchIndex() {
 		//Disable the interceptor so we can update the search index
-		boolean resetToStrict = false;
 		String originalValue = null;
 		Context.addProxyPrivilege(PrivilegeConstants.MANAGE_GLOBAL_PROPERTIES);
 		AdministrationService as = Context.getAdministrationService();
@@ -49,10 +48,8 @@ public abstract class BaseFilterTest extends BaseModuleContextSensitiveTest {
 			gp = new GlobalProperty(ImplConstants.GP_RUN_IN_STRICT_MODE);
 		} else {
 			originalValue = gp.getPropertyValue();
-			if (!"false".equalsIgnoreCase(gp.getPropertyValue())) {
-				resetToStrict = true;
-			}
 		}
+		
 		gp.setPropertyValue("false");
 		as.saveGlobalProperty(gp);
 		Context.removeProxyPrivilege(PrivilegeConstants.MANAGE_GLOBAL_PROPERTIES);
@@ -62,13 +59,11 @@ public abstract class BaseFilterTest extends BaseModuleContextSensitiveTest {
 			super.updateSearchIndex();
 		}
 		finally {
-			if (resetToStrict) {
-				Context.addProxyPrivilege(PrivilegeConstants.MANAGE_GLOBAL_PROPERTIES);
-				gp.setPropertyValue(originalValue);
-				as.saveGlobalProperty(gp);
-				Context.removeProxyPrivilege(PrivilegeConstants.MANAGE_GLOBAL_PROPERTIES);
-				Context.flushSession();
-			}
+			Context.addProxyPrivilege(PrivilegeConstants.MANAGE_GLOBAL_PROPERTIES);
+			gp.setPropertyValue(originalValue == null ? "" : originalValue);
+			as.saveGlobalProperty(gp);
+			Context.removeProxyPrivilege(PrivilegeConstants.MANAGE_GLOBAL_PROPERTIES);
+			Context.flushSession();
 		}
 	}
 	

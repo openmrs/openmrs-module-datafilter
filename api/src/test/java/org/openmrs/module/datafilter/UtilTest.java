@@ -99,7 +99,6 @@ public class UtilTest {
 	@Before
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
-		mockStatic(Context.class);
 	}
 	
 	@Test
@@ -206,6 +205,7 @@ public class UtilTest {
 	
 	@Test
 	public void isFilterDisabled_shouldReturnFalseIfTheDisableGPForTheFilterIsNotSet() {
+		mockStatic(Context.class);
 		when(Context.getRegisteredComponent("adminDAO", AdministrationDAO.class)).thenReturn(adminDAO);
 		when(adminDAO.executeSQL(anyString(), eq(true))).thenReturn(Collections.emptyList());
 		assertFalse(Util.isFilterDisabled("someFilter"));
@@ -213,6 +213,7 @@ public class UtilTest {
 	
 	@Test
 	public void isFilterDisabled_shouldReturnFalseIfTheDisableGPForTheFilterIsSetToFalse() {
+		mockStatic(Context.class);
 		when(Context.getRegisteredComponent("adminDAO", AdministrationDAO.class)).thenReturn(adminDAO);
 		List<List<Object>> expectedRows = Collections.singletonList(Collections.singletonList("false"));
 		when(adminDAO.executeSQL(anyString(), eq(true))).thenReturn(expectedRows);
@@ -221,6 +222,7 @@ public class UtilTest {
 	
 	@Test
 	public void isFilterDisabled_shouldReturnTrueIfTheDisableGPForTheFilterISetToTrue() {
+		mockStatic(Context.class);
 		when(Context.getRegisteredComponent("adminDAO", AdministrationDAO.class)).thenReturn(adminDAO);
 		List<List<Object>> expectedRows = Collections.singletonList(Collections.singletonList("true"));
 		when(adminDAO.executeSQL(anyString(), eq(true))).thenReturn(expectedRows);
@@ -229,12 +231,14 @@ public class UtilTest {
 	
 	@Test
 	public void skipFilter_shouldReturnFalseIfTheFilterIsNotDisabledAndTheUserHasNoByPassPrivilege() {
+		mockStatic(Context.class);
 		when(Context.getRegisteredComponent("adminDAO", AdministrationDAO.class)).thenReturn(adminDAO);
 		assertFalse(Util.skipFilter("someFilter"));
 	}
 	
 	@Test
 	public void skipFilter_shouldReturnTrueIfTheFilterIsDisabled() {
+		mockStatic(Context.class);
 		when(Context.getRegisteredComponent("adminDAO", AdministrationDAO.class)).thenReturn(adminDAO);
 		List<List<Object>> expectedRows = Collections.singletonList(Collections.singletonList("true"));
 		when(adminDAO.executeSQL(anyString(), eq(true))).thenReturn(expectedRows);
@@ -244,6 +248,7 @@ public class UtilTest {
 	
 	@Test
 	public void skipFilter_shouldReturnTrueIfTheUserHasTheIndividualFilterByPassPrivilege() {
+		mockStatic(Context.class);
 		when(Context.getRegisteredComponent("adminDAO", AdministrationDAO.class)).thenReturn(adminDAO);
 		final String filterName = "someFilter";
 		PowerMockito.when(Context.isAuthenticated()).thenReturn(true);

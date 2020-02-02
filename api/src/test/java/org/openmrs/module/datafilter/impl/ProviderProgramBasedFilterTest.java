@@ -61,8 +61,8 @@ public class ProviderProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 		assertEquals(1, userProviderAccounts.size());
 		assertNull(userProviderAccounts.iterator().next().getRole());
 		assertEquals(2, providers.size());
-		assertTrue(TestUtil.containsId(providers, 10005));
-		assertTrue(TestUtil.containsId(providers, 10006));
+		assertTrue(TestUtil.containsId(providers, 100005));
+		assertTrue(TestUtil.containsId(providers, 100006));
 	}
 	
 	@Test
@@ -75,8 +75,8 @@ public class ProviderProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 		    userRoles.stream().filter(r -> programRoles.contains(r.getName())).collect(Collectors.toList()).size());
 		Collection<Provider> providers = getProviders();
 		assertEquals(2, providers.size());
-		assertTrue(TestUtil.containsId(providers, 10005));
-		assertTrue(TestUtil.containsId(providers, 10006));
+		assertTrue(TestUtil.containsId(providers, 100005));
+		assertTrue(TestUtil.containsId(providers, 100006));
 	}
 	
 	@Test
@@ -85,28 +85,28 @@ public class ProviderProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 		int expCount = 6;
 		Collection<Provider> providers = getProviders();
 		assertEquals(expCount, providers.size());
-		assertTrue(TestUtil.containsId(providers, 10001));
-		assertTrue(TestUtil.containsId(providers, 10002));
+		assertTrue(TestUtil.containsId(providers, 100001));
+		assertTrue(TestUtil.containsId(providers, 100002));
 		//Should include a user working at the same program but in a different uncommon role
-		assertTrue(TestUtil.containsId(providers, 10004));
+		assertTrue(TestUtil.containsId(providers, 100004));
 		//Should include a provider with no roles
-		assertTrue(TestUtil.containsId(providers, 10005));
+		assertTrue(TestUtil.containsId(providers, 100005));
 		//Should include a user with some other role(s) but none is a program role
-		assertTrue(TestUtil.containsId(providers, 10006));
+		assertTrue(TestUtil.containsId(providers, 100006));
 		//Should include a user with any of the roles the user has
-		assertTrue(TestUtil.containsId(providers, 10007));
+		assertTrue(TestUtil.containsId(providers, 100007));
 		
 		service.grantAccess(new Role(ROLE_COORDINATOR_PROG_1), new Program(10002));
 		expCount = 7;
 		providers = getProviders();
 		assertEquals(expCount, providers.size());
-		assertTrue(TestUtil.containsId(providers, 10001));
-		assertTrue(TestUtil.containsId(providers, 10002));
-		assertTrue(TestUtil.containsId(providers, 10003));
-		assertTrue(TestUtil.containsId(providers, 10004));
-		assertTrue(TestUtil.containsId(providers, 10005));
-		assertTrue(TestUtil.containsId(providers, 10006));
-		assertTrue(TestUtil.containsId(providers, 10007));
+		assertTrue(TestUtil.containsId(providers, 100001));
+		assertTrue(TestUtil.containsId(providers, 100002));
+		assertTrue(TestUtil.containsId(providers, 100003));
+		assertTrue(TestUtil.containsId(providers, 100004));
+		assertTrue(TestUtil.containsId(providers, 100005));
+		assertTrue(TestUtil.containsId(providers, 100006));
+		assertTrue(TestUtil.containsId(providers, 100007));
 	}
 	
 	@Test

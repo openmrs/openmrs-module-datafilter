@@ -58,16 +58,16 @@ public class ProviderLocationBasedFilterTest extends BaseFilterTest {
 		int expCount = 2;
 		Collection<Provider> providers = getProviders();
 		assertEquals(expCount, providers.size());
-		assertTrue(TestUtil.containsId(providers, 10001));
-		assertTrue(TestUtil.containsId(providers, 10002));
+		assertTrue(TestUtil.containsId(providers, 100001));
+		assertTrue(TestUtil.containsId(providers, 100002));
 		
 		service.grantAccess(Context.getAuthenticatedUser(), new Location(4001));
 		expCount = 3;
 		providers = getProviders();
 		assertEquals(expCount, providers.size());
-		assertTrue(TestUtil.containsId(providers, 10001));
-		assertTrue(TestUtil.containsId(providers, 10002));
-		assertTrue(TestUtil.containsId(providers, 10003));
+		assertTrue(TestUtil.containsId(providers, 100001));
+		assertTrue(TestUtil.containsId(providers, 100002));
+		assertTrue(TestUtil.containsId(providers, 100003));
 	}
 	
 	@Test
@@ -90,7 +90,7 @@ public class ProviderLocationBasedFilterTest extends BaseFilterTest {
 		
 		Provider provider = providerService.getProviderByUuid("b1e3868a-6b90-11e0-93c3-18a905e044dc");
 		Assert.assertNotNull(provider);
-		assertEquals(10002, provider.getProviderId().intValue());
+		assertEquals(100002, provider.getProviderId().intValue());
 	}
 	
 }

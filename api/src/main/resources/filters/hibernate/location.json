@@ -78,11 +78,16 @@
     {
         "name": "datafilter_locationBasedProviderFilter",
         "targetClasses": ["org.openmrs.Provider"],
-        "condition": "(person_id = (:authenticatedPersonId) OR provider_id IN (
-                       SELECT DISTINCT o.entity_identifier FROM datafilter_entity_basis_map o
-                            WHERE o.entity_type = 'org.openmrs.Provider'
-                            AND o.basis_type = 'org.openmrs.Location'
-                            AND o.basis_identifier IN (:basisIds)))",
+        "condition": "(person_id = (:authenticatedPersonId)
+                        OR person_id IN (
+                            SELECT DISTINCT datafilter_u.person_id FROM users datafilter_u
+                                WHERE datafilter_u.user_id IN (
+                                    SELECT DISTINCT o.entity_identifier FROM datafilter_entity_basis_map o
+                                        WHERE o.entity_type = 'org.openmrs.User'
+                                        AND o.basis_type = 'org.openmrs.Location'
+                                        AND o.basis_identifier IN (:basisIds)
+                                )
+                        ))",
         "parameters": [
             {
                 "name": "authenticatedPersonId",

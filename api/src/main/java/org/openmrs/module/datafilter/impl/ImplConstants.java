@@ -36,6 +36,8 @@ public final class ImplConstants {
 	
 	public static final String PARAM_NAME_AUTHENTICATED_PERSON_ID = "authenticatedPersonId";
 	
+	public static final String PARAM_NAME_AUTHENTICATED_USER_ID = "authenticatedUserId";
+	
 	public static final String PARAM_NAME_USER_PROG_ROLES = "userProgramRoles";
 	
 	public static final String PARAM_NAME_ALL_PROG_ROlES = "allProgramRoles";
@@ -52,6 +54,8 @@ public final class ImplConstants {
 	
 	public static final String LOCATION_BASED_FILTER_NAME_PROVIDER = LOCATION_BASED_FILTER_NAME_PREFIX + "ProviderFilter";
 	
+	public static final String LOCATION_FILTER_NAME = MODULE_ID + "_locationFilter";
+	
 	public static final String PROGRAM_BASED_FILTER_NAME_USER = PROGRAM_BASED_FILTER_NAME_PREFIX + "UserFilter";
 	
 	public static final String PROGRAM_BASED_FILTER_NAME_PROVIDER = PROGRAM_BASED_FILTER_NAME_PREFIX + "ProviderFilter";
@@ -63,7 +67,8 @@ public final class ImplConstants {
 	
 	public static final Set<String> LOCATION_BASED_FILTER_NAMES = Stream
 	        .of(LOCATION_BASED_FILTER_NAME_PATIENT, LOCATION_BASED_FILTER_NAME_VISIT, LOCATION_BASED_FILTER_NAME_ENCOUNTER,
-	            LOCATION_BASED_FILTER_NAME_OBS, LOCATION_BASED_FILTER_NAME_USER, LOCATION_BASED_FILTER_NAME_PROVIDER)
+	            LOCATION_BASED_FILTER_NAME_OBS, LOCATION_BASED_FILTER_NAME_USER, LOCATION_BASED_FILTER_NAME_PROVIDER,
+	            LOCATION_FILTER_NAME)
 	        .collect(Collectors.toSet());
 	
 	public static final Set<String> PROGRAM_BASED_FILTER_NAMES = Stream
@@ -104,6 +109,8 @@ public final class ImplConstants {
 	
 	public static final String GP_LOCATION_BASED_FULL_TEXT_FILTER_PATIENT = LOCATION_BASED_FULL_TEXT_FILTER_NAME_PATIENT
 	        + DISABLED;
+	
+	public static final String GP_LOCATION_FILTER_NAME = LOCATION_FILTER_NAME + DISABLED;
 	
 	public static final String GP_PROGRAM_BASED_FILTER_NAME_USER = PROGRAM_BASED_FILTER_NAME_USER + DISABLED;
 	

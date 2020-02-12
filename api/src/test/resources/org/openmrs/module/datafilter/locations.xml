@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+
+    This Source Code Form is subject to the terms of the Mozilla Public License,
+    v. 2.0. If a copy of the MPL was not distributed with this file, You can
+    obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+    the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+
+    Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+    graphic logo is a trademark of OpenMRS Inc.
+
+-->
+
+<dataset>
+    <location location_id="40000" name="Kampala Nsambya" description="Nsambya Hospital" creator="1" date_created="2019-05-01 00:00:00.0" retired="false" uuid="1d6c993f-c2cc-11de-8d13-0010c6dffd0f" />
+    <location location_id="40001" name="Kampala Rubaga" description="Rubaga Hospital" creator="1" date_created="2019-05-01 00:00:00.0" retired="false" uuid="2d6c993f-c2cc-11de-8d13-0010c6dffd0f" />
+    <location location_id="40002" name="Kampala Mulago" description="Mulago Hospital" creator="1" date_created="2019-05-01 00:00:00.0" retired="false" parent_location="4001" uuid="3d6c993f-c2cc-11de-8d13-0010c6dffd0f" />
+
+    <datafilter_entity_basis_map entity_basis_map_id="2001" entity_identifier="3000" entity_type="org.openmrs.User" basis_identifier="40000" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="ae41929c-3bca-56r4-a4dc-9198f6b2873d" />
+    <datafilter_entity_basis_map entity_basis_map_id="2002" entity_identifier="3000" entity_type="org.openmrs.User" basis_identifier="40001" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="be41929c-3bca-56r4-a4dc-9198f6b2873d" />
+</dataset>

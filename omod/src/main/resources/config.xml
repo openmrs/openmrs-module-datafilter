@@ -28,10 +28,6 @@
 	<!-- Module Activator -->
 	<activator>${project.parent.groupId}.${project.parent.artifactId}.DataFilterActivator</activator>
 
-    <require_modules>
-        <require_module version="${appframeworkVersion}">${project.parent.groupId}.appframework</require_module>
-    </require_modules>
-
     <filter>
         <filter-name>${project.parent.artifactId}DataFilterWebFilter</filter-name>
         <filter-class>${project.parent.groupId}.${project.parent.artifactId}.web.DataFilterWebFilter</filter-class>

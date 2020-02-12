@@ -33,10 +33,6 @@
 			<artifactId>openmrs-api</artifactId>
 		</dependency>
         <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>appframework-api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
         </dependency>

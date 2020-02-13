@@ -51,7 +51,9 @@ public class ImplDataFilterListener implements DataFilterListener {
 			return false;
 		}
 		
-		if (filterContext.getFilterName().startsWith(ImplConstants.LOCATION_BASED_FILTER_NAME_PREFIX)) {
+		if (filterContext.getFilterName().startsWith(ImplConstants.LOCATION_BASED_FILTER_NAME_PREFIX)
+		        || filterContext.getFilterName().equals(ImplConstants.LOCATION_FILTER_NAME)) {
+			
 			Collection<String> basisIds = new HashSet();
 			if (Context.isAuthenticated()) {
 				basisIds.addAll(AccessUtil.getAssignedBasisIds(Location.class));
@@ -73,15 +75,6 @@ public class ImplDataFilterListener implements DataFilterListener {
 			}
 			
 			filterContext.setParameter(ImplConstants.PARAM_NAME_BASIS_IDS, basisIds);
-			
-		} else if (filterContext.getFilterName().equals(ImplConstants.LOCATION_FILTER_NAME)) {
-			//If there is no authenticated user, no location will be matched because we expect none with id -1 
-			Integer authenticatedUserId = -1;
-			if (Context.isAuthenticated()) {
-				authenticatedUserId = Context.getAuthenticatedUser().getId();
-			}
-			
-			filterContext.setParameter(ImplConstants.PARAM_NAME_AUTHENTICATED_USER_ID, authenticatedUserId);
 			
 		} else if (filterContext.getFilterName().startsWith(ImplConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX)) {
 			Collection<String> roles = new HashSet();

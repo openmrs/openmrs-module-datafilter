@@ -22,6 +22,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.datafilter.TestConstants;
 import org.openmrs.module.datafilter.impl.api.DataFilterService;
 import org.openmrs.test.TestUtil;
+import org.openmrs.util.PrivilegeConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class LocationFilterTest extends BaseFilterTest {
@@ -40,27 +41,55 @@ public class LocationFilterTest extends BaseFilterTest {
 	}
 	
 	@Test
+	public void getLocations_shouldReturnNoLocationsIfTheUserIsNotGrantedAccessToAny() {
+		reloginAs("dBeckham", "test");
+		assertEquals(0, locationService.getLocations("Kampala").size());
+	}
+	
+	@Test
+	public void getLocations_shouldReturnNoLocationsIfThereIsNoAuthenticatedUser() {
+		Context.logout();
+		Context.addProxyPrivilege(PrivilegeConstants.GET_LOCATIONS);
+		try {
+			assertEquals(0, locationService.getLocations("Kampala").size());
+		}
+		finally {
+			Context.removeProxyPrivilege(PrivilegeConstants.GET_LOCATIONS);
+		}
+	}
+	
+	@Test
 	public void getLocations_shouldReturnLocationsBelongingToPatientsAccessibleToTheUser() throws Exception {
 		reloginAs("dyorke", "test");
-		int expCount = 2;
+		int expCount = 7;
 		Collection<Location> locations = locationService.getLocations("Kampala");
 		assertEquals(expCount, locations.size());
 		assertTrue(TestUtil.containsId(locations, 40000));
 		assertTrue(TestUtil.containsId(locations, 40001));
+		assertTrue(TestUtil.containsId(locations, 40003));
+		assertTrue(TestUtil.containsId(locations, 40004));
+		assertTrue(TestUtil.containsId(locations, 40006));
+		assertTrue(TestUtil.containsId(locations, 40007));
+		assertTrue(TestUtil.containsId(locations, 40008));
 		
 		service.grantAccess(Context.getAuthenticatedUser(), new Location(40002));
-		expCount = 3;
+		expCount = 8;
 		locations = locationService.getLocations("Kampala");
 		assertEquals(expCount, locations.size());
 		assertTrue(TestUtil.containsId(locations, 40000));
 		assertTrue(TestUtil.containsId(locations, 40001));
 		assertTrue(TestUtil.containsId(locations, 40002));
+		assertTrue(TestUtil.containsId(locations, 40003));
+		assertTrue(TestUtil.containsId(locations, 40004));
+		assertTrue(TestUtil.containsId(locations, 40006));
+		assertTrue(TestUtil.containsId(locations, 40007));
+		assertTrue(TestUtil.containsId(locations, 40008));
 	}
 	
 	@Test
 	public void getLocations_shouldReturnAllLocationsIfTheAuthenticatedUserIsASuperUser() {
 		assertTrue(Context.getAuthenticatedUser().isSuperUser());
-		final int expCount = 3;
+		final int expCount = 8;
 		Collection<Location> locations = locationService.getLocations("Kampala");
 		assertEquals(expCount, locations.size());
 		assertTrue(TestUtil.containsId(locations, 40000));
@@ -72,7 +101,7 @@ public class LocationFilterTest extends BaseFilterTest {
 	public void getLocations_shouldReturnAllLocationsIfFilteringIsDisabled() {
 		DataFilterTestUtils.disableLocationFiltering();
 		reloginAs("dyorke", "test");
-		assertEquals(3, locationService.getLocations("Kampala").size());
+		assertEquals(8, locationService.getLocations("Kampala").size());
 	}
 	
 }

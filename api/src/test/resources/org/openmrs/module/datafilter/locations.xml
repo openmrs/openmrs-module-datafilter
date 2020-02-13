@@ -15,7 +15,13 @@
 <dataset>
     <location location_id="40000" name="Kampala Nsambya" description="Nsambya Hospital" creator="1" date_created="2019-05-01 00:00:00.0" retired="false" uuid="1d6c993f-c2cc-11de-8d13-0010c6dffd0f" />
     <location location_id="40001" name="Kampala Rubaga" description="Rubaga Hospital" creator="1" date_created="2019-05-01 00:00:00.0" retired="false" uuid="2d6c993f-c2cc-11de-8d13-0010c6dffd0f" />
-    <location location_id="40002" name="Kampala Mulago" description="Mulago Hospital" creator="1" date_created="2019-05-01 00:00:00.0" retired="false" parent_location="4001" uuid="3d6c993f-c2cc-11de-8d13-0010c6dffd0f" />
+    <location location_id="40002" name="Kampala Mulago" description="Mulago Hospital" creator="1" date_created="2019-05-01 00:00:00.0" retired="false" uuid="3d6c993f-c2cc-11de-8d13-0010c6dffd0f" />
+    <location location_id="40003" name="Kampala Nsambya 1" description="Nsambya 1 Hospital" parent_location="40000" creator="1" date_created="2019-05-01 00:00:00.0" retired="false" uuid="4d6c993f-c2cc-11de-8d13-0010c6dffd0f" />
+    <location location_id="40004" name="Kampala Nsambya 2" description="Nsambya 2 Hospital" parent_location="40000" creator="1" date_created="2019-05-01 00:00:00.0" retired="false" uuid="5d6c993f-c2cc-11de-8d13-0010c6dffd0f" />
+    <location location_id="40005" name="Jinja Nsambya" description="Nsambya Hospital in Jinja" parent_location="40000" creator="1" date_created="2019-05-01 00:00:00.0" retired="false" uuid="6d6c993f-c2cc-11de-8d13-0010c6dffd0f" />
+    <location location_id="40006" name="Kampala Nsambya 1 Clinic 1" description="Nsambya 1 clinic 1" creator="1" parent_location="40003" date_created="2019-05-01 00:00:00.0" retired="false" uuid="7d6c993f-c2cc-11de-8d13-0010c6dffd0f" />
+    <location location_id="40007" name="Kampala Nsambya 1 Clinic 2" description="Nsambya 1 clinic 2" creator="1" parent_location="40003" date_created="2019-05-01 00:00:00.0" retired="false" uuid="8d6c993f-c2cc-11de-8d13-0010c6dffd0f" />
+    <location location_id="40008" name="Kampala Nsambya 2 Clinic" description="Nsambya 2 clinic" creator="1" parent_location="40004" date_created="2019-05-01 00:00:00.0" retired="false" uuid="9d6c993f-c2cc-11de-8d13-0010c6dffd0f" />
 
     <datafilter_entity_basis_map entity_basis_map_id="2001" entity_identifier="3000" entity_type="org.openmrs.User" basis_identifier="40000" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="ae41929c-3bca-56r4-a4dc-9198f6b2873d" />
     <datafilter_entity_basis_map entity_basis_map_id="2002" entity_identifier="3000" entity_type="org.openmrs.User" basis_identifier="40001" basis_type="org.openmrs.Location" creator="1" date_created="2019-05-01 00:00:00.0" uuid="be41929c-3bca-56r4-a4dc-9198f6b2873d" />

@@ -9,17 +9,6 @@
  */
 package org.openmrs.module.datafilter.impl.api.db.hibernate;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.isA;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.openmrs.module.datafilter.DataFilterConstants.MODULE_ID;
-import static org.openmrs.module.datafilter.impl.ImplConstants.GP_PAT_LOC_INTERCEPTOR_ENABLED;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.hibernate.AssertionFailure;
 import org.junit.Before;
 import org.junit.Rule;
@@ -30,10 +19,12 @@ import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.Person;
 import org.openmrs.PersonName;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
+import org.openmrs.api.PersonService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.db.DAOException;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
@@ -43,10 +34,24 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.isA;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.openmrs.module.datafilter.DataFilterConstants.MODULE_ID;
+import static org.openmrs.module.datafilter.impl.ImplConstants.GP_PAT_LOC_INTERCEPTOR_ENABLED;
+
 public class PatientLocationLinkingInterceptorTest extends BaseModuleContextSensitiveTest {
 	
 	@Autowired
 	private PatientService patientService;
+
+	@Autowired
+	private PersonService personService;
 	
 	@Autowired
 	private LocationService locationService;
@@ -134,13 +139,35 @@ public class PatientLocationLinkingInterceptorTest extends BaseModuleContextSens
 		Context.getUserContext().setLocation(new Location(locationId));
 		long originalCount = getCountOfPatientLocationLinks();
 		patientService.savePatient(patient);
-		
+
 		assertEquals(++originalCount, getCountOfPatientLocationLinks().intValue());
 		List<String> patientLocations = getPatientLocations(patient);
 		assertEquals(1, patientLocations.size());
 		assertTrue(patientLocations.contains(locationId.toString()));
 	}
-	
+
+	@Test
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public void onSave_shouldCreateAnEntryWhenANewPatientIsCreatedUsingAnExistingPerson() {
+		Person person = new Person();
+		person.addName(new PersonName("Foo", "Bar", "Baaz"));
+		person.setBirthdate(new Date());
+		person.setGender("M");
+		Person savedPerson = personService.savePerson(person);
+
+		Patient patient = new Patient(savedPerson);
+		patient.addIdentifier(new PatientIdentifier("12345", new PatientIdentifierType(2), new Location(1)));
+		final Integer locationId = 1;
+		Context.getUserContext().setLocation(new Location(locationId));
+		long originalCount = getCountOfPatientLocationLinks();
+		patientService.savePatient(patient);
+
+		assertEquals(++originalCount, getCountOfPatientLocationLinks().intValue());
+		List<String> patientLocations = getPatientLocations(patient);
+		assertEquals(1, patientLocations.size());
+		assertTrue(patientLocations.contains(locationId.toString()));
+	}
+
 	@Test
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public void onSave_shouldNotLinkPatientsToLocationsIfTheGpIsNotEnabled() {

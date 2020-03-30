@@ -56,6 +56,9 @@ public class PatientLocationLinkingInterceptor extends EmptyInterceptor {
 	 */
 	@Override
 	public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
+		//TODO: The below line is needed to show the type of entities for which this method has been called.
+		// Should be removed once the patient creation with existing person is removed.
+		System.out.println("Fired onSave for "+entity.getClass());
 		if (!(entity instanceof Patient)) {
 			return super.onSave(entity, id, state, propertyNames, types);
 		}

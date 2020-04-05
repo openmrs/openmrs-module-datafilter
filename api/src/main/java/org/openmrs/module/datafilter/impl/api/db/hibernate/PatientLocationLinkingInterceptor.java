@@ -56,33 +56,34 @@ public class PatientLocationLinkingInterceptor extends EmptyInterceptor {
 	 */
 	@Override
 	public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
-		if (!(entity instanceof Patient)) {
-			return super.onSave(entity, id, state, propertyNames, types);
+		
+		if (entity instanceof Patient && isInterceptorEnabled()) {
+			setSessionDataAndLocationDetectorProcess(entity);
 		}
-		
-		//Hibernate will flush any changes in the current session before querying the DB when fetching
-		//the GP value below and we end up in this method again, therefore we need to disable auto flush
-		if (!"true".equalsIgnoreCase(InterceptorUtil.getGpValueNoFlush(ImplConstants.GP_PAT_LOC_INTERCEPTOR_ENABLED))) {
-			
-			if (log.isTraceEnabled()) {
-				log.trace("Skipping PatientLocationLinkingInterceptor because is it disabled");
-			}
-			
-			return super.onSave(entity, id, state, propertyNames, types);
-		}
-		
-		SessionData sessionData = new SessionData();
-		sessionData.patient = (Patient) entity;
-		sessionDataHolder.set(sessionData);
-		
-		//See SessionLocationDetector class to understand why we have the lines below otherwise if we detect 
-		//the location from beforeTransactionCompletion method and throw an exception, hibernate will swallow it
-		//whereas it bubbles out if we throw it from a BeforeTransactionCompletionProcess instance.
-		SessionFactory sessionFactory = Context.getRegisteredComponents(SessionFactory.class).get(0);
-		EventSource eventSource = (EventSource) sessionFactory.getCurrentSession();
-		eventSource.getActionQueue().registerProcess(new SessionLocationDetector());
 		
 		return super.onSave(entity, id, state, propertyNames, types);
+	}
+	
+	/**
+	 * Should link the patient to the current user's session location if they are is getting created
+	 * from an existing person record.
+	 *
+	 * @see EmptyInterceptor#onFlushDirty(Object, Serializable, Object[], Object[], String[], Type[])
+	 */
+	@Override
+	public int[] findDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
+	                       String[] propertyNames, Type[] types) {
+		
+		if (entity instanceof Patient && isInterceptorEnabled() && previousState == null) {
+			//This is a patient getting created from an existing person record
+			if (log.isDebugEnabled()) {
+				log.debug("Detected a new patient getting created from an existing person with id: " + id);
+			}
+			
+			setSessionDataAndLocationDetectorProcess(entity);
+		}
+		
+		return super.findDirty(entity, id, currentState, previousState, propertyNames, types);
 	}
 	
 	/**
@@ -116,6 +117,44 @@ public class PatientLocationLinkingInterceptor extends EmptyInterceptor {
 		if (sessionDataHolder.get() != null) {
 			sessionDataHolder.remove();
 		}
+	}
+	
+	/**
+	 * Convenience method that checks if this interceptor is enabled
+	 * 
+	 * @return true if the interceptor is enabled otherwise false
+	 */
+	private boolean isInterceptorEnabled() {
+		//Hibernate will flush any changes in the current session before querying the DB when fetching
+		//the GP value below and we end up in this method again, therefore we need to disable auto flush
+		if (!"true".equalsIgnoreCase(InterceptorUtil.getGpValueNoFlush(ImplConstants.GP_PAT_LOC_INTERCEPTOR_ENABLED))) {
+			if (log.isTraceEnabled()) {
+				log.trace("Skipping PatientLocationLinkingInterceptor because is it disabled");
+			}
+			
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Convenience method that sets session data on the current thread and registers a
+	 * SessionLocationDetector instance for the current transaction.
+	 * 
+	 * @param entity the new patient object getting saved
+	 */
+	private void setSessionDataAndLocationDetectorProcess(Object entity) {
+		SessionData sessionData = new SessionData();
+		sessionData.patient = (Patient) entity;
+		sessionDataHolder.set(sessionData);
+		
+		//See SessionLocationDetector class to understand why we have the lines below otherwise if we detect 
+		//the location from beforeTransactionCompletion method and throw an exception, hibernate will swallow it
+		//whereas it bubbles out if we throw it from a BeforeTransactionCompletionProcess instance.
+		SessionFactory sessionFactory = Context.getRegisteredComponents(SessionFactory.class).get(0);
+		EventSource eventSource = (EventSource) sessionFactory.getCurrentSession();
+		eventSource.getActionQueue().registerProcess(new SessionLocationDetector());
 	}
 	
 	/**

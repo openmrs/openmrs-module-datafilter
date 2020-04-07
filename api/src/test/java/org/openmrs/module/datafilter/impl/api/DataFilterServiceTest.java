@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Location;
@@ -27,6 +28,7 @@ import org.openmrs.User;
 import org.openmrs.module.datafilter.DataFilterSessionContext;
 import org.openmrs.module.datafilter.TestConstants;
 import org.openmrs.module.datafilter.impl.BaseFilterTest;
+import org.openmrs.module.datafilter.impl.EntityBasisMap;
 import org.powermock.reflect.Whitebox;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -109,5 +111,11 @@ public class DataFilterServiceTest extends BaseFilterTest {
 			assertFalse(service.hasAccess(user, basis));
 		}
 	}
-	
+
+	@Test
+	public void get_shouldGetAllEntityBasisForAnEntityForABasisType(){
+		User user = new User(3000);
+		Collection<EntityBasisMap> map = service.get(user,Location.class.getName());
+		Assert.assertEquals(2,map.size());
+	}
 }

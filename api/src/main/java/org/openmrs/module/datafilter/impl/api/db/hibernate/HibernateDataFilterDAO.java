@@ -15,6 +15,8 @@ import org.hibernate.criterion.Restrictions;
 import org.openmrs.module.datafilter.impl.EntityBasisMap;
 import org.openmrs.module.datafilter.impl.api.db.DataFilterDAO;
 
+import java.util.Collection;
+
 public class HibernateDataFilterDAO implements DataFilterDAO {
 	
 	private SessionFactory sessionFactory;
@@ -52,7 +54,7 @@ public class HibernateDataFilterDAO implements DataFilterDAO {
 		sessionFactory.getCurrentSession().save(entityBasisMap);
 		return entityBasisMap;
 	}
-	
+
 	/**
 	 * @see DataFilterDAO#deleteEntityBasisMap(EntityBasisMap)
 	 */
@@ -60,5 +62,14 @@ public class HibernateDataFilterDAO implements DataFilterDAO {
 	public void deleteEntityBasisMap(EntityBasisMap entityBasisMap) {
 		sessionFactory.getCurrentSession().delete(entityBasisMap);
 	}
-	
+
+    @Override
+    public Collection<EntityBasisMap> get(String entityIdentifier, String entityType, String basisType) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(EntityBasisMap.class);
+        criteria.add(Restrictions.eq("entityIdentifier", entityIdentifier).ignoreCase());
+        criteria.add(Restrictions.eq("entityType", entityType).ignoreCase());
+        criteria.add(Restrictions.eq("basisType", basisType).ignoreCase());
+
+        return (Collection<EntityBasisMap>) criteria.list();
+    }
 }

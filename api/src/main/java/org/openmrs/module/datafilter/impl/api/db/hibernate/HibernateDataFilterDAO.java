@@ -63,8 +63,11 @@ public class HibernateDataFilterDAO implements DataFilterDAO {
 		sessionFactory.getCurrentSession().delete(entityBasisMap);
 	}
 	
+	/**
+	 * @see DataFilterDAO#getEntityBasisMaps(String, String, String)
+	 */
 	@Override
-	public Collection<EntityBasisMap> get(String entityIdentifier, String entityType, String basisType) {
+	public Collection<EntityBasisMap> getEntityBasisMaps(String entityIdentifier, String entityType, String basisType) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(EntityBasisMap.class);
 		criteria.add(Restrictions.eq("entityIdentifier", entityIdentifier).ignoreCase());
 		criteria.add(Restrictions.eq("entityType", entityType).ignoreCase());

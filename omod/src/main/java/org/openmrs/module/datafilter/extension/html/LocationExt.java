@@ -56,7 +56,7 @@ public class LocationExt extends Extension {
 		List<String> selectedLocations = new ArrayList<>();
 		if (!userId.equals("")) {
 			User user = Context.getUserService().getUser(Integer.parseInt(userId));
-			Collection<EntityBasisMap> mappedLocationsMap = dataFilterService.get(user, Location.class.getName());
+			Collection<EntityBasisMap> mappedLocationsMap = dataFilterService.getEntityBasisMaps(user, Location.class.getName());
 			if (mappedLocationsMap != null) {
 				selectedLocations = mappedLocationsMap.stream()
 				        .map(mappedLocation -> locationService

@@ -115,7 +115,7 @@ public class DataFilterServiceTest extends BaseFilterTest {
 	@Test
 	public void get_shouldGetAllEntityBasisForAnEntityForABasisType() {
 		User user = new User(3000);
-		Collection<EntityBasisMap> map = service.get(user, Location.class.getName());
+		Collection<EntityBasisMap> map = service.getEntityBasisMaps(user, Location.class.getName());
 		Assert.assertEquals(2, map.size());
 	}
 }

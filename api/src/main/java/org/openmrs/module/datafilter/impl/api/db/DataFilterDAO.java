@@ -42,10 +42,10 @@ public interface DataFilterDAO {
 	
 	/**
 	 * Get all the EntityBasisMap for the specified entity and type from the database
-	 *
+	 * 
 	 * @param entityIdentifier
 	 * @param entityType
 	 * @param basisType
 	 */
-	Collection<EntityBasisMap> get(String entityIdentifier, String entityType, String basisType);
+	Collection<EntityBasisMap> getEntityBasisMaps(String entityIdentifier, String entityType, String basisType);
 }

@@ -10,12 +10,12 @@
 
 package org.openmrs.module.datafilter.extension.html;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 public class ContentTest {
 
@@ -23,7 +23,7 @@ public class ContentTest {
     public void addLocationNameLine() {
         Content content = new Content(Arrays.asList("L1","L2"),new ArrayList<String>());
 
-        String expected = "<style>.listItemBoxCustom {width: 460px;padding: 2px;border: 1px solid lightgray;float: left;background-color: #EFEFEF;overflow-x: scroll;height: 200px;}</style>" +
+		String expected = "<style>.listItemBoxCustom {width: 460px;padding: 2px;border: 1px solid lightgray;float: left;background-color: #EFEFEF;overflow-x: scroll;height: 200px;}</style>" +
                 "<td valign='top'>Location</td>" +
                 "<p>Selected Locations:</p>" +
                 "<p id='selectedLocations'></p>" +

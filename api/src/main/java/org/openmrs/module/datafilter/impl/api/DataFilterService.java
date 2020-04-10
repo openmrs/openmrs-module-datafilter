@@ -57,8 +57,7 @@ public interface DataFilterService extends OpenmrsService {
 	 * @return true if the entity has access otherwise false
 	 */
 	boolean hasAccess(OpenmrsObject entity, OpenmrsObject basis);
-
-
+	
 	Collection<EntityBasisMap> get(OpenmrsObject entity, String basisName);
 	
 }

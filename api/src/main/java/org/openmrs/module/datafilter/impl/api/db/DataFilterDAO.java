@@ -9,9 +9,9 @@
  */
 package org.openmrs.module.datafilter.impl.api.db;
 
-import org.openmrs.module.datafilter.impl.EntityBasisMap;
-
 import java.util.Collection;
+
+import org.openmrs.module.datafilter.impl.EntityBasisMap;
 
 public interface DataFilterDAO {
 	
@@ -39,7 +39,7 @@ public interface DataFilterDAO {
 	 * @param entityBasisMap
 	 */
 	void deleteEntityBasisMap(EntityBasisMap entityBasisMap);
-
+	
 	/**
 	 * Get all the EntityBasisMap for the specified entity and type from the database
 	 *

@@ -11,6 +11,8 @@ package org.openmrs.module.datafilter.impl.api.db;
 
 import org.openmrs.module.datafilter.impl.EntityBasisMap;
 
+import java.util.Collection;
+
 public interface DataFilterDAO {
 	
 	/**
@@ -37,5 +39,13 @@ public interface DataFilterDAO {
 	 * @param entityBasisMap
 	 */
 	void deleteEntityBasisMap(EntityBasisMap entityBasisMap);
-	
+
+	/**
+	 * Get all the EntityBasisMap for the specified entity and type from the database
+	 *
+	 * @param entityIdentifier
+	 * @param entityType
+	 * @param basisType
+	 */
+	Collection<EntityBasisMap> get(String entityIdentifier, String entityType, String basisType);
 }

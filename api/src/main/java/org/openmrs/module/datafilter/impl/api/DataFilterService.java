@@ -13,6 +13,7 @@ import java.util.Collection;
 
 import org.openmrs.OpenmrsObject;
 import org.openmrs.api.OpenmrsService;
+import org.openmrs.module.datafilter.impl.EntityBasisMap;
 
 public interface DataFilterService extends OpenmrsService {
 	
@@ -56,5 +57,8 @@ public interface DataFilterService extends OpenmrsService {
 	 * @return true if the entity has access otherwise false
 	 */
 	boolean hasAccess(OpenmrsObject entity, OpenmrsObject basis);
+
+
+	Collection<EntityBasisMap> get(OpenmrsObject entity, String basisName);
 	
 }

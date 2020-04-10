@@ -38,6 +38,16 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <filter>
+        <filter-name>org.openmrs.module.datafilter.filter.SubmissionFilter</filter-name>
+        <filter-class>org.openmrs.module.datafilter.filter.SubmissionFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>org.openmrs.module.datafilter.filter.SubmissionFilter</filter-name>
+        <url-pattern>/admin/users/user.form</url-pattern>
+    </filter-mapping>
+
     <!-- Privileges
     <privilege>
         <name>ByPass Data Filters</name>
@@ -63,5 +73,9 @@
         </description>
     </globalProperty>
 
+    <extension>
+        <point>org.openmrs.userForm.custom.extension</point>
+        <class>org.openmrs.module.datafilter.extension.html.LocationExt</class>
+    </extension>
 </module>
 

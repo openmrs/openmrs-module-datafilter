@@ -29,17 +29,24 @@ public class Content {
 	private String contentEnd;
 	
 	private static final String CHECKED = " checked";
-	
+
 	public Content(List<String> locationNames, List<String> selectedLocations) {
 		this.locationNames = locationNames;
 		this.selectedLocations = selectedLocations;
-		this.styles = "<style>.listItemBoxCustom {width: 460px;" + "padding: 2px;" + "border: 1px solid lightgray;"
-		        + "float: left;" + "background-color: #EFEFEF;" + "overflow-x: scroll;" + "height: 200px;}" + "</style>";
+		this.styles = "<style>.listItemBoxCustom {width: 460px;" +
+				"padding: 2px;" +
+				"border: 1px solid lightgray;" +
+				"float: left;" +
+				"background-color: #EFEFEF;" +
+				"overflow-x: scroll;" +
+				"height: 200px;}" +
+				"</style>";
 		this.scripts = "";
 		this.title = "Location";
-		this.contentStart = styles + scripts + "<td valign='top'>" + title + "</td>" + "<p>Selected Locations:</p>"
-		        + "<p id='selectedLocations'></p>" + "<td valign='top'>"
-		        + "<div id='locationStrings' class='listItemBoxCustom'>";
+		this.contentStart = styles + scripts +
+				"<td valign='top'>" + title + "</td>" +
+				"<td valign='top'>" +
+				"<div id='locationStrings' class='listItemBoxCustom'>";
 		this.contentEnd = "</div></td>";
 	}
 	

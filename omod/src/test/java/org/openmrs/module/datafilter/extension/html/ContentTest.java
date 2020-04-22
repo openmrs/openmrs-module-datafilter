@@ -25,8 +25,6 @@ public class ContentTest {
 
 		String expected = "<style>.listItemBoxCustom {width: 460px;padding: 2px;border: 1px solid lightgray;float: left;background-color: #EFEFEF;overflow-x: scroll;height: 200px;}</style>" +
                 "<td valign='top'>Location</td>" +
-                "<p>Selected Locations:</p>" +
-                "<p id='selectedLocations'></p>" +
                 "<td valign='top'><div id='locationStrings' class='listItemBoxCustom'>" +
                 "<span class='listItem'>" +
                 "<input type='checkbox' name='locationStrings' id='locationStrings.L1' value='L1'><label for='locationStrings.L1'>L1</label>" +
@@ -45,8 +43,6 @@ public class ContentTest {
 
         String expected = "<style>.listItemBoxCustom {width: 460px;padding: 2px;border: 1px solid lightgray;float: left;background-color: #EFEFEF;overflow-x: scroll;height: 200px;}</style>" +
                 "<td valign='top'>Location</td>" +
-                "<p>Selected Locations:</p>" +
-                "<p id='selectedLocations'></p>" +
                 "<td valign='top'><div id='locationStrings' class='listItemBoxCustom'>" +
                 "<span class='listItem'>" +
                 "<input type='checkbox' name='locationStrings' id='locationStrings.L1' value='L1'><label for='locationStrings.L1'>L1</label>" +
@@ -63,8 +59,6 @@ public class ContentTest {
     public void getFullContent() {
         String expected = "<style>.listItemBoxCustom {width: 460px;padding: 2px;border: 1px solid lightgray;float: left;background-color: #EFEFEF;overflow-x: scroll;height: 200px;}</style>" +
                 "<td valign='top'>Location</td>" +
-                "<p>Selected Locations:</p>" +
-                "<p id='selectedLocations'></p>" +
                 "<td valign='top'><div id='locationStrings' class='listItemBoxCustom'></div></td>";
         assertEquals(expected, new Content(new ArrayList<>(), new ArrayList<>()).generate());
 

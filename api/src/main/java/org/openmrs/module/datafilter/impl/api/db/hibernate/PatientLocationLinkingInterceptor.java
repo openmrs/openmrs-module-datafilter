@@ -31,15 +31,12 @@ import org.springframework.stereotype.Component;
 
 /**
  * This interceptor links every newly created patient to the current user's session location This is
- * a very basic implementation that makes the assumptions below:
- * 
- * <pre>
+ * a very basic implementation that makes the assumptions below: <pre>
  * <ul>
  * <li>No nested transactions</li>
  * <li>Exactly one patient is created in a session</li>
  * <li>There is a session location set on the user context</li>
  * <ul/>
- * 
  * <pre/>
  */
 @Component("patientLocationLinkingInterceptor")
@@ -72,7 +69,7 @@ public class PatientLocationLinkingInterceptor extends EmptyInterceptor {
 	 */
 	@Override
 	public int[] findDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
-	                       String[] propertyNames, Type[] types) {
+	        String[] propertyNames, Type[] types) {
 		
 		if (entity instanceof Patient && isInterceptorEnabled() && previousState == null) {
 			//This is a patient getting created from an existing person record

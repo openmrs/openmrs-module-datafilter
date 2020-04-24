@@ -247,8 +247,7 @@ public class Util {
 	 * @param filterAnnotation the {@link org.hibernate.annotations.Filter} annotation to add
 	 */
 	protected static void registerFilter(Class<?> entityClass, FilterDefAnnotation filterDefAnnotation,
-	                                     FilterAnnotation filterAnnotation)
-	    throws ReflectiveOperationException {
+	        FilterAnnotation filterAnnotation) throws ReflectiveOperationException {
 		
 		addAnnotationToGroup(entityClass, FilterDefs.class, filterDefAnnotation);
 		addAnnotationToGroup(entityClass, Filters.class, filterAnnotation);
@@ -263,7 +262,7 @@ public class Util {
 	 *            annotation to add
 	 */
 	protected static void registerFullTextFilter(Class<?> entityClass, FullTextFilterDefAnnotation filterDefAnnotation)
-	    throws ReflectiveOperationException {
+	        throws ReflectiveOperationException {
 		addAnnotationToGroup(entityClass, FullTextFilterDefs.class, filterDefAnnotation);
 	}
 	
@@ -275,8 +274,7 @@ public class Util {
 	 * @param toAdd the grouped annotation instance to add
 	 */
 	private static void addAnnotationToGroup(Class<?> entityClass, Class<? extends Annotation> aggregateAnnClass,
-	                                         Annotation toAdd)
-	    throws ReflectiveOperationException {
+	        Annotation toAdd) throws ReflectiveOperationException {
 		
 		Annotation aggregateAnnotation = entityClass.getAnnotation(aggregateAnnClass);
 		if (aggregateAnnotation == null) {
@@ -339,7 +337,7 @@ public class Util {
 	 * @param annotation the annotation to add
 	 */
 	private static void addAnnotationToField(String fieldName, Class<?> clazz, Annotation annotation)
-	    throws ReflectiveOperationException {
+	        throws ReflectiveOperationException {
 		
 		final String annotationName = annotation.annotationType().getName();
 		if (log.isDebugEnabled()) {
@@ -632,7 +630,7 @@ public class Util {
 	 *            the mapping location
 	 */
 	public static void updateResourceLocation(InputStream in, String resourceName, String resourceFilename,
-	                                          OutputStream out) {
+	        OutputStream out) {
 		
 		Map model = new HashMap();
 		model.put("resourceName", resourceName);
@@ -651,8 +649,7 @@ public class Util {
 	 * @throws IOException
 	 */
 	protected static File createNewMappingFile(String hbmResourceName, List<HibernateFilterRegistration> filterRegistrations,
-	                                           File outputDir)
-	    throws IOException {
+	        File outputDir) throws IOException {
 		
 		InputStream in = OpenmrsClassLoader.getInstance().getResourceAsStream(hbmResourceName);
 		ByteArrayOutputStream outFinal = null;

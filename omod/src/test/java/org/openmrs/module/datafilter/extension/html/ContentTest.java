@@ -18,49 +18,43 @@ import java.util.Arrays;
 import org.junit.Test;
 
 public class ContentTest {
-
-    @Test
-    public void addLocationNameLine() {
-        Content content = new Content(Arrays.asList("L1","L2"),new ArrayList<String>());
-
-		String expected = "<style>.listItemBoxCustom {width: 460px;padding: 2px;border: 1px solid lightgray;float: left;background-color: #EFEFEF;overflow-x: scroll;height: 200px;}</style>" +
-                "<td valign='top'>Location</td>" +
-                "<td valign='top'><div id='locationStrings' class='listItemBoxCustom'>" +
-                "<span class='listItem'>" +
-                "<input type='checkbox' name='locationStrings' id='locationStrings.L1' value='L1'><label for='locationStrings.L1'>L1</label>" +
-                "</span>" +
-                "<span class='listItem'>" +
-                "<input type='checkbox' name='locationStrings' id='locationStrings.L2' value='L2'><label for='locationStrings.L2'>L2</label>" +
-                "</span>" +
-                "</div></td>";
-        assertEquals(expected, content.generate());
-
-    }
-
-    @Test
-    public void addLocationNameLineWithMappedLocationsChecked() {
-        Content content = new Content(Arrays.asList("L1","L2"),Arrays.asList("L2"));
-
-        String expected = "<style>.listItemBoxCustom {width: 460px;padding: 2px;border: 1px solid lightgray;float: left;background-color: #EFEFEF;overflow-x: scroll;height: 200px;}</style>" +
-                "<td valign='top'>Location</td>" +
-                "<td valign='top'><div id='locationStrings' class='listItemBoxCustom'>" +
-                "<span class='listItem'>" +
-                "<input type='checkbox' name='locationStrings' id='locationStrings.L1' value='L1'><label for='locationStrings.L1'>L1</label>" +
-                "</span>" +
-                "<span class='listItem'>" +
-                "<input type='checkbox' name='locationStrings' id='locationStrings.L2' value='L2' checked><label for='locationStrings.L2'>L2</label>" +
-                "</span>" +
-                "</div></td>";
-        assertEquals(expected, content.generate());
-
-    }
-
-    @Test
-    public void getFullContent() {
-        String expected = "<style>.listItemBoxCustom {width: 460px;padding: 2px;border: 1px solid lightgray;float: left;background-color: #EFEFEF;overflow-x: scroll;height: 200px;}</style>" +
-                "<td valign='top'>Location</td>" +
-                "<td valign='top'><div id='locationStrings' class='listItemBoxCustom'></div></td>";
-        assertEquals(expected, new Content(new ArrayList<>(), new ArrayList<>()).generate());
-
-    }
+	
+	@Test
+	public void addLocationNameLine() {
+		Content content = new Content(Arrays.asList("L1", "L2"), new ArrayList<String>());
+		
+		String expected = "<style>.listItemBoxCustom {width: 460px;padding: 2px;border: 1px solid lightgray;float: left;background-color: #EFEFEF;overflow-x: scroll;height: 200px;}</style>"
+		        + "<td valign='top'>Location</td>" + "<td valign='top'><div id='locationStrings' class='listItemBoxCustom'>"
+		        + "<span class='listItem'>"
+		        + "<input type='checkbox' name='locationStrings' id='locationStrings.L1' value='L1'><label for='locationStrings.L1'>L1</label>"
+		        + "</span>" + "<span class='listItem'>"
+		        + "<input type='checkbox' name='locationStrings' id='locationStrings.L2' value='L2'><label for='locationStrings.L2'>L2</label>"
+		        + "</span>" + "</div></td>";
+		assertEquals(expected, content.generate());
+		
+	}
+	
+	@Test
+	public void addLocationNameLineWithMappedLocationsChecked() {
+		Content content = new Content(Arrays.asList("L1", "L2"), Arrays.asList("L2"));
+		
+		String expected = "<style>.listItemBoxCustom {width: 460px;padding: 2px;border: 1px solid lightgray;float: left;background-color: #EFEFEF;overflow-x: scroll;height: 200px;}</style>"
+		        + "<td valign='top'>Location</td>" + "<td valign='top'><div id='locationStrings' class='listItemBoxCustom'>"
+		        + "<span class='listItem'>"
+		        + "<input type='checkbox' name='locationStrings' id='locationStrings.L1' value='L1'><label for='locationStrings.L1'>L1</label>"
+		        + "</span>" + "<span class='listItem'>"
+		        + "<input type='checkbox' name='locationStrings' id='locationStrings.L2' value='L2' checked><label for='locationStrings.L2'>L2</label>"
+		        + "</span>" + "</div></td>";
+		assertEquals(expected, content.generate());
+		
+	}
+	
+	@Test
+	public void getFullContent() {
+		String expected = "<style>.listItemBoxCustom {width: 460px;padding: 2px;border: 1px solid lightgray;float: left;background-color: #EFEFEF;overflow-x: scroll;height: 200px;}</style>"
+		        + "<td valign='top'>Location</td>"
+		        + "<td valign='top'><div id='locationStrings' class='listItemBoxCustom'></div></td>";
+		assertEquals(expected, new Content(new ArrayList<>(), new ArrayList<>()).generate());
+		
+	}
 }

@@ -41,35 +41,35 @@ import org.springframework.util.StringUtils;
 
 @Component("userFormSubmissionHandler")
 public class UserFormSubmissionHandler {
-
+	
 	private static final Logger log = LoggerFactory.getLogger(UserFormSubmissionHandler.class);
-
+	
 	@Transactional
 	public void handle(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
-
+	        throws IOException, ServletException {
+		
 		//Process form data from legacy UI
 		chain.doFilter(request, response);
-
+		
 		if (((HttpServletRequest) request).getMethod().equals("POST")
-				&& ((HttpServletResponse) response).getStatus() < 400) {
-
+		        && ((HttpServletResponse) response).getStatus() < 400) {
+			
 			DataFilterService dataFilterService = Context.getRegisteredComponents(DataFilterService.class).get(0);
 			LocationService locationService = Context.getLocationService();
 			UserService userService = Context.getUserService();
-
+			
 			User user = null;
 			//TODO remove this if condition when the legacy ui passes userId
 			String userName = request.getParameter("username");
 			if (!StringUtils.isEmpty(userName)) {
 				user = userService.getUserByUsername(userName);
 			}
-
+			
 			if (user == null) {
 				String userUUID = ((HttpServletResponse) response).getHeader("userUUID");
 				user = userService.getUserByUuid(userUUID);
 			}
-
+			
 			if (user == null) {
 				log.info("User details missing or Invalid user details");
 				return;
@@ -80,12 +80,12 @@ public class UserFormSubmissionHandler {
 				return;
 			}
 			Set<OpenmrsObject> allSelectedLocations = Arrays.stream(locationStrings).map(l -> locationService.getLocation(l))
-					.filter(Objects::nonNull).collect(Collectors.toSet());
-
-			Collection<EntityBasisMap> mappedLocationsMap = dataFilterService
-					.getEntityBasisMaps(user, Location.class.getName());
+			        .filter(Objects::nonNull).collect(Collectors.toSet());
+			
+			Collection<EntityBasisMap> mappedLocationsMap = dataFilterService.getEntityBasisMaps(user,
+			    Location.class.getName());
 			List<OpenmrsObject> locationsToBeRevoked = getLocationsToBeRevoked(locationService.getAllLocations(),
-					mappedLocationsMap, locationStrings);
+			    mappedLocationsMap, locationStrings);
 			if (!locationsToBeRevoked.isEmpty()) {
 				dataFilterService.revokeAccess(user, locationsToBeRevoked);
 			}
@@ -93,25 +93,24 @@ public class UserFormSubmissionHandler {
 				dataFilterService.grantAccess(user, allSelectedLocations);
 			}
 		}
-
+		
 	}
-
+	
 	private List<OpenmrsObject> getLocationsToBeRevoked(List<Location> allLocationsForLoggedInUser,
-			Collection<EntityBasisMap> entityBasisMapsForUserBeingEdited,
-			String[] locationStrings) {
-
+	        Collection<EntityBasisMap> entityBasisMapsForUserBeingEdited, String[] locationStrings) {
+		
 		Set<String> mappedLocationIDsForUser = entityBasisMapsForUserBeingEdited.stream()
-				.map(entityBasisMap -> entityBasisMap.getBasisIdentifier()).collect(Collectors.toSet());
-
+		        .map(entityBasisMap -> entityBasisMap.getBasisIdentifier()).collect(Collectors.toSet());
+		
 		List<String> markedLocations = Arrays.asList(locationStrings);
-
+		
 		List<Location> locationsLoggedInUserHasControl = allLocationsForLoggedInUser.stream()
-				.filter((location) -> mappedLocationIDsForUser.contains(location.getLocationId().toString()))
-				.collect(Collectors.toList());
-
+		        .filter((location) -> mappedLocationIDsForUser.contains(location.getLocationId().toString()))
+		        .collect(Collectors.toList());
+		
 		if (!locationsLoggedInUserHasControl.isEmpty()) {
 			return locationsLoggedInUserHasControl.stream().filter(location -> !markedLocations.contains(location.getName()))
-					.collect(Collectors.toList());
+			        .collect(Collectors.toList());
 		}
 		return new ArrayList<>();
 	}

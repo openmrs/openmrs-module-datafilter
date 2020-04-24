@@ -92,7 +92,7 @@ public class UtilTest {
 	}
 	
 	public static boolean elementExists(Object doc, String path, String attribName, String attribValue)
-	    throws XPathExpressionException {
+	        throws XPathExpressionException {
 		return getCount(doc, path + "[@" + attribName + "='" + attribValue + "']") > 0;
 	}
 	
@@ -103,7 +103,7 @@ public class UtilTest {
 	
 	@Test
 	public void addAnnotationToClass_shouldAddTheSpecifiedAnnotationToTheSpecifiedClass()
-	    throws ReflectiveOperationException {
+	        throws ReflectiveOperationException {
 		Class<? extends Annotation> annotationClass = FilterDef.class;
 		Class<?> clazz = Concept.class;
 		assertFalse(clazz.isAnnotationPresent(annotationClass));

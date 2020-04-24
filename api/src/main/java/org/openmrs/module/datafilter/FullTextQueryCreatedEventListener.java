@@ -121,7 +121,7 @@ public class FullTextQueryCreatedEventListener implements ApplicationListener<Fu
 	}
 	
 	private void enableFilter(FullTextFilterRegistration registration, Map<String, Object> paramNameValueMap,
-	                          FullTextQuery query) {
+	        FullTextQuery query) {
 		
 		FullTextFilter filter = query.enableFullTextFilter(registration.getName());
 		if (registration.getParameters() != null) {

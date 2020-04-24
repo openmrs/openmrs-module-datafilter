@@ -32,9 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * This class provides a facade for determining the list of person ids that the authenticated user
  * is granted to access to based on some basis, the basic could be something like a Location or a
- * Program.
- *
- * <pre>
+ * Program. <pre>
  *     TODO This is a very simple implementation that should be replaced with a better one
  *     that doesn't use raw sql queries, supports caching of person ids, uses global properties,
  *     basis ids and other cool features.

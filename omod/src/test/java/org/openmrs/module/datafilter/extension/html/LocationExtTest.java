@@ -33,32 +33,32 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @PrepareForTest(Context.class)
 @RunWith(PowerMockRunner.class)
 public class LocationExtTest {
-
+	
 	private LocationExt locationExt;
-
+	
 	@Mock
 	private LocationService locationService;
-
+	
 	@Mock
 	private UserService userService;
-
+	
 	@Mock
 	private DataFilterService dataFilterService;
-
+	
 	@Before
 	public void setUp() {
 		initMocks(this);
 		PowerMockito.mockStatic(Context.class);
-
+		
 		locationExt = new LocationExt();
 		when(Context.getLocationService()).thenReturn(locationService);
 		when(Context.getUserService()).thenReturn(userService);
 		when(Context.getRegisteredComponents(DataFilterService.class)).thenReturn(Arrays.asList(dataFilterService));
-
+		
 		List<Location> locationList = Arrays.asList(getLocationMock("l1"), getLocationMock("l2"));
 		when(locationService.getAllLocations()).thenReturn(locationList);
 	}
-
+	
 	@Test
 	public void shouldGenerateContentWithNoSelectedLocationsWhenUserHasNoLocationsMapped() {
 		locationExt.setParameterMap(new HashMap<String, String>());
@@ -66,7 +66,7 @@ public class LocationExtTest {
 		assertTrue(content.contains("<input type='checkbox' name='locationStrings' id='locationStrings.l1' value='l1'>"));
 		assertTrue(content.contains("<input type='checkbox' name='locationStrings' id='locationStrings.l2' value='l2'>"));
 	}
-
+	
 	@Test
 	public void shouldGenerateContentWithCheckedUserLocations() {
 		Map<String, String> parameterMap = new HashMap<String, String>();
@@ -74,26 +74,26 @@ public class LocationExtTest {
 		locationExt.setParameterMap(parameterMap);
 		User user = new User(1);
 		when(userService.getUser(1)).thenReturn(user);
-
+		
 		EntityBasisMap entityBasisMap = new EntityBasisMap();
 		entityBasisMap.setEntityIdentifier("1");
 		entityBasisMap.setBasisIdentifier("2");
-
-		when(dataFilterService.getEntityBasisMaps(user, Location.class.getName())).thenReturn(
-				Arrays.asList(entityBasisMap));
+		
+		when(dataFilterService.getEntityBasisMaps(user, Location.class.getName())).thenReturn(Arrays.asList(entityBasisMap));
 		when(locationService.getLocation(2)).thenReturn(getLocationMock("l2"));
-
+		
 		String content = locationExt.getOverrideContent("");
-
+		
 		assertTrue(content.contains("<input type='checkbox' name='locationStrings' id='locationStrings.l1' value='l1'>"));
-		assertTrue(content.contains(
-				"<input type='checkbox' name='locationStrings' id='locationStrings.l2' value='l2' checked>"));;
+		assertTrue(
+		    content.contains("<input type='checkbox' name='locationStrings' id='locationStrings.l2' value='l2' checked>"));
+		;
 	}
-
+	
 	private Location getLocationMock(String locationName) {
 		Location location = new Location(Integer.parseInt(locationName.substring(1)));
 		location.setName(locationName);
 		return location;
 	}
-
+	
 }

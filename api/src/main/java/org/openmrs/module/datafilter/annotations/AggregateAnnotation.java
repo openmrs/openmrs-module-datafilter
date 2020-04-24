@@ -25,8 +25,6 @@ public interface AggregateAnnotation<A> {
 	
 	/**
 	 * Subclasses need to implement this method to return the type of the annotation they group.
-	 * 
-	 * @return
 	 */
 	Class<A> getGroupedAnnotationType();
 	

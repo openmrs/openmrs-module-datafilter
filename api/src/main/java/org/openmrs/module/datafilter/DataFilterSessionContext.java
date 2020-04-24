@@ -168,7 +168,7 @@ public class DataFilterSessionContext extends SpringSessionContext {
 	}
 	
 	private void enableFilter(HibernateFilterRegistration registration, Map<String, Object> paramNameValueMap,
-	                          Session session) {
+	        Session session) {
 		
 		Filter filter = session.getEnabledFilter(registration.getName());
 		if (filter == null) {

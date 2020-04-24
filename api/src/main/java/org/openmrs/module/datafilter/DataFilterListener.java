@@ -13,9 +13,7 @@ package org.openmrs.module.datafilter;
  * Any spring bean that implements this interface will be notified before a supported filter is
  * enabled. A supported filter is one for which a call to {@link #supports(String)} returns true for
  * it. Implementations of this interface can do some useful logic to determine the filter logic a=nd
- * can also set parameter values in the condition for the filter about to be enabled.
- * 
- * <pre>
+ * can also set parameter values in the condition for the filter about to be enabled. <pre>
  * Implementations are expected to ONLY listen for filters they have registered.
  * </pre>
  */

@@ -113,7 +113,7 @@ public class AccessInterceptor extends EmptyInterceptor {
 	}
 	
 	private void checkIfHasLocationBasedAccess(Object entity, Serializable id, Object[] state, String[] propertyNames,
-	                                           User user, String filterName) {
+	        User user, String filterName) {
 		
 		boolean check = !Util.skipFilter(filterName);
 		if (check) {
@@ -131,7 +131,7 @@ public class AccessInterceptor extends EmptyInterceptor {
 	}
 	
 	private void checkIfHasEncounterTypeBasedAccess(Object entity, Object[] state, String[] propertyNames, User user,
-	                                                String filterName) {
+	        String filterName) {
 		
 		boolean check = !Util.skipFilter(filterName);
 		if (check) {

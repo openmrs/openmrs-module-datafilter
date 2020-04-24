@@ -1,19 +1,19 @@
 [
     {
-        "name": "datafilter_locationBasedPatientFullTextFilter",
-        "targetClasses": [
+        "name" : "datafilter_locationBasedPatientFullTextFilter",
+        "targetClasses" : [
             "org.openmrs.PatientIdentifier",
             "org.openmrs.PersonName",
             "org.openmrs.PersonAttribute"
         ],
-        "implClass": "org.openmrs.module.datafilter.impl.PatientIdFullTextFilter",
-        "cacheMode": "NONE",
-        "parameters": [
+        "implClass" : "org.openmrs.module.datafilter.impl.PatientIdFullTextFilter",
+        "cacheMode" : "NONE",
+        "parameters" : [
             {
-                "name": "field"
+                "name" : "field"
             },
             {
-                "name": "patientIds"
+                "name" : "patientIds"
             }
         ]
     }

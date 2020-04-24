@@ -39,9 +39,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * Custom BeanFactoryPostProcessor that registers filters to hbm files by doing the following for
- * all filtered entities mapped using xml.
- * 
- * <pre>
+ * all filtered entities mapped using xml. <pre>
  * <ul>
  * <li>Find all filtered entities that are mapped using xml and load the contents of their hbm
  * files</li>
@@ -56,7 +54,6 @@ import org.springframework.stereotype.Component;
  * of our transformed hibernate.cfg.xml file that references the transformed hbm files containing
  * our filters</li>
  * <ul/>
- * 
  * <pre/>
  */
 @Component
@@ -152,7 +149,7 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 	 * @return the absolute path of the new hibernate cfg file
 	 */
 	private static String createTransformedHibernateCfgFile(Map<String, String> oldAndTransformedMappingFiles,
-	                                                        String timestamp) {
+	        String timestamp) {
 		
 		InputStream in = OpenmrsClassLoader.getInstance().getResourceAsStream(CORE_HIBERNATE_CFG_FILE);
 		ByteArrayOutputStream outFinal = null;
@@ -191,8 +188,8 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 	 * @param timestamp the timestamp to use for the output directory name
 	 * @return map of previous and respective absolute paths of their new hbm file.
 	 */
-	private static Map<String, String> createTransformedMappingFiles(Map<Class, List<HibernateFilterRegistration>> classFiltersMap,
-	                                                                 String timestamp) {
+	private static Map<String, String> createTransformedMappingFiles(
+	        Map<Class, List<HibernateFilterRegistration>> classFiltersMap, String timestamp) {
 		
 		File transformedResourcesRepo = FileUtils.getFile(FileUtils.getTempDirectory(), MODULE_ID, timestamp);
 		Map<String, String> oldAndTransformedMappingFiles = new HashMap();

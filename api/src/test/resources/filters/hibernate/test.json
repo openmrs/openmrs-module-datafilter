@@ -1,18 +1,24 @@
 [
     {
-        "name": "datafilter_locationFilter1",
-        "targetClasses": ["org.openmrs.Location"],
-        "condition": "1=1"
+        "name" : "datafilter_locationFilter1",
+        "targetClasses" : [
+            "org.openmrs.Location"
+        ],
+        "condition" : "1=1"
     },
     {
-        "name": "datafilter_locationFilter2",
-        "targetClasses": ["org.openmrs.Location"],
-        "condition": "1=1"
+        "name" : "datafilter_locationFilter2",
+        "targetClasses" : [
+            "org.openmrs.Location"
+        ],
+        "condition" : "1=1"
     },
     {
-        "name": "datafilter_CareSettingFilter",
-        "defaultCondition": "1=1",
-        "targetClasses": ["org.openmrs.CareSetting"],
-        "condition": "0 < 1"
+        "name" : "datafilter_CareSettingFilter",
+        "defaultCondition" : "1=1",
+        "targetClasses" : [
+            "org.openmrs.CareSetting"
+        ],
+        "condition" : "0 < 1"
     }
 ]

@@ -42,14 +42,14 @@ public class DataFilterSessionFactoryBean extends HibernateSessionFactoryBean {
 	 * @see HibernateSessionFactoryBean#setMappingResources(String...)
 	 */
 	@Override
-	public void setMappingResources(String... moduleMappingResourcesToAdd) {
+	public void setMappingResources(String... mappingResources) {
 		Map<Class, List<HibernateFilterRegistration>> classFiltersMap = Util.getClassFiltersMap();
 		if (classFiltersMap.isEmpty()) {
 			if (log.isDebugEnabled()) {
 				log.debug("No registered filters found for hbm files");
 			}
 			
-			super.setMappingResources(moduleMappingResourcesToAdd);
+			super.setMappingResources(mappingResources);
 			return;
 		}
 		
@@ -57,8 +57,8 @@ public class DataFilterSessionFactoryBean extends HibernateSessionFactoryBean {
 		List<String> filteredModuleHbmFiles = new ArrayList();
 		File outputDir = new File(filteredResourcesLocation);
 		
-		for (int i = 0; i < moduleMappingResourcesToAdd.length; i++) {
-			String resource = moduleMappingResourcesToAdd[i];
+		for (int i = 0; i < mappingResources.length; i++) {
+			String resource = mappingResources[i];
 			String classname = Util.getMappedClassName(resource);
 			if (classname == null) {
 				//Some module hbm files are actually empty

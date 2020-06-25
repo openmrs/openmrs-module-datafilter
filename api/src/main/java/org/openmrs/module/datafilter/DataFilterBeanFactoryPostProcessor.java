@@ -16,10 +16,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
@@ -28,7 +28,6 @@ import org.openmrs.util.OpenmrsClassLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.InvalidPropertyException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -65,10 +64,6 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 	
 	public static final String CFG_LOC_PROP_NAME = "configLocations";
 	
-	public static final String CORE_HIBERNATE_CFG_FILE = "hibernate.cfg.xml";
-	
-	public static final String DATAFILTER_HIBERNATE_CFG_FILE = "datafilterHibernate.cfg.xml";
-	
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		log.info("In datafilter's BeanFactoryPostProcessor");
 		
@@ -85,58 +80,93 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 		
 		final BeanDefinition beanDefinition = beanFactory.getBeanDefinition(SESSION_FACTORY_BEAN_NAME);
 		
-		ManagedList<TypedStringValue> configLocations = (ManagedList) beanDefinition.getPropertyValues()
+		ManagedList<TypedStringValue> configLocationsList = (ManagedList) beanDefinition.getPropertyValues()
 		        .get(CFG_LOC_PROP_NAME);
 		
-		Optional candidate = configLocations.stream()
-		        .filter(loc -> ("classpath:" + CORE_HIBERNATE_CFG_FILE).equals(loc.getValue())).findFirst();
+		List<String> hbmConfigFiles = new ArrayList(configLocationsList.size());
+		configLocationsList.stream().forEach(loc -> hbmConfigFiles.add(loc.getValue().substring(10)));
 		
-		if (!candidate.isPresent()) {
-			//What? Was the file renamed in core?
-			Class<?> beanClass;
-			try {
-				beanClass = OpenmrsClassLoader.getInstance().loadClass(beanDefinition.getBeanClassName());
-			}
-			catch (ClassNotFoundException e) {
-				throw new BeanCreationException("Failed to reconfigure sessionFactory bean", e);
-			}
-			
-			throw new InvalidPropertyException(beanClass, CFG_LOC_PROP_NAME,
-			        CORE_HIBERNATE_CFG_FILE + " entry not found among configLocations");
-		}
+		log.info("Hibernate Config locations: " + hbmConfigFiles);
 		
 		final String timestamp = new Long(System.currentTimeMillis()).toString();
-		Map<String, String> oldAndTransformedMappingFiles = createTransformedMappingFiles(classFiltersMap, timestamp);
-		if (oldAndTransformedMappingFiles.isEmpty()) {
+		
+		Map<String, Map<String, String>> cfgAndOldAndTransformedMappingFiles = new HashMap();
+		for (Map.Entry<Class, List<HibernateFilterRegistration>> entry : classFiltersMap.entrySet()) {
+			//TODO parse the hibernate cfg file once outside of this method and reuse it everywhere,
+			//Same for the individual hbm files, Util.getMappingResource should return name and resource map
+			//So that we don't have to parse each file again when adding filters.
+			String className = entry.getKey().getName();
+			if (log.isDebugEnabled()) {
+				log.debug("Looking up mapping resource for: " + className);
+			}
+			
+			String hbmResourceName = null;
+			String hbmConfigFile = null;
+			for (String candidate : hbmConfigFiles) {
+				hbmResourceName = Util.getMappingResource(candidate, className);
+				if (hbmResourceName != null) {
+					if (log.isDebugEnabled()) {
+						log.debug("Found mapping resource for " + className + " in config file: " + candidate);
+					}
+					
+					hbmConfigFile = candidate;
+					break;
+				}
+			}
+			
+			if (hbmResourceName == null) {
+				//This is most likely a filter to be added to a module resource
+				//TODO keep track of skipped module resources so we can actually catch bad filter registrations 
+				continue;
+			}
+			
+			String newMappingFile = createTransformedMappingFiles(hbmResourceName, timestamp, entry.getValue());
+			if (cfgAndOldAndTransformedMappingFiles.get(hbmConfigFile) == null) {
+				cfgAndOldAndTransformedMappingFiles.put(hbmConfigFile, new HashMap());
+			}
+			
+			cfgAndOldAndTransformedMappingFiles.get(hbmConfigFile).put(hbmResourceName, newMappingFile);
+		}
+		
+		log.info("Hibernate cfg files and their old And transformed mapping files: " + cfgAndOldAndTransformedMappingFiles);
+		
+		if (cfgAndOldAndTransformedMappingFiles.isEmpty()) {
 			return;
 		}
 		
-		String newCfgFilePath;
-		try {
+		for (Map.Entry<String, Map<String, String>> entry : cfgAndOldAndTransformedMappingFiles.entrySet()) {
+			log.info(entry.getKey() + " -> " + entry.getValue());
+			if (entry.getValue().isEmpty()) {
+				continue;
+			}
 			
-			newCfgFilePath = createTransformedHibernateCfgFile(oldAndTransformedMappingFiles, timestamp);
-		}
-		finally {
-			File transformedFilesDir = FileUtils.getFile(FileUtils.getTempDirectory(), MODULE_ID);
-			if (transformedFilesDir.exists()) {
-				try {
-					FileUtils.forceDeleteOnExit(transformedFilesDir);
-				}
-				catch (IOException e) {
-					//Ignore since it is in the temp dir anyways
+			String newCfgFilePath;
+			try {
+				newCfgFilePath = createTransformedHibernateCfgFile(entry.getValue(), timestamp, entry.getKey());
+			}
+			finally {
+				File transformedFilesDir = FileUtils.getFile(FileUtils.getTempDirectory(), MODULE_ID);
+				if (transformedFilesDir.exists()) {
+					try {
+						FileUtils.forceDeleteOnExit(transformedFilesDir);
+					}
+					catch (IOException e) {
+						//Ignore since it is in the temp dir anyways
+					}
 				}
 			}
+			
+			configLocationsList.remove(new TypedStringValue("classpath:" + entry.getKey()));
+			configLocationsList.add(new TypedStringValue("file:" + newCfgFilePath));
 		}
-		
-		configLocations.remove(candidate.get());
-		configLocations.add(new TypedStringValue("file:" + newCfgFilePath));
 		
 		File transformedResourcesRepo = FileUtils.getFile(FileUtils.getTempDirectory(), MODULE_ID, timestamp);
 		beanDefinition.getPropertyValues().addPropertyValue("filteredResourcesLocation",
 		    transformedResourcesRepo.getAbsolutePath());
+		
 		beanDefinition.setBeanClassName(DataFilterSessionFactoryBean.class.getName());
 		
-		log.info("Successfully reconfigured the sessionFactory bean's configLocations to: " + configLocations.stream()
+		log.info("Successfully reconfigured the sessionFactory bean's configLocations to: " + configLocationsList.stream()
 		        .map(typedStringValue -> typedStringValue.getValue()).collect(Collectors.toList()));
 	}
 	
@@ -146,12 +176,13 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 	 * @param oldAndTransformedMappingFiles map of previous and respective absolute paths of their new
 	 *            hbm file.
 	 * @param timestamp the timestamp to use for the output directory name
+	 * @param cfgFile the source hibernate cfg file
 	 * @return the absolute path of the new hibernate cfg file
 	 */
 	private static String createTransformedHibernateCfgFile(Map<String, String> oldAndTransformedMappingFiles,
-	        String timestamp) {
+	        String timestamp, String cfgFile) {
 		
-		InputStream in = OpenmrsClassLoader.getInstance().getResourceAsStream(CORE_HIBERNATE_CFG_FILE);
+		InputStream in = OpenmrsClassLoader.getInstance().getResourceAsStream(cfgFile);
 		ByteArrayOutputStream outFinal = null;
 		
 		for (Map.Entry<String, String> entry : oldAndTransformedMappingFiles.entrySet()) {
@@ -164,12 +195,11 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 			outFinal = outTemp;
 		}
 		
-		File newCfgFile = FileUtils.getFile(FileUtils.getTempDirectory(), MODULE_ID, timestamp,
-		    DATAFILTER_HIBERNATE_CFG_FILE);
+		File newCfgFile = FileUtils.getFile(FileUtils.getTempDirectory(), MODULE_ID, timestamp, MODULE_ID + "-" + cfgFile);
 		
 		try {
 			if (log.isDebugEnabled()) {
-				log.debug("Hibernate cfg file in use: " + newCfgFile.getAbsolutePath());
+				log.debug("Hibernate cfg file " + cfgFile + " replaced with: " + newCfgFile.getAbsolutePath());
 			}
 			
 			FileUtils.writeByteArrayToFile(newCfgFile, outFinal.toByteArray());
@@ -184,42 +214,27 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 	/**
 	 * Creates new transformed hbm files that contain our filters
 	 *
-	 * @param classFiltersMap map of classes and their filter registrations
+	 * @param hbmResourceName the name of the original mapping resource
 	 * @param timestamp the timestamp to use for the output directory name
+	 * @param filterRegs the list of filters registrations for the class associated to the mapping file
 	 * @return map of previous and respective absolute paths of their new hbm file.
 	 */
-	private static Map<String, String> createTransformedMappingFiles(
-	        Map<Class, List<HibernateFilterRegistration>> classFiltersMap, String timestamp) {
+	private static String createTransformedMappingFiles(String hbmResourceName, String timestamp,
+	        List<HibernateFilterRegistration> filterRegs) {
 		
 		File transformedResourcesRepo = FileUtils.getFile(FileUtils.getTempDirectory(), MODULE_ID, timestamp);
-		Map<String, String> oldAndTransformedMappingFiles = new HashMap();
 		
-		for (Map.Entry<Class, List<HibernateFilterRegistration>> entry : classFiltersMap.entrySet()) {
-			//TODO parse the hibernate cfg file once outside of this method and reuse it everywhere,
-			//Same for the individual hbm files, Util.getMappingResource should return name and resource map
-			//So that we don't have to parse each file again when adding filters.
-			String hbmResourceName = Util.getMappingResource(CORE_HIBERNATE_CFG_FILE, entry.getKey().getName());
-			if (hbmResourceName == null) {
-				//This is most likely a filter to be added to a module resource
-				//TODO keep track of skipped module resources so we can actually catch bad filter registrations 
-				continue;
-			}
+		try {
+			File newMappingFile = Util.createNewMappingFile(hbmResourceName, filterRegs, transformedResourcesRepo);
 			
-			try {
-				File newMappingFile = Util.createNewMappingFile(hbmResourceName, entry.getValue(), transformedResourcesRepo);
-				
-				if (log.isDebugEnabled()) {
-					log.debug("Mapping file in use for " + entry.getKey() + ": " + newMappingFile.getAbsolutePath());
-				}
-				
-				oldAndTransformedMappingFiles.put(hbmResourceName, newMappingFile.getAbsolutePath());
+			if (log.isDebugEnabled()) {
+				log.debug("Mapping resource " + hbmResourceName + ": replaced with:" + newMappingFile.getAbsolutePath());
 			}
-			catch (IOException e) {
-				throw new BeanCreationException("Failed to create transformed mapping file for " + entry.getKey(), e);
-			}
+			return newMappingFile.getAbsolutePath();
 		}
-		
-		return oldAndTransformedMappingFiles;
+		catch (IOException e) {
+			throw new BeanCreationException("Failed to create transformed mapping file for " + hbmResourceName, e);
+		}
 	}
 	
 }

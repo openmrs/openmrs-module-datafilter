@@ -253,7 +253,7 @@ public class PatientLocationBasedFilterTest extends BaseFilterTest {
 	
 	@Test
 	public void patientFilter_shouldNotFilterPersonsThatAreNotPatients() {
-		executeDataSet("otherPersonsThatAreNotPatients.xml");
+		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "otherPersonsThatAreNotPatients.xml");
 		reloginAs("dyorke", "test");
 		int expCount = 2;
 		Session session = sf.getCurrentSession();

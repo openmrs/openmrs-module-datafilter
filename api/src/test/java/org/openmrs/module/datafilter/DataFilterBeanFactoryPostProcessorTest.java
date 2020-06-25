@@ -9,18 +9,21 @@
  */
 package org.openmrs.module.datafilter;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.openmrs.module.datafilter.DataFilterBeanFactoryPostProcessor.CFG_LOC_PROP_NAME;
-import static org.openmrs.module.datafilter.DataFilterBeanFactoryPostProcessor.CORE_HIBERNATE_CFG_FILE;
-import static org.openmrs.module.datafilter.DataFilterBeanFactoryPostProcessor.DATAFILTER_HIBERNATE_CFG_FILE;
 import static org.openmrs.module.datafilter.DataFilterBeanFactoryPostProcessor.SESSION_FACTORY_BEAN_NAME;
+import static org.openmrs.module.datafilter.Util.getDocumentBuilder;
 
+import java.io.FileInputStream;
 import java.util.Optional;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -29,6 +32,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.TypedStringValue;
 import org.springframework.beans.factory.support.ManagedList;
+import org.w3c.dom.Document;
 
 public class DataFilterBeanFactoryPostProcessorTest {
 	
@@ -40,6 +44,10 @@ public class DataFilterBeanFactoryPostProcessorTest {
 	@Mock
 	private BeanDefinition mockBeanDefinition;
 	
+	public class MockEntity {
+		
+	}
+	
 	@Before
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
@@ -48,18 +56,35 @@ public class DataFilterBeanFactoryPostProcessorTest {
 	}
 	
 	@Test
-	public void postProcessBeanFactory_shouldRegisterFiltersToMappingResourceFiles() {
+	@Ignore
+	public void postProcessBeanFactory_shouldRegisterFiltersToMappingResourceFiles() throws Exception {
 		ManagedList<TypedStringValue> configLocations = new ManagedList();
-		configLocations.add(new TypedStringValue("classpath:" + CORE_HIBERNATE_CFG_FILE));
+		final String hbmCfgFile = "hibernate.cfg.xml";
+		final String testHbmCfgFile = "testHibernateCfg.xml";
+		configLocations.add(new TypedStringValue("classpath:" + hbmCfgFile));
+		configLocations.add(new TypedStringValue("classpath:" + testHbmCfgFile));
 		MutablePropertyValues propertyValues = new MutablePropertyValues();
 		propertyValues.add(CFG_LOC_PROP_NAME, configLocations);
 		when(mockBeanDefinition.getPropertyValues()).thenReturn(propertyValues);
 		
 		processor.postProcessBeanFactory(mockFactory);
 		
-		Optional<TypedStringValue> dataFilterConfigLocation = configLocations.stream()
-		        .filter(loc -> (loc.getValue()).contains(DATAFILTER_HIBERNATE_CFG_FILE)).findFirst();
-		assertNotNull(dataFilterConfigLocation.get().getValue());
+		Optional<TypedStringValue> dataFilterHbmCfgFile = configLocations.stream()
+		        .filter(loc -> (loc.getValue()).contains("datafilter-" + hbmCfgFile)).findFirst();
+		assertNotNull(dataFilterHbmCfgFile.get().getValue());
+		
+		String resource = dataFilterHbmCfgFile.get().getValue();
+		Document doc = getDocumentBuilder().parse(new FileInputStream(resource.substring(5)));
+		assertEquals(6, UtilTest.getCount(doc, "/hibernate-configuration/session-factory/mapping[@file]"));
+		
+		Optional<TypedStringValue> dataFilterTestHbmCfgFile = configLocations.stream()
+		        .filter(loc -> (loc.getValue()).contains("datafilter-" + testHbmCfgFile)).findFirst();
+		assertNotNull(dataFilterTestHbmCfgFile.get().getValue());
+		
+		resource = dataFilterTestHbmCfgFile.get().getValue();
+		doc = getDocumentBuilder().parse(new FileInputStream(resource.substring(5)));
+		assertTrue(UtilTest.getAttribute(doc, "/hibernate-configuration/session-factory/mapping", "file")
+		        .contains("MockEntityResource.hbm.xml"));
 		assertNotNull(propertyValues.getPropertyValue("filteredResourcesLocation"));
 		verify(mockBeanDefinition, times(1)).setBeanClassName(DataFilterSessionFactoryBean.class.getName());
 	}

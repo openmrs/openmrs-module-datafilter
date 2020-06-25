@@ -544,10 +544,6 @@ public class Util {
 	 */
 	private static List<String> getMappingResources(String cfgFilename) {
 		
-		if (mappingResources != null) {
-			return mappingResources;
-		}
-		
 		String xpathExpression = "/hibernate-configuration/session-factory/mapping/@resource";
 		NodeList resourceAttributes = readFromXmlFile(xpathExpression, cfgFilename, XPathConstants.NODESET);
 		mappingResources = new ArrayList();

@@ -76,7 +76,9 @@ public class ImplDataFilterListener implements DataFilterListener {
 			
 			filterContext.setParameter(ImplConstants.PARAM_NAME_BASIS_IDS, basisIds);
 			
-		} else if (filterContext.getFilterName().startsWith(ImplConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX)) {
+		} else if (filterContext.getFilterName().startsWith(ImplConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX)
+		        || filterContext.getFilterName().startsWith(ImplConstants.PRIV_BASED_FILTER_NAME_PREFIX)) {
+			
 			Collection<String> roles = new HashSet();
 			if (Context.isAuthenticated()) {
 				Collection<String> allRoles = Context.getAuthenticatedUser().getAllRoles().stream().map(r -> r.getName())

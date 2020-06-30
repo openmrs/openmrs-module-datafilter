@@ -115,10 +115,10 @@
         "name": "datafilter_locationBasedAppointmentFilter",
         "targetClasses": ["org.openmrs.module.appointments.model.Appointment"],
         "condition": "patient_id IN (
-                        SELECT DISTINCT appointments_ebm.entity_identifier FROM datafilter_entity_basis_map appointments_ebm
-                            WHERE appointments_ebm.entity_type = 'org.openmrs.Patient'
-                            AND appointments_ebm.basis_type = 'org.openmrs.Location'
-                            AND appointments_ebm.basis_identifier IN (:basisIds))",
+                        SELECT DISTINCT datafilter_ebm.entity_identifier FROM datafilter_entity_basis_map datafilter_ebm
+                            WHERE datafilter_ebm.entity_type = 'org.openmrs.Patient'
+                            AND datafilter_ebm.basis_type = 'org.openmrs.Location'
+                            AND datafilter_ebm.basis_identifier IN (:basisIds))",
         "parameters": [
             {
                 "name": "basisIds",

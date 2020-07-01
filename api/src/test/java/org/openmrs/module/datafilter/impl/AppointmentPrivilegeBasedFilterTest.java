@@ -12,13 +12,11 @@ package org.openmrs.module.datafilter.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Test;
-import org.openmrs.Location;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appointments.model.Appointment;
 import org.openmrs.module.datafilter.TestConstants;
@@ -26,7 +24,7 @@ import org.openmrs.module.datafilter.impl.api.DataFilterService;
 import org.openmrs.test.TestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class AppointmentLocationBasedFilterTest extends BaseFilterTest {
+public class AppointmentPrivilegeBasedFilterTest extends BaseFilterTest {
 	
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -35,9 +33,9 @@ public class AppointmentLocationBasedFilterTest extends BaseFilterTest {
 	private DataFilterService service;
 	
 	@Before
-	public void before() throws Exception {
+	public void before() {
 		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "appointments.xml");
-		DataFilterTestUtils.disableAppointmentPrivilegeFiltering();
+		DataFilterTestUtils.disableLocationFiltering();
 	}
 	
 	private List<Appointment> getAppointments() {
@@ -45,40 +43,35 @@ public class AppointmentLocationBasedFilterTest extends BaseFilterTest {
 	}
 	
 	@Test
-	public void getAppointments_shouldReturnNoAppointmentsIfTheUserIsNotGrantedAccessToAnyBasis() {
+	public void getAppointments_shouldExcludeAppointmentsAssociatedToServicesThatRequireAPrivilege() {
 		reloginAs("dBeckham", "test");
 		assertEquals(0, getAppointments().size());
 	}
 	
 	@Test
-	public void getAppointments_shouldReturnAppointmentsBelongingToPatientsAccessibleToTheUser() {
+	public void getAppointments_shouldIncludeAppointmentsAssociatedToServicesThatRequireAPrivilegeAndTheUserHasIt() {
 		reloginAs("dyorke", "test");
-		int expCount = 2;
-		Collection<Appointment> appointments = getAppointments();
+		int expCount = 3;
+		List<Appointment> appointments = getAppointments();
 		assertEquals(expCount, appointments.size());
 		assertTrue(TestUtil.containsId(appointments, 101));
 		assertTrue(TestUtil.containsId(appointments, 102));
+		assertTrue(TestUtil.containsId(appointments, 103));
 		
-		service.grantAccess(Context.getAuthenticatedUser(), new Location(4001));
-		appointments = getAppointments();
-		assertEquals(4, appointments.size());
+		DataFilterTestUtils.addPrivilege(TestConstants.PRIV_MANAGE_DENTAL_APPOINTMENTS);
+		expCount = 4;
+		assertEquals(expCount, getAppointments().size());
 	}
 	
 	@Test
 	public void getAppointments_shouldReturnAllAppointmentsIfTheAuthenticatedUserIsASuperUser() {
 		assertTrue(Context.getAuthenticatedUser().isSuperUser());
-		final int expCount = 4;
-		Collection<Appointment> appointments = getAppointments();
-		assertEquals(expCount, appointments.size());
-		assertTrue(TestUtil.containsId(appointments, 101));
-		assertTrue(TestUtil.containsId(appointments, 102));
-		assertTrue(TestUtil.containsId(appointments, 103));
-		assertTrue(TestUtil.containsId(appointments, 104));
+		assertEquals(4, getAppointments().size());
 	}
 	
 	@Test
-	public void getAppointments_shouldReturnAllAppointmentsIfLocationFilteringIsDisabled() {
-		DataFilterTestUtils.disableLocationFiltering();
+	public void getAppointments_shouldReturnAllAppointmentsIfPrivFilteringIsDisabled() {
+		DataFilterTestUtils.disableAppointmentPrivilegeFiltering();
 		reloginAs("dyorke", "test");
 		assertEquals(4, getAppointments().size());
 	}

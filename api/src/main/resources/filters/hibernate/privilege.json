@@ -18,5 +18,25 @@
                 "type" : "string"
             }
         ]
+    },
+    {
+        "name" : "datafilter_PrivBasedAppointmentFilter",
+        "targetClasses" : [
+            "org.openmrs.module.appointments.model.Appointment"
+        ],
+        "condition" : "appointment_service_id IN (
+            SELECT DISTINCT datafilter_ebm.entity_identifier FROM datafilter_entity_basis_map datafilter_ebm
+            WHERE datafilter_ebm.entity_type = 'org.openmrs.module.appointments.model.AppointmentServiceDefinition'
+            AND datafilter_ebm.basis_type = 'org.openmrs.Privilege'
+            AND datafilter_ebm.basis_identifier IN (
+                SELECT DISTINCT datafilter_rp.privilege FROM role_privilege datafilter_rp WHERE datafilter_rp.role IN (:roles)
+            )
+        )",
+        "parameters" : [
+            {
+                "name" : "roles",
+                "type" : "string"
+            }
+        ]
     }
 ]

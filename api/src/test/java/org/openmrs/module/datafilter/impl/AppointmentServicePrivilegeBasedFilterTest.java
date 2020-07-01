@@ -30,7 +30,7 @@ public class AppointmentServicePrivilegeBasedFilterTest extends BaseFilterTest {
 	
 	@Before
 	public void before() {
-		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "appointmentServices.xml");
+		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "appointments.xml");
 		DataFilterTestUtils.disableLocationFiltering();
 	}
 	
@@ -39,7 +39,7 @@ public class AppointmentServicePrivilegeBasedFilterTest extends BaseFilterTest {
 	}
 	
 	@Test
-	public void getObs_shouldExcludeEncountersThatRequireAPrivilegeTheUserDoesNotHave() {
+	public void getServices_shouldExcludeServicesThatRequireAPrivilegeTheUserDoesNotHave() {
 		reloginAs("dBeckham", "test");
 		assertEquals(0, getServices().size());
 	}

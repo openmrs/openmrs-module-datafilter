@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+
+    This Source Code Form is subject to the terms of the Mozilla Public License,
+    v. 2.0. If a copy of the MPL was not distributed with this file, You can
+    obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+    the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+
+    Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+    graphic logo is a trademark of OpenMRS Inc.
+
+-->
+
+<dataset>
+    <privilege privilege="Manage Chemo Appointments" description="Manage Chemo Appointments" uuid="ae90cb7d-c291-46c8-8d3a-96dc33d188fd" />
+    <privilege privilege="Manage Dental Appointments" description="Manage Dental Appointments" uuid="be90cb7d-c291-46c8-8d3a-96dc33d188fd" />
+
+    <appointment_service appointment_service_id="301" name="Chemo 1" description="Chemo 1" voided="0" creator="1" uuid="a46006e5-9fbb-4f20-866b-0ece245615a7" />
+    <appointment_service appointment_service_id="302" name="Chemo 2" description="Chemo 2" voided="0" creator="1" uuid="b46006e5-9fbb-4f20-866b-0ece245615a7" />
+    <appointment_service appointment_service_id="303" name="Dental" description="Dental" voided="0" creator="1" uuid="c46006e5-9fbb-4f20-866b-0ece245615a7" />
+    <appointment_service appointment_service_id="304" name="Other" description="Dental" voided="0" creator="1" uuid="d46006e5-9fbb-4f20-866b-0ece245615a7" />
+
+    <role role="Chemo Assistant" description="Chemo Assistant" uuid="1280cb6d-c291-46e8-8d3a-96dc33d189fc" />
+
+    <role_privilege role="Chemo Assistant" privilege="Manage Chemo Appointments" />
+
+    <user_role user_id="3000" role="Chemo Assistant" />
+    
+    <datafilter_entity_basis_map entity_basis_map_id="1001" entity_identifier="301" entity_type="org.openmrs.module.appointments.model.AppointmentServiceDefinition" basis_identifier="Manage Chemo Appointments" basis_type="org.openmrs.Privilege" creator="1" date_created="2020-06-27 00:00:00.0" uuid="ae56928c-3bca-56r4-a4dc-9197f6b2873c" />
+    <datafilter_entity_basis_map entity_basis_map_id="1002" entity_identifier="302" entity_type="org.openmrs.module.appointments.model.AppointmentServiceDefinition" basis_identifier="Manage Chemo Appointments" basis_type="org.openmrs.Privilege" creator="1" date_created="2020-06-27 00:00:00.0" uuid="be56928c-3bca-56r4-a4dc-9197f6b2873c" />
+    <datafilter_entity_basis_map entity_basis_map_id="1003" entity_identifier="303" entity_type="org.openmrs.module.appointments.model.AppointmentServiceDefinition" basis_identifier="Manage Dental Appointments" basis_type="org.openmrs.Privilege" creator="1" date_created="2020-06-27 00:00:00.0" uuid="ce56928c-3bca-56r4-a4dc-9197f6b2873c" />
+</dataset>

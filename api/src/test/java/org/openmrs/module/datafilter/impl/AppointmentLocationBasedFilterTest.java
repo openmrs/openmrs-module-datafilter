@@ -37,7 +37,6 @@ public class AppointmentLocationBasedFilterTest extends BaseFilterTest {
 	@Before
 	public void before() throws Exception {
 		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "appointments.xml");
-		DataFilterTestUtils.disableAppointmentPrivilegeFiltering();
 	}
 	
 	private List<Appointment> getAppointments() {
@@ -60,27 +59,30 @@ public class AppointmentLocationBasedFilterTest extends BaseFilterTest {
 		assertTrue(TestUtil.containsId(appointments, 102));
 		
 		service.grantAccess(Context.getAuthenticatedUser(), new Location(4001));
+		expCount = 3;
 		appointments = getAppointments();
-		assertEquals(4, appointments.size());
+		assertEquals(expCount, appointments.size());
+		assertTrue(TestUtil.containsId(appointments, 101));
+		assertTrue(TestUtil.containsId(appointments, 102));
+		assertTrue(TestUtil.containsId(appointments, 103));
 	}
 	
 	@Test
 	public void getAppointments_shouldReturnAllAppointmentsIfTheAuthenticatedUserIsASuperUser() {
 		assertTrue(Context.getAuthenticatedUser().isSuperUser());
-		final int expCount = 4;
+		final int expCount = 3;
 		Collection<Appointment> appointments = getAppointments();
 		assertEquals(expCount, appointments.size());
 		assertTrue(TestUtil.containsId(appointments, 101));
 		assertTrue(TestUtil.containsId(appointments, 102));
 		assertTrue(TestUtil.containsId(appointments, 103));
-		assertTrue(TestUtil.containsId(appointments, 104));
 	}
 	
 	@Test
 	public void getAppointments_shouldReturnAllAppointmentsIfLocationFilteringIsDisabled() {
 		DataFilterTestUtils.disableLocationFiltering();
 		reloginAs("dyorke", "test");
-		assertEquals(4, getAppointments().size());
+		assertEquals(3, getAppointments().size());
 	}
 	
 }

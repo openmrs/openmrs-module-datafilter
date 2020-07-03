@@ -14,7 +14,7 @@ public class TestConstants {
 	public static final String ROOT_PACKAGE_DIR = "org/openmrs/module/" + DataFilterConstants.MODULE_ID + "/";
 	
 	public static final String MODULE_TEST_DATASET_XML = TestConstants.ROOT_PACKAGE_DIR + "moduleTestData.xml";
-	
-	public final static String PRIV_MANAGE_DENTAL_APPOINTMENTS = "Manage Dental Appointments";
+
+    public final static String PRIV_MANAGE_DENTAL_APPOINTMENTS = "Manage Dental Appointments";
 	
 }

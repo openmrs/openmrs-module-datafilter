@@ -20,8 +20,6 @@ import static org.openmrs.module.datafilter.impl.ImplConstants.GP_LOCATION_BASED
 import static org.openmrs.module.datafilter.impl.ImplConstants.GP_LOCATION_BASED_FILTER_NAME_VISIT;
 import static org.openmrs.module.datafilter.impl.ImplConstants.GP_LOCATION_BASED_FULL_TEXT_FILTER_PATIENT;
 import static org.openmrs.module.datafilter.impl.ImplConstants.GP_LOCATION_FILTER_NAME;
-import static org.openmrs.module.datafilter.impl.ImplConstants.GP_PRIV_BASED_FILTER_NAME_APPOINTMENT;
-import static org.openmrs.module.datafilter.impl.ImplConstants.GP_PRIV_BASED_FILTER_NAME_APPT_SERVICE;
 import static org.openmrs.module.datafilter.impl.ImplConstants.GP_PROGRAM_BASED_FILTER_NAME_PROVIDER;
 import static org.openmrs.module.datafilter.impl.ImplConstants.GP_PROGRAM_BASED_FILTER_NAME_USER;
 
@@ -58,13 +56,6 @@ public class DataFilterTestUtils {
 		AdministrationService as = Context.getAdministrationService();
 		as.setGlobalProperty(GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS, "true");
 		as.setGlobalProperty(GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER, "true");
-		Context.flushSession();
-	}
-	
-	public static void disableAppointmentPrivilegeFiltering() {
-		AdministrationService as = Context.getAdministrationService();
-		as.setGlobalProperty(GP_PRIV_BASED_FILTER_NAME_APPOINTMENT, "true");
-		as.setGlobalProperty(GP_PRIV_BASED_FILTER_NAME_APPT_SERVICE, "true");
 		Context.flushSession();
 	}
 	

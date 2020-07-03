@@ -49,7 +49,6 @@
         <openmrsPlatformVersion>2.3.0</openmrsPlatformVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <freemarkerVersion>2.3.29</freemarkerVersion>
-        <appointmentsVersion>1.3.0-SNAPSHOT</appointmentsVersion>
     </properties>
     
     <dependencyManagement>
@@ -65,13 +64,6 @@
                 <artifactId>freemarker</artifactId>
                 <version>${freemarkerVersion}</version>
             </dependency>
-            <dependency>
-                <groupId>org.bahmni.module</groupId>
-                <artifactId>appointments-api</artifactId>
-                <version>${appointmentsVersion}</version>
-                <scope>provided</scope>
-            </dependency>
-            
             <!-- Test dependencies -->
             <dependency>
                 <groupId>org.openmrs.api</groupId>

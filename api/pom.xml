@@ -34,20 +34,8 @@
             <artifactId>freemarker</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.bahmni.module</groupId>
-            <artifactId>appointments-api</artifactId>
-        </dependency>
-
-        <!--Test dependencies -->
-        <dependency>
             <groupId>org.openmrs.api</groupId>
             <artifactId>openmrs-api</artifactId>
-            <type>test-jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.bahmni.module</groupId>
-            <artifactId>appointments-api</artifactId>
-            <version>${appointmentsVersion}</version>
             <type>test-jar</type>
         </dependency>
         <dependency>

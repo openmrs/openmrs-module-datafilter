@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-
-<dataset>
-    <patient_appointment patient_appointment_id="101" patient_id ="1001" creator="1" date_created="2020-06-15 00:00:00.0" voided="0" uuid="a45006e5-9fbb-4f20-866b-0ece245615a7" />
-    <patient_appointment patient_appointment_id="102" patient_id ="1001" creator="1" date_created="2020-06-15 00:00:00.0" voided="0" uuid="b45006e5-9fbb-4f20-866b-0ece245615a7" />
-    <patient_appointment patient_appointment_id="103" patient_id ="1002" creator="1" date_created="2020-06-15 00:00:00.0" voided="0" uuid="c45006e5-9fbb-4f20-866b-0ece245615a7" />
-</dataset>

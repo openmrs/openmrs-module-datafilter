@@ -11,7 +11,6 @@ package org.openmrs.module.datafilter.impl;
 
 import static org.openmrs.module.datafilter.impl.ImplConstants.GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER;
 import static org.openmrs.module.datafilter.impl.ImplConstants.GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS;
-import static org.openmrs.module.datafilter.impl.ImplConstants.GP_LOCATION_BASED_FILTER_NAME_APPOINTMENT;
 import static org.openmrs.module.datafilter.impl.ImplConstants.GP_LOCATION_BASED_FILTER_NAME_ENCOUNTER;
 import static org.openmrs.module.datafilter.impl.ImplConstants.GP_LOCATION_BASED_FILTER_NAME_OBS;
 import static org.openmrs.module.datafilter.impl.ImplConstants.GP_LOCATION_BASED_FILTER_NAME_PATIENT;
@@ -40,7 +39,6 @@ public class DataFilterTestUtils {
 		as.setGlobalProperty(GP_LOCATION_BASED_FILTER_NAME_OBS, "true");
 		as.setGlobalProperty(GP_LOCATION_BASED_FILTER_NAME_USER, "true");
 		as.setGlobalProperty(GP_LOCATION_BASED_FILTER_NAME_PROVIDER, "true");
-		as.setGlobalProperty(GP_LOCATION_BASED_FILTER_NAME_APPOINTMENT, "true");
 		as.setGlobalProperty(GP_LOCATION_FILTER_NAME, "true");
 		Context.flushSession();
 	}

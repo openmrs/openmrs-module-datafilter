@@ -92,7 +92,7 @@ public class AccessUtil {
 	 * @param basisType the type to base on
 	 * @return a collection of basis ids
 	 */
-	protected static Collection<String> getAssignedBasisIds(Class<? extends BaseOpenmrsObject> basisType) {
+	public static Collection<String> getAssignedBasisIds(Class<? extends BaseOpenmrsObject> basisType) {
 		if (log.isDebugEnabled()) {
 			log.debug("Looking up assigned bases for the authenticated user");
 		}

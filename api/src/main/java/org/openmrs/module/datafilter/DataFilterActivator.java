@@ -9,7 +9,6 @@
  */
 package org.openmrs.module.datafilter;
 
-import org.openmrs.api.APIException;
 import org.openmrs.module.BaseModuleActivator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,23 +31,6 @@ public class DataFilterActivator extends BaseModuleActivator {
 	@Override
 	public void stopped() {
 		log.info("Data Filter Module stopped");
-	}
-	
-	/**
-	 * @see BaseModuleActivator#willRefreshContext() ()
-	 */
-	@Override
-	public void willRefreshContext() {
-		log.info("Start: Data Filter Module willRefreshContext");
-		
-		try {
-			Util.initializeFilters();
-		}
-		catch (ReflectiveOperationException e) {
-			throw new APIException(e);
-		}
-		
-		log.info("End: Data Filter Module willRefreshContext");
 	}
 	
 	/**

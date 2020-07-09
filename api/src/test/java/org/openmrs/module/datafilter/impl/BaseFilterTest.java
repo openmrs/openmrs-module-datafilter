@@ -10,22 +10,15 @@
 package org.openmrs.module.datafilter.impl;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UsernamePasswordCredentials;
 import org.openmrs.module.datafilter.TestConstants;
-import org.openmrs.module.datafilter.Util;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.util.PrivilegeConstants;
 
 public abstract class BaseFilterTest extends BaseModuleContextSensitiveTest {
-	
-	@BeforeClass
-	public static void beforeBaseFilterClass() throws ReflectiveOperationException {
-		Util.initializeFilters();
-	}
 	
 	@Before
 	public void beforeTestMethod() {

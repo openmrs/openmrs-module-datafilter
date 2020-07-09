@@ -64,8 +64,16 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 	
 	public static final String CFG_LOC_PROP_NAME = "configLocations";
 	
+	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		log.info("In datafilter's BeanFactoryPostProcessor");
+		
+		try {
+			Util.initializeFilters();
+		}
+		catch (ReflectiveOperationException e) {
+			throw new BeanCreationException("Failed to initialize filters", e);
+		}
 		
 		Map<Class, List<HibernateFilterRegistration>> classFiltersMap = Util.getClassFiltersMap();
 		if (classFiltersMap.isEmpty()) {

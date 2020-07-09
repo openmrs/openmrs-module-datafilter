@@ -10,7 +10,6 @@
 package org.openmrs.module.datafilter.impl.api.db.hibernate;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.startsWith;
@@ -81,7 +80,7 @@ public class AccessInterceptorTest {
 		when(Context.getRegisteredComponents(eq(SessionFactory.class))).thenReturn(Collections.singletonList(sf));
 		when(Util.skipFilter(anyString())).thenCallRealMethod();
 		when(Util.isFilterDisabled(anyString())).thenReturn(false);
-		when(adminService.getGlobalPropertyValue(eq(ImplConstants.GP_RUN_IN_STRICT_MODE), anyBoolean())).thenReturn(true);
+		when(adminService.getGlobalProperty(eq(ImplConstants.GP_RUN_IN_STRICT_MODE))).thenReturn("true");
 	}
 	
 	@Test

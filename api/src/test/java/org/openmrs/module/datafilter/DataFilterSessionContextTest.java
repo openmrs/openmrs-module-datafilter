@@ -49,9 +49,8 @@ public class DataFilterSessionContextTest {
 	
 	@Test
 	public void currentSession_shouldSkipIfTheMethodHasAlreadyBeenCalledOnTheCurrentThread() {
-		ThreadLocal areFiltersSet = new ThreadLocal();
+		ThreadLocal areFiltersSet = Whitebox.getInternalState(DataFilterSessionContext.class, "areFiltersSet");
 		areFiltersSet.set(true);
-		Whitebox.setInternalState(DataFilterSessionContext.class, "areFiltersSet", areFiltersSet);
 		suppress(method(SpringSessionContext.class, "currentSession"));
 		Whitebox.setInternalState(DataFilterSessionContext.class, "log", mockLogger);
 		when(mockLogger.isTraceEnabled()).thenReturn(true);

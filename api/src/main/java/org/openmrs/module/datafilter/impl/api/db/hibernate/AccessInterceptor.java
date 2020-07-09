@@ -90,11 +90,7 @@ public class AccessInterceptor extends EmptyInterceptor {
 					//Hibernate will flush any changes in the current session before querying the DB when fetching
 					//the GP value below and we end up in this method again, therefore we need to disable auto flush
 					String strictModeStr = InterceptorUtil.getGpValueNoFlush(ImplConstants.GP_RUN_IN_STRICT_MODE);
-					if ("false".equalsIgnoreCase(strictModeStr)) {
-						if (log.isTraceEnabled()) {
-							log.trace("Skipping AccessInterceptor because the module is not running in strict mode");
-						}
-					} else {
+					if ("true".equalsIgnoreCase(strictModeStr)) {
 						if (filteredByLoc) {
 							String filterName = locationBasedClassAndFiltersMap.get(entity.getClass());
 							checkIfHasLocationBasedAccess(entity, id, state, propertyNames, user, filterName);
@@ -103,6 +99,10 @@ public class AccessInterceptor extends EmptyInterceptor {
 						if (filteredByEnc) {
 							String filterName = encTypeBasedClassAndFiltersMap.get(entity.getClass());
 							checkIfHasEncounterTypeBasedAccess(entity, state, propertyNames, user, filterName);
+						}
+					} else {
+						if (log.isTraceEnabled()) {
+							log.trace("Skipping AccessInterceptor because the module is not running in strict mode");
 						}
 					}
 				}

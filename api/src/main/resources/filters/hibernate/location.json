@@ -110,5 +110,20 @@
                 "type": "string"
             }
         ]
+    },
+    {
+        "name": "datafilter_locationBasedDiagnosisFilter",
+        "targetClasses": ["org.openmrs.Diagnosis"],
+        "condition": "patient_id IN (
+        SELECT DISTINCT datafilter_ebm.entity_identifier FROM datafilter_entity_basis_map datafilter_ebm
+        WHERE datafilter_ebm.entity_type = 'org.openmrs.Patient'
+        AND datafilter_ebm.basis_type = 'org.openmrs.Location'
+        AND datafilter_ebm.basis_identifier IN (:basisIds))",
+        "parameters": [
+            {
+                "name": "basisIds",
+                "type": "string"
+            }
+        ]
     }
 ]

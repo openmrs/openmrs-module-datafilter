@@ -28,9 +28,9 @@ public class DataFilterBeanFactoryPostProcessorIntegrationTest extends BaseFilte
 	
 	@Test
 	public void postProcessBeanFactory_shouldRegisterFiltersToHbmFiles() {
-		assertEquals(16, Util.getHibernateFilterRegistrations().size());
+		assertEquals(17, Util.getHibernateFilterRegistrations().size());
 		Set<String> registeredFilters = sessionFactory.getDefinedFilterNames();
-		assertEquals(15, registeredFilters.size());
+		assertEquals(16, registeredFilters.size());
 		for (String filterName : testXMlFilters) {
 			registeredFilters.contains(filterName);
 		}

@@ -9,6 +9,7 @@
  */
 package org.openmrs.module.datafilter.impl;
 
+import static org.openmrs.module.datafilter.impl.ImplConstants.GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_CONDITION;
 import static org.openmrs.module.datafilter.impl.ImplConstants.GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_DIAGNOSIS;
 import static org.openmrs.module.datafilter.impl.ImplConstants.GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER;
 import static org.openmrs.module.datafilter.impl.ImplConstants.GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS;
@@ -60,6 +61,7 @@ public class DataFilterTestUtils {
 		as.setGlobalProperty(GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS, "true");
 		as.setGlobalProperty(GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER, "true");
 		as.setGlobalProperty(GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_DIAGNOSIS, "true");
+		as.setGlobalProperty(GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_CONDITION, "true");
 		Context.flushSession();
 	}
 	

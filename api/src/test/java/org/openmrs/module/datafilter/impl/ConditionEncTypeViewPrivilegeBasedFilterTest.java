@@ -10,6 +10,7 @@
 package org.openmrs.module.datafilter.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
@@ -19,26 +20,19 @@ import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Condition;
-import org.openmrs.Location;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.datafilter.TestConstants;
-import org.openmrs.module.datafilter.impl.api.DataFilterService;
 import org.openmrs.test.TestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class ConditionLocationBasedFilterTest extends BaseFilterTest {
+public class ConditionEncTypeViewPrivilegeBasedFilterTest extends BaseEncTypeViewPrivilegeBasedFilterTest {
 	
 	@Autowired
 	private SessionFactory sessionFactory;
 	
-	@Autowired
-	private DataFilterService service;
-	
 	@Before
 	public void before() {
-		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "encounters.xml");
-		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "conditions.xml");
-		DataFilterTestUtils.disableEncTypeViewPrivilegeFiltering();
+		executeDataSet(TestConstants.ROOT_PACKAGE_DIR + "privilegedEncounters.xml");
 	}
 	
 	protected List<Condition> getConditions() {
@@ -46,45 +40,34 @@ public class ConditionLocationBasedFilterTest extends BaseFilterTest {
 	}
 	
 	@Test
-	public void getCondition_shouldReturnNoConditionIfTheUserIsNotGrantedAccessToAnyBasis() {
-		reloginAs("dBeckham", "test");
-		assertEquals(0, getConditions().size());
-	}
-	
-	@Test
-	public void getCondition_shouldReturnConditionsBelongingToPatientsAccessibleToTheUser() {
+	public void getCondition_shouldIncludeConditionsLinkedToEncountersThatRequireAPrivilegeAndTheUserHasIt() {
 		reloginAs("dyorke", "test");
-		int expCount = 2;
+		assertFalse(Context.getAuthenticatedUser().hasPrivilege(PRIV_MANAGE_CHEMO_PATIENTS));
+		int expCount = 0;
 		Collection<Condition> conditions = getConditions();
 		assertEquals(expCount, conditions.size());
-		assertTrue(TestUtil.containsId(conditions, 1001));
-		assertTrue(TestUtil.containsId(conditions, 1002));
 		
-		service.grantAccess(Context.getAuthenticatedUser(), new Location(4001));
-		expCount = 3;
+		DataFilterTestUtils.addPrivilege(PRIV_MANAGE_CHEMO_PATIENTS);
+		expCount = 1;
 		conditions = getConditions();
 		assertEquals(expCount, conditions.size());
-		assertTrue(TestUtil.containsId(conditions, 1001));
-		assertTrue(TestUtil.containsId(conditions, 1002));
-		assertTrue(TestUtil.containsId(conditions, 1003));
+		assertTrue(TestUtil.containsId(conditions, 1004));
 	}
 	
 	@Test
 	public void getCondition_shouldReturnAllConditionsIfTheAuthenticatedUserIsASuperUser() {
 		assertTrue(Context.getAuthenticatedUser().isSuperUser());
-		int expCount = 3;
 		Collection<Condition> conditions = getConditions();
-		assertEquals(expCount, conditions.size());
-		assertTrue(TestUtil.containsId(conditions, 1001));
-		assertTrue(TestUtil.containsId(conditions, 1002));
-		assertTrue(TestUtil.containsId(conditions, 1003));
+		assertEquals(1, conditions.size());
+		assertTrue(TestUtil.containsId(conditions, 1004));
 	}
 	
 	@Test
-	public void getCondition_shouldReturnAllConditionsIfLocationFilteringIsDisabled() {
-		DataFilterTestUtils.disableLocationFiltering();
-		reloginAs("dyorke", "test");
-		assertEquals(3, getConditions().size());
+	public void getCondition_shouldReturnAllConditionsIfEncTypeViewPrivFilteringIsDisabled() {
+		DataFilterTestUtils.disableEncTypeViewPrivilegeFiltering();
+		Collection<Condition> conditions = getConditions();
+		assertEquals(1, conditions.size());
+		assertTrue(TestUtil.containsId(conditions, 1004));
 	}
 	
 }

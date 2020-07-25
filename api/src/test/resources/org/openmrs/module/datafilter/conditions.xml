@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+
+    This Source Code Form is subject to the terms of the Mozilla Public License,
+    v. 2.0. If a copy of the MPL was not distributed with this file, You can
+    obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+    the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+
+    Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+    graphic logo is a trademark of OpenMRS Inc.
+
+-->
+
+<dataset>
+    <conditions condition_id="1001" patient_id="1001" clinical_status="ACTIVE" verification_status="CONFIRMED" voided="0" creator="1" date_created="2020-07-23 00:00:00" uuid="1cc6880e-4d46-11e4-9138-a6c5e4d20fb8" />
+    <conditions condition_id="1002" patient_id="1001" clinical_status="ACTIVE" verification_status="CONFIRMED" voided="0" creator="1" date_created="2020-07-23 00:00:00" uuid="2cc6880e-4d46-11e4-9138-a6c5e4d20fb8" />
+    <conditions condition_id="1003" patient_id="1002" clinical_status="ACTIVE" verification_status="CONFIRMED" voided="0" creator="1" date_created="2020-07-23 00:00:00" uuid="3cc6880e-4d46-11e4-9138-a6c5e4d20fb8" />
+</dataset>

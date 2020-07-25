@@ -10,6 +10,7 @@
 package org.openmrs.module.datafilter.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -40,27 +41,21 @@ public class ObsEncTypeViewPrivilegeBasedFilterTest extends BaseEncTypeViewPrivi
 	
 	private List<Obs> getObservations() {
 		List<Concept> questions = Collections.singletonList(new Concept(5089));
-		List<Encounter> encounters = new ArrayList<>();
+		List<Encounter> encounters = new ArrayList();
 		encounters.add(new Encounter(2001));
 		return obsService.getObservations(null, encounters, questions, null, null, null, null, null, null, null, null,
 		    false);
 	}
 	
 	@Test
-	public void getObs_shouldIncludeEncountersThatRequireAPrivilegeAndTheUserHasIt() {
+	public void getEncounters_shouldIncludeObsLinkedToEncountersThatRequireAPrivilegeAndTheUserHasIt() {
 		reloginAs("dyorke", "test");
-		int expCount = 0;
-		assertEquals(expCount, getObservations().size());
-	}
-	
-	@Test
-	public void getObs_shouldExcludeEncountersThatRequireAPrivilege() {
-		reloginAs("dyorke", "test");
+		assertFalse(Context.getAuthenticatedUser().hasPrivilege(PRIV_MANAGE_CHEMO_PATIENTS));
 		int expCount = 0;
 		Collection<Obs> observations = getObservations();
 		assertEquals(expCount, observations.size());
 		
-		DataFilterTestUtils.addPrivilege(BaseEncTypeViewPrivilegeBasedFilterTest.PRIV_MANAGE_CHEMO_PATIENTS);
+		DataFilterTestUtils.addPrivilege(PRIV_MANAGE_CHEMO_PATIENTS);
 		expCount = 1;
 		observations = getObservations();
 		assertEquals(expCount, observations.size());
@@ -70,9 +65,17 @@ public class ObsEncTypeViewPrivilegeBasedFilterTest extends BaseEncTypeViewPrivi
 	@Test
 	public void getObs_shouldReturnAllObsIfTheAuthenticatedUserIsASuperUser() {
 		assertTrue(Context.getAuthenticatedUser().isSuperUser());
-		int expCount = 1;
 		Collection<Obs> observations = getObservations();
-		assertEquals(expCount, observations.size());
+		assertEquals(1, observations.size());
+		assertTrue(TestUtil.containsId(observations, 1004));
+	}
+	
+	@Test
+	public void getObs_shouldReturnAllObsIfEncTypeViewPrivFilteringIsDisabled() {
+		DataFilterTestUtils.disableEncTypeViewPrivilegeFiltering();
+		reloginAs("dyorke", "test");
+		Collection<Obs> observations = getObservations();
+		assertEquals(1, observations.size());
 		assertTrue(TestUtil.containsId(observations, 1004));
 	}
 	

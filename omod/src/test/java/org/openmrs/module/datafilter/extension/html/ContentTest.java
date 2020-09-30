@@ -26,12 +26,11 @@ public class ContentTest {
 		String expected = "<style>.listItemBoxCustom {width: 460px;padding: 2px;border: 1px solid lightgray;float: left;background-color: #EFEFEF;overflow-x: scroll;height: 200px;}</style>"
 		        + "<td valign='top'>Location</td>" + "<td valign='top'><div id='locationStrings' class='listItemBoxCustom'>"
 		        + "<span class='listItem'>"
-		        + "<input type='checkbox' name='locationStrings' id='locationStrings.L1' value='L1'><label for='locationStrings.L1'>L1</label>"
+		        + "<input type='checkbox' name='locationStrings' id=\"locationStrings.L1\" value=\"L1\"><label for=\"locationStrings.L1\">L1</label>"
 		        + "</span>" + "<span class='listItem'>"
-		        + "<input type='checkbox' name='locationStrings' id='locationStrings.L2' value='L2'><label for='locationStrings.L2'>L2</label>"
+		        + "<input type='checkbox' name='locationStrings' id=\"locationStrings.L2\" value=\"L2\"><label for=\"locationStrings.L2\">L2</label>"
 		        + "</span>" + "</div></td>";
 		assertEquals(expected, content.generate());
-		
 	}
 	
 	@Test
@@ -41,12 +40,25 @@ public class ContentTest {
 		String expected = "<style>.listItemBoxCustom {width: 460px;padding: 2px;border: 1px solid lightgray;float: left;background-color: #EFEFEF;overflow-x: scroll;height: 200px;}</style>"
 		        + "<td valign='top'>Location</td>" + "<td valign='top'><div id='locationStrings' class='listItemBoxCustom'>"
 		        + "<span class='listItem'>"
-		        + "<input type='checkbox' name='locationStrings' id='locationStrings.L1' value='L1'><label for='locationStrings.L1'>L1</label>"
+		        + "<input type='checkbox' name='locationStrings' id=\"locationStrings.L1\" value=\"L1\"><label for=\"locationStrings.L1\">L1</label>"
 		        + "</span>" + "<span class='listItem'>"
-		        + "<input type='checkbox' name='locationStrings' id='locationStrings.L2' value='L2' checked><label for='locationStrings.L2'>L2</label>"
+		        + "<input type='checkbox' name='locationStrings' id=\"locationStrings.L2\" value=\"L2\" checked><label for=\"locationStrings.L2\">L2</label>"
 		        + "</span>" + "</div></td>";
 		assertEquals(expected, content.generate());
+	}
+	
+	@Test
+	public void addLocationNameLineWithApostrophe() {
+		Content content = new Content(Arrays.asList("L'1", "L2"), new ArrayList<String>());
 		
+		String expected = "<style>.listItemBoxCustom {width: 460px;padding: 2px;border: 1px solid lightgray;float: left;background-color: #EFEFEF;overflow-x: scroll;height: 200px;}</style>"
+		        + "<td valign='top'>Location</td>" + "<td valign='top'><div id='locationStrings' class='listItemBoxCustom'>"
+		        + "<span class='listItem'>"
+		        + "<input type='checkbox' name='locationStrings' id=\"locationStrings.L'1\" value=\"L'1\"><label for=\"locationStrings.L'1\">L'1</label>"
+		        + "</span>" + "<span class='listItem'>"
+		        + "<input type='checkbox' name='locationStrings' id=\"locationStrings.L2\" value=\"L2\"><label for=\"locationStrings.L2\">L2</label>"
+		        + "</span>" + "</div></td>";
+		assertEquals(expected, content.generate());
 	}
 	
 	@Test

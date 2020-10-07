@@ -51,15 +51,14 @@ public class Content {
 	private String addHTMLForLocationNames() {
 		return locationNames.stream().reduce("", (appendedContent, locationName) -> {
 			String checkedValue = "";
-			String escapedLocationName = StringEscapeUtils.escapeHtml(locationName);
-			appendedContent += "<span class='listItem'>";
 			if (selectedLocations.contains(locationName)) {
 				checkedValue = CHECKED;
 			}
-			appendedContent += "<input type='checkbox' name='locationStrings' id=\"locationStrings." + escapedLocationName
-			        + "\"" + " value=\"" + escapedLocationName + "\"" + checkedValue + ">";
-			appendedContent += "<label for=\"locationStrings." + escapedLocationName + "\">" + escapedLocationName
-			        + "</label>";
+			locationName = StringEscapeUtils.escapeHtml(locationName);
+			appendedContent += "<span class='listItem'>";
+			appendedContent += "<input type='checkbox' name='locationStrings' id=\"locationStrings." + locationName + "\""
+			        + " value=\"" + locationName + "\"" + checkedValue + ">";
+			appendedContent += "<label for=\"locationStrings." + locationName + "\">" + locationName + "</label>";
 			appendedContent += "</span>";
 			return appendedContent;
 		});

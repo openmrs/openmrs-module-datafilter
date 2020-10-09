@@ -63,10 +63,8 @@ public class LocationExtTest {
 	public void shouldGenerateContentWithNoSelectedLocationsWhenUserHasNoLocationsMapped() {
 		locationExt.setParameterMap(new HashMap<String, String>());
 		String content = locationExt.getOverrideContent("");
-		assertTrue(
-		    content.contains("<input type='checkbox' name='locationStrings' id=\"locationStrings.l1\" value=\"l1\">"));
-		assertTrue(
-		    content.contains("<input type='checkbox' name='locationStrings' id=\"locationStrings.l2\" value=\"l2\">"));
+		assertTrue(content.contains("<input type='checkbox' name='locationStrings' id='locationStrings.l1' value='l1'>"));
+		assertTrue(content.contains("<input type='checkbox' name='locationStrings' id='locationStrings.l2' value='l2'>"));
 	}
 	
 	@Test
@@ -86,10 +84,9 @@ public class LocationExtTest {
 		
 		String content = locationExt.getOverrideContent("");
 		
+		assertTrue(content.contains("<input type='checkbox' name='locationStrings' id='locationStrings.l1' value='l1'>"));
 		assertTrue(
-		    content.contains("<input type='checkbox' name='locationStrings' id=\"locationStrings.l1\" value=\"l1\">"));
-		assertTrue(content
-		        .contains("<input type='checkbox' name='locationStrings' id=\"locationStrings.l2\" value=\"l2\" checked>"));
+		    content.contains("<input type='checkbox' name='locationStrings' id='locationStrings.l2' value='l2' checked>"));
 		;
 	}
 	

@@ -10,7 +10,7 @@
 
 package org.openmrs.module.datafilter.extension.html;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.springframework.web.util.HtmlUtils;
 
 import java.util.List;
 
@@ -54,11 +54,11 @@ public class Content {
 			if (selectedLocations.contains(locationName)) {
 				checkedValue = CHECKED;
 			}
-			locationName = StringEscapeUtils.escapeHtml(locationName);
+			locationName = HtmlUtils.htmlEscape(locationName);
 			appendedContent += "<span class='listItem'>";
-			appendedContent += "<input type='checkbox' name='locationStrings' id=\"locationStrings." + locationName + "\""
-			        + " value=\"" + locationName + "\"" + checkedValue + ">";
-			appendedContent += "<label for=\"locationStrings." + locationName + "\">" + locationName + "</label>";
+			appendedContent += "<input type='checkbox' name='locationStrings' id='locationStrings." + locationName + "'"
+			        + " value='" + locationName + "'" + checkedValue + ">";
+			appendedContent += "<label for='locationStrings." + locationName + "'>" + locationName + "</label>";
 			appendedContent += "</span>";
 			return appendedContent;
 		});

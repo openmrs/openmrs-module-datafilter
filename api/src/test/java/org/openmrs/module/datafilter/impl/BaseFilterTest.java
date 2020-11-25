@@ -9,6 +9,9 @@
  */
 package org.openmrs.module.datafilter.impl;
 
+import java.util.Properties;
+
+import org.hibernate.cfg.Environment;
 import org.junit.Before;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.AdministrationService;
@@ -19,6 +22,14 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.util.PrivilegeConstants;
 
 public abstract class BaseFilterTest extends BaseModuleContextSensitiveTest {
+	
+	@Override
+	public Properties getRuntimeProperties() {
+		Properties props = super.getRuntimeProperties();
+		//Fixes the error reported by the h2 driver in tests
+		props.setProperty(Environment.URL, props.getProperty(Environment.URL) + ";DB_CLOSE_ON_EXIT=FALSE");
+		return props;
+	}
 	
 	@Before
 	public void beforeTestMethod() {

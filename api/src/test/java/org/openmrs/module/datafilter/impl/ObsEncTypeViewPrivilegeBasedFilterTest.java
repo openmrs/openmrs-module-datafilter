@@ -11,9 +11,9 @@ package org.openmrs.module.datafilter.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -21,8 +21,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Concept;
-import org.openmrs.Encounter;
 import org.openmrs.Obs;
+import org.openmrs.Person;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.datafilter.TestConstants;
@@ -40,34 +40,39 @@ public class ObsEncTypeViewPrivilegeBasedFilterTest extends BaseEncTypeViewPrivi
 	}
 	
 	private List<Obs> getObservations() {
-		List<Concept> questions = Collections.singletonList(new Concept(5089));
-		List<Encounter> encounters = new ArrayList();
-		encounters.add(new Encounter(2001));
-		return obsService.getObservations(null, encounters, questions, null, null, null, null, null, null, null, null,
-		    false);
+		List<Concept> questions = Collections.singletonList(new Concept(5497));
+		Person person = new Person();
+		person.setPersonId(1001);
+		List<Person> persons = Collections.singletonList(person);
+		return obsService.getObservations(persons, null, questions, null, null, null, null, null, null, null, null, false);
 	}
 	
 	@Test
 	public void getEncounters_shouldIncludeObsLinkedToEncountersThatRequireAPrivilegeAndTheUserHasIt() {
 		reloginAs("dyorke", "test");
 		assertFalse(Context.getAuthenticatedUser().hasPrivilege(PRIV_MANAGE_CHEMO_PATIENTS));
-		int expCount = 0;
+		int expCount = 1;//Only return the encounter-less obs
 		Collection<Obs> observations = getObservations();
 		assertEquals(expCount, observations.size());
+		Obs obs = observations.iterator().next();
+		assertEquals(1005, obs.getId().longValue());
+		assertNull(obs.getEncounter());
 		
 		DataFilterTestUtils.addPrivilege(PRIV_MANAGE_CHEMO_PATIENTS);
-		expCount = 1;
+		expCount = 2;
 		observations = getObservations();
 		assertEquals(expCount, observations.size());
 		assertTrue(TestUtil.containsId(observations, 1004));
+		assertTrue(TestUtil.containsId(observations, 1005));
 	}
 	
 	@Test
 	public void getObs_shouldReturnAllObsIfTheAuthenticatedUserIsASuperUser() {
 		assertTrue(Context.getAuthenticatedUser().isSuperUser());
 		Collection<Obs> observations = getObservations();
-		assertEquals(1, observations.size());
+		assertEquals(2, observations.size());
 		assertTrue(TestUtil.containsId(observations, 1004));
+		assertTrue(TestUtil.containsId(observations, 1005));
 	}
 	
 	@Test
@@ -75,8 +80,9 @@ public class ObsEncTypeViewPrivilegeBasedFilterTest extends BaseEncTypeViewPrivi
 		DataFilterTestUtils.disableEncTypeViewPrivilegeFiltering();
 		reloginAs("dyorke", "test");
 		Collection<Obs> observations = getObservations();
-		assertEquals(1, observations.size());
+		assertEquals(2, observations.size());
 		assertTrue(TestUtil.containsId(observations, 1004));
+		assertTrue(TestUtil.containsId(observations, 1005));
 	}
 	
 }

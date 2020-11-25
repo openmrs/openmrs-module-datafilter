@@ -11,6 +11,7 @@ package org.openmrs.module.datafilter.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
@@ -43,31 +44,37 @@ public class ConditionEncTypeViewPrivilegeBasedFilterTest extends BaseEncTypeVie
 	public void getCondition_shouldIncludeConditionsLinkedToEncountersThatRequireAPrivilegeAndTheUserHasIt() {
 		reloginAs("dyorke", "test");
 		assertFalse(Context.getAuthenticatedUser().hasPrivilege(PRIV_MANAGE_CHEMO_PATIENTS));
-		int expCount = 0;
+		int expCount = 1;//Only return the encounter-less condition
 		Collection<Condition> conditions = getConditions();
 		assertEquals(expCount, conditions.size());
+		Condition condition = conditions.iterator().next();
+		assertEquals(1005, condition.getId().longValue());
+		assertNull(condition.getEncounter());
 		
 		DataFilterTestUtils.addPrivilege(PRIV_MANAGE_CHEMO_PATIENTS);
-		expCount = 1;
+		expCount = 2;
 		conditions = getConditions();
 		assertEquals(expCount, conditions.size());
 		assertTrue(TestUtil.containsId(conditions, 1004));
+		assertTrue(TestUtil.containsId(conditions, 1005));
 	}
 	
 	@Test
 	public void getCondition_shouldReturnAllConditionsIfTheAuthenticatedUserIsASuperUser() {
 		assertTrue(Context.getAuthenticatedUser().isSuperUser());
 		Collection<Condition> conditions = getConditions();
-		assertEquals(1, conditions.size());
+		assertEquals(2, conditions.size());
 		assertTrue(TestUtil.containsId(conditions, 1004));
+		assertTrue(TestUtil.containsId(conditions, 1005));
 	}
 	
 	@Test
 	public void getCondition_shouldReturnAllConditionsIfEncTypeViewPrivFilteringIsDisabled() {
 		DataFilterTestUtils.disableEncTypeViewPrivilegeFiltering();
 		Collection<Condition> conditions = getConditions();
-		assertEquals(1, conditions.size());
+		assertEquals(2, conditions.size());
 		assertTrue(TestUtil.containsId(conditions, 1004));
+		assertTrue(TestUtil.containsId(conditions, 1005));
 	}
 	
 }

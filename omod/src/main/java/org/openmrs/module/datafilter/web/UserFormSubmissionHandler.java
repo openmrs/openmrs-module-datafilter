@@ -74,10 +74,14 @@ public class UserFormSubmissionHandler {
 				log.info("User details missing or Invalid user details");
 				return;
 			}
-
-			String[] locationStrings = request.getParameterValues("locationStrings") != null ? request.getParameterValues("locationStrings") : new String[0];
-			Collection<EntityBasisMap> mappedLocationsMap = dataFilterService.getEntityBasisMaps(user, Location.class.getName());
-			List<OpenmrsObject> locationsToBeRevoked = getLocationsToBeRevoked(locationService.getAllLocations(), mappedLocationsMap, locationStrings);
+			
+			String[] locationStrings = request.getParameterValues("locationStrings") != null
+			        ? request.getParameterValues("locationStrings")
+			        : new String[0];
+			Collection<EntityBasisMap> mappedLocationsMap = dataFilterService.getEntityBasisMaps(user,
+			    Location.class.getName());
+			List<OpenmrsObject> locationsToBeRevoked = getLocationsToBeRevoked(locationService.getAllLocations(),
+			    mappedLocationsMap, locationStrings);
 			if (!locationsToBeRevoked.isEmpty()) {
 				dataFilterService.revokeAccess(user, locationsToBeRevoked);
 			}
@@ -86,7 +90,7 @@ public class UserFormSubmissionHandler {
 				return;
 			}
 			Set<OpenmrsObject> allSelectedLocations = Arrays.stream(locationStrings).map(l -> locationService.getLocation(l))
-					.filter(Objects::nonNull).collect(Collectors.toSet());
+			        .filter(Objects::nonNull).collect(Collectors.toSet());
 			if (!allSelectedLocations.isEmpty()) {
 				dataFilterService.grantAccess(user, allSelectedLocations);
 			}

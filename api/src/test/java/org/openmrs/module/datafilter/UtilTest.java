@@ -58,7 +58,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.w3c.dom.Document;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore({ "com.sun.org.apache.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*" })
+@PowerMockIgnore({ "javax.xml.*", "org.xml.*", "org.w3c.dom.*" })
 @PrepareForTest({ Context.class, FileUtils.class })
 public class UtilTest {
 	

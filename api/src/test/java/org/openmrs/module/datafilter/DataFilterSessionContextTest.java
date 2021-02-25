@@ -29,7 +29,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
-import org.springframework.orm.hibernate4.SpringSessionContext;
+import org.springframework.orm.hibernate5.SpringSessionContext;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ SpringSessionContext.class, Daemon.class, Util.class })

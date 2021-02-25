@@ -115,7 +115,7 @@ public class DataFilterSessionFactoryBeanTest {
 		when(newModule2EntityHbmFile.getAbsolutePath()).thenReturn(expectedModule2ResourcePath);
 		when(Util.createNewMappingFile(eq(module1EntityHbmFile), eq(module1EntityFilters), any(File.class)))
 		        .thenReturn(newModule1EntityHbmFile);
-		when(Util.createNewMappingFile(argThat(Matchers.equalTo(module2EntityHbmFile)), anyList(), any(File.class)))
+		when(Util.createNewMappingFile(eq(module2EntityHbmFile), anyList(), any(File.class)))
 		        .thenReturn(newModule2EntityHbmFile);
 		
 		sessionFactoryBean.setMappingResources(mappingResources.toArray(new String[] {}));

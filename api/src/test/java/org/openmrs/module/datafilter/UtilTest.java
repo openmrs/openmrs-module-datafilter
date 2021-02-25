@@ -52,11 +52,13 @@ import org.openmrs.module.datafilter.registration.HibernateFilterParameter;
 import org.openmrs.module.datafilter.registration.HibernateFilterRegistration;
 import org.openmrs.util.OpenmrsClassLoader;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.w3c.dom.Document;
 
 @RunWith(PowerMockRunner.class)
+@PowerMockIgnore({ "com.sun.org.apache.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*" })
 @PrepareForTest({ Context.class, FileUtils.class })
 public class UtilTest {
 	

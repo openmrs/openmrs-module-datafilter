@@ -10,8 +10,6 @@
 
 package org.openmrs.module.datafilter.web;
 
-import org.hamcrest.collection.IsCollectionWithSize;
-import org.hibernate.exception.JDBCConnectionException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,10 +35,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyCollectionOf;
@@ -207,10 +202,13 @@ public class UserFormSubmissionHandlerTest {
 		
 		handler.handle(request, response, filterChain);
 		
-		verify(dataFilterService).revokeAccess(any(User.class),
-		    (Collection<OpenmrsObject>) argThat(IsCollectionWithSize.hasSize(2)));
-		verify(dataFilterService).grantAccess(any(User.class),
-		    (Collection<OpenmrsObject>) argThat(IsCollectionWithSize.hasSize(2)));
+		ArgumentCaptor<List> liestCaptor = ArgumentCaptor.forClass(List.class);
+		verify(dataFilterService).revokeAccess(any(User.class), liestCaptor.capture());
+		Assert.assertEquals(2, liestCaptor.getValue().size());
+		
+		ArgumentCaptor<Set> setCaptor = ArgumentCaptor.forClass(Set.class);
+		verify(dataFilterService).grantAccess(any(User.class), setCaptor.capture());
+		Assert.assertEquals(2, setCaptor.getValue().size());
 	}
 	
 	@Test

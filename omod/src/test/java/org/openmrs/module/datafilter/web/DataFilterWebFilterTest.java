@@ -31,7 +31,7 @@ public class DataFilterWebFilterTest {
 		ThreadLocal areFiltersSet = new ThreadLocal();
 		areFiltersSet.set(true);
 		Whitebox.setInternalState(DataFilterSessionContext.class, "areFiltersSet", areFiltersSet);
-		// FIXE: No idea why the bellow assert is failing
+		// FIXME: No idea why the bellow assert is failing
 		assertNotNull(((ThreadLocal) Whitebox.getInternalState(DataFilterSessionContext.class, "areFiltersSet")).get());
 		
 		new DataFilterWebFilter().doFilter(null, null, filterChain);

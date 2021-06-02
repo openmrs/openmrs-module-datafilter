@@ -31,7 +31,7 @@ import org.openmrs.module.datafilter.registration.FilterRegistration;
 import org.openmrs.module.datafilter.registration.HibernateFilterRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.hibernate4.SpringSessionContext;
+import org.springframework.orm.hibernate5.SpringSessionContext;
 import org.springframework.stereotype.Component;
 
 /**

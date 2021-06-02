@@ -9,8 +9,7 @@
  */
 package org.openmrs.module.datafilter.impl.api.db.hibernate;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.isA;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -22,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.AssertionFailure;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -44,6 +43,7 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.util.DatabaseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.orm.hibernate5.HibernateSystemException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -161,15 +161,15 @@ public class PatientLocationLinkingInterceptorTest extends BaseModuleContextSens
 		assertEquals(originalCount, getCountOfPatientLocationLinks().intValue());
 		assertEquals(0, getPatientLocations(patient).size());
 	}
-	
+
 	@Test
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public void onSave_shouldFailIfThereIsNoSessionLocation() {
 		Patient patient = createTestPatient("789");
-		ee.expect(AssertionFailure.class);
+		ee.expect(HibernateSystemException.class);
 		ee.expectMessage(containsString(("Unable to perform beforeTransactionCompletion callback")));
-		ee.expectCause(isA(DAOException.class));
-		
+		ee.expectCause(Matchers.hasProperty("cause", isA(DAOException.class)));
+
 		patientService.savePatient(patient);
 	}
 	

@@ -31,6 +31,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.type.ManyToOneType;
 import org.hibernate.type.Type;
+import org.hibernate.type.TypeFactory;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -166,7 +167,7 @@ public class AccessInterceptorTest {
 		EncounterType encType = new EncounterType();
 		encType.setId(encounterTypeId);
 		interceptor.onLoad(new Encounter(), encounterId, new Object[] { encType }, new String[] { "encounterType" },
-		    new Type[] { new ManyToOneType(null, null) });
+		    new Type[] { new ManyToOneType((TypeFactory.TypeScope) null, null) });
 	}
 	
 	@Test
@@ -208,7 +209,7 @@ public class AccessInterceptorTest {
 		ee.expectMessage(equalTo(ImplConstants.ILLEGAL_RECORD_ACCESS_MESSAGE));
 		when(AccessUtil.getEncounterTypeId(Matchers.eq(encounterId))).thenReturn(encounterTypeId);
 		interceptor.onLoad(new Obs(), obsId, new Object[] { new Encounter(encounterId) }, new String[] { "encounter" },
-		    new Type[] { new ManyToOneType(null, null) });
+		    new Type[] { new ManyToOneType((TypeFactory.TypeScope) null, null) });
 	}
 	
 	@Test
@@ -228,7 +229,7 @@ public class AccessInterceptorTest {
 		Encounter e = new Encounter();
 		e.setEncounterType(new EncounterType(encounterTypeId));
 		interceptor.onLoad(new Obs(), obsId, new Object[] { e }, new String[] { "encounter" },
-		    new Type[] { new ManyToOneType(null, null) });
+		    new Type[] { new ManyToOneType((TypeFactory.TypeScope) null, null) });
 	}
 	
 	@Test

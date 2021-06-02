@@ -14,6 +14,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.openmrs.api.context.Context;
 
+import javax.persistence.FlushModeType;
+
 final class InterceptorUtil {
 	
 	/**
@@ -26,7 +28,7 @@ final class InterceptorUtil {
 		Session session = Context.getRegisteredComponents(SessionFactory.class).get(0).getCurrentSession();
 		//Hibernate will flush any changes in the current session before querying the DB when fetching
 		//the GP value below and we end up in this method again, therefore we need to disable auto flush
-		final FlushMode flushMode = session.getFlushMode();
+		final FlushModeType flushMode = session.getFlushMode();
 		session.setFlushMode(FlushMode.MANUAL);
 		try {
 			return Context.getAdministrationService().getGlobalProperty(gpName);

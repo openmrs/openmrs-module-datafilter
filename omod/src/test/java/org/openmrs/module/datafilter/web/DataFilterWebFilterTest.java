@@ -15,11 +15,16 @@ import static org.junit.Assert.assertNull;
 import javax.servlet.FilterChain;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openmrs.module.datafilter.DataFilterSessionContext;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(DataFilterSessionContext.class)
 public class DataFilterWebFilterTest {
 	
 	@Mock
@@ -31,6 +36,7 @@ public class DataFilterWebFilterTest {
 		ThreadLocal areFiltersSet = new ThreadLocal();
 		areFiltersSet.set(true);
 		Whitebox.setInternalState(DataFilterSessionContext.class, "areFiltersSet", areFiltersSet);
+		
 		assertNotNull(((ThreadLocal) Whitebox.getInternalState(DataFilterSessionContext.class, "areFiltersSet")).get());
 		
 		new DataFilterWebFilter().doFilter(null, null, filterChain);

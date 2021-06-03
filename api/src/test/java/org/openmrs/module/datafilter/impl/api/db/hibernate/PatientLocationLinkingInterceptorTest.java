@@ -161,7 +161,7 @@ public class PatientLocationLinkingInterceptorTest extends BaseModuleContextSens
 		assertEquals(originalCount, getCountOfPatientLocationLinks().intValue());
 		assertEquals(0, getPatientLocations(patient).size());
 	}
-
+	
 	@Test
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public void onSave_shouldFailIfThereIsNoSessionLocation() {
@@ -169,7 +169,7 @@ public class PatientLocationLinkingInterceptorTest extends BaseModuleContextSens
 		ee.expect(HibernateSystemException.class);
 		ee.expectMessage(containsString(("Unable to perform beforeTransactionCompletion callback")));
 		ee.expectCause(Matchers.hasProperty("cause", isA(DAOException.class)));
-
+		
 		patientService.savePatient(patient);
 	}
 	

@@ -102,8 +102,8 @@ public class DataFilterServiceImpl extends BaseOpenmrsService implements DataFil
 	 */
 	@Override
 	public boolean hasAccess(OpenmrsObject entity, OpenmrsObject basis) {
-		EntityBasisMap map = dao.getEntityBasisMap(getIdentifier(entity), Hibernate.getClass(entity).getName(), getIdentifier(basis),
-				Hibernate.getClass(basis).getName());
+		EntityBasisMap map = dao.getEntityBasisMap(getIdentifier(entity), Hibernate.getClass(entity).getName(),
+		    getIdentifier(basis), Hibernate.getClass(basis).getName());
 		
 		if (map != null) {
 			return true;

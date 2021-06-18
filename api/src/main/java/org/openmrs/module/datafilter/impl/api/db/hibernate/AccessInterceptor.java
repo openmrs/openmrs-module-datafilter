@@ -59,6 +59,7 @@ public class AccessInterceptor extends EmptyInterceptor {
 		encTypeBasedClassAndFiltersMap = new HashMap();
 		encTypeBasedClassAndFiltersMap.put(Encounter.class, ImplConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER);
 		encTypeBasedClassAndFiltersMap.put(Obs.class, ImplConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS);
+		encTypeBasedClassAndFiltersMap.put(EncounterType.class, ImplConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER_TYPE);
 	}
 	
 	/**

@@ -76,7 +76,7 @@ public class EncounterAllFiltersTest extends BaseFilterTest {
 	public void getEncounters_shouldReturnAllEncountersIfTheAuthenticatedUserIsASuperUser() {
 		assertTrue(Context.getAuthenticatedUser().isSuperUser());
 		final String name = "Navuga";
-		final int expCount = 4;
+		final int expCount = 5;
 		assertEquals(expCount, encounterService.getCountOfEncounters(name, false).intValue());
 		Collection<Encounter> encounters = encounterService.getEncounters(name, 0, Integer.MAX_VALUE, false);
 		assertEquals(expCount, encounters.size());
@@ -92,7 +92,7 @@ public class EncounterAllFiltersTest extends BaseFilterTest {
 		DataFilterTestUtils.disableEncTypeViewPrivilegeFiltering();
 		reloginAs("dyorke", "test");
 		final String name = "Navuga";
-		assertEquals(4, encounterService.getCountOfEncounters(name, false).intValue());
+		assertEquals(5, encounterService.getCountOfEncounters(name, false).intValue());
 		//In core this method already filters encounters by privilege
 		assertEquals(3, encounterService.getEncounters(name, 0, Integer.MAX_VALUE, false).size());
 	}

@@ -64,7 +64,7 @@
         "targetClasses" : [
             "org.openmrs.EncounterType"
         ],
-        "condition" : "encounter_type_id in (SELECT DISTINCT encounter_type_id FROM encounter_type et WHERE et.view_privilege IS NULL OR et.view_privilege IN (SELECT DISTINCT rp.privilege FROM role_privilege rp WHERE rp.role IN (:roles)))",
+        "condition" : "encounter_type_id in (SELECT DISTINCT et.encounter_type_id FROM encounter_type et WHERE et.view_privilege IS NULL OR et.view_privilege IN (SELECT DISTINCT rp.privilege FROM role_privilege rp WHERE rp.role IN (:roles)))",
         "parameters" : [
             {
                 "name" : "roles",

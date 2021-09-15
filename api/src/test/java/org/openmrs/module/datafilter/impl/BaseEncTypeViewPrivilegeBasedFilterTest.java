@@ -15,6 +15,8 @@ public abstract class BaseEncTypeViewPrivilegeBasedFilterTest extends BaseFilter
 	
 	protected final static String PRIV_MANAGE_CHEMO_PATIENTS = "Manage Chemo Patients";
 	
+	protected final static String PRIV_MANAGE_ADMISSION_FORM = "Manage Admission Form";
+	
 	@Before
 	public void beforePrivilegeBasedFilterMethod() {
 		DataFilterTestUtils.disableLocationFiltering();

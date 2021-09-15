@@ -24,4 +24,10 @@
     <encounter_diagnosis diagnosis_id="1004" patient_id="1001" encounter_id="2001" certainty="CONFIRMED" rank="1" voided="0" creator="1" date_created="2019-05-24 11:30:00.0" uuid="19902dde-6880-17e4-6880-a68804d22fb7" />
     <conditions condition_id="1004" patient_id="1001" encounter_id="2001" clinical_status="ACTIVE" verification_status="CONFIRMED" voided="0" creator="1" date_created="2019-05-24 11:30:00.0" uuid="1cc6880e-4d46-11d4-9138-a6c5e4d20fb9" />
     <conditions condition_id="1005" patient_id="1001" clinical_status="ACTIVE" verification_status="PROVISIONAL" voided="0" creator="1" date_created="2019-08-24 11:30:00.0" uuid="2cc6880e-4d46-11d4-9138-a6c5e4d20fb9" />
+
+    <privilege privilege="Manage Admission Form" description="Can Manage Admission Form" uuid="39ed0167-37a4-4570-997e-5bffcb3300ec" />
+    <encounter_type encounter_type_id="5001" name="Admission Form" view_privilege="Manage Admission Form" description="Admission Form" creator="1" date_created="2021-09-13 11:00:00.0" retired="0" uuid="d65d9239-9553-4657-93ec-cd99e8962ef4" />
+    <encounter encounter_id="2002" encounter_type="5001" patient_id="1001" location_id="4001" encounter_datetime="2021-09-13 11:00:00.0" creator="1" date_created="2021-09-13 11:00:00.0" voided="0" uuid="074cf659-66ab-4bd3-92b8-701daee06413" />
+    <encounter_provider encounter_provider_id="4001" encounter_id="2002" provider_id="1" encounter_role_id="1" creator="1" date_created="2021-09-13 11:00:00.0" voided="0" uuid="eee9916b-dc07-4d86-adc3-2d171fa482db" />
+
 </dataset>

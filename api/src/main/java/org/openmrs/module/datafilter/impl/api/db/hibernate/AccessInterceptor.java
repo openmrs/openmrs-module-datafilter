@@ -141,6 +141,8 @@ public class AccessInterceptor extends EmptyInterceptor {
 			if (entity instanceof Encounter) {
 				int encounterTypeIndex = ArrayUtils.indexOf(propertyNames, "encounterType");
 				encounterTypeId = ((EncounterType) state[encounterTypeIndex]).getEncounterTypeId();
+			} else if (entity instanceof EncounterType) {
+				encounterTypeId = ((EncounterType) entity).getEncounterTypeId()
 			} else {
 				//This is an Obs
 				int encounterIndex = ArrayUtils.indexOf(propertyNames, "encounter");

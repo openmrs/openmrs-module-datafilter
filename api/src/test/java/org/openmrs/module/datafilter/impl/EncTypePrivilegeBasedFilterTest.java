@@ -16,9 +16,7 @@ import org.openmrs.EncounterType;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.datafilter.TestConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.List;
-
 import static org.junit.Assert.*;
 
 public class EncTypePrivilegeBasedFilterTest extends BaseEncTypeViewPrivilegeBasedFilterTest {
@@ -44,7 +42,6 @@ public class EncTypePrivilegeBasedFilterTest extends BaseEncTypeViewPrivilegeBas
 		expCount = 4;
 		ecounterTypelist = sessionFactory.getCurrentSession().createCriteria(EncounterType.class).list();
 		assertEquals(expCount, ecounterTypelist.size());
-		
 	}
 	
 	@Test

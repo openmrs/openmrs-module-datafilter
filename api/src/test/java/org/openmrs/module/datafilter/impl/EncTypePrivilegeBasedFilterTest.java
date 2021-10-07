@@ -56,7 +56,6 @@ public class EncTypePrivilegeBasedFilterTest extends BaseEncTypeViewPrivilegeBas
 	
 	@Test
 	public void getCondition_shouldReturnAllEncounterTypesIfTheAuthenticatedUserIsASuperUser() {
-		reloginAs("dyorke", "test");
 		assertTrue(Context.getAuthenticatedUser().isSuperUser());
 		List encounterTypes = sessionFactory.getCurrentSession().createCriteria(EncounterType.class).list();
 		assertEquals(4, encounterTypes.size());
@@ -64,7 +63,6 @@ public class EncTypePrivilegeBasedFilterTest extends BaseEncTypeViewPrivilegeBas
 	
 	@Test
 	public void getCondition_shouldReturnAllEncounterTypesIfEncTypeViewPrivFilteringIsDisabled() {
-		reloginAs("dyorke", "test");
 		DataFilterTestUtils.disableEncTypeViewPrivilegeFiltering();
 		List encounterTypes = sessionFactory.getCurrentSession().createCriteria(EncounterType.class).list();
 		assertEquals(4, encounterTypes.size());

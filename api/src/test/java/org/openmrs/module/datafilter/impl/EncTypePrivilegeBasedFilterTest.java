@@ -17,7 +17,9 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.datafilter.TestConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class EncTypePrivilegeBasedFilterTest extends BaseEncTypeViewPrivilegeBasedFilterTest {
 	
@@ -43,12 +45,19 @@ public class EncTypePrivilegeBasedFilterTest extends BaseEncTypeViewPrivilegeBas
 		ecounterTypelist = sessionFactory.getCurrentSession().createCriteria(EncounterType.class).list();
 		assertEquals(expCount, ecounterTypelist.size());
 	}
+
+	@Test
+	public void getCondition_shouldNotReturnEncounterTypesThatRequireAPrivilege() {
+		reloginAs("dyorke", "test");
+		assertFalse(Context.getAuthenticatedUser().hasPrivilege(PRIV_MANAGE_CHEMO_PATIENTS));
+		List encounterTypes = sessionFactory.getCurrentSession().createCriteria(EncounterType.class).list();
+		assertEquals(3, encounterTypes.size());
+	}
 	
 	@Test
 	public void getCondition_shouldReturnAllEncounterTypesIfTheAuthenticatedUserIsASuperUser() {
 		assertTrue(Context.getAuthenticatedUser().isSuperUser());
 		List encounterTypes = sessionFactory.getCurrentSession().createCriteria(EncounterType.class).list();
-		System.out.println(encounterTypes);
 		assertEquals(4, encounterTypes.size());
 	}
 	
@@ -58,5 +67,4 @@ public class EncTypePrivilegeBasedFilterTest extends BaseEncTypeViewPrivilegeBas
 		List encounterTypes = sessionFactory.getCurrentSession().createCriteria(EncounterType.class).list();
 		assertEquals(4, encounterTypes.size());
 	}
-	
 }

@@ -47,22 +47,22 @@ public class EncTypePrivilegeBasedFilterTest extends BaseEncTypeViewPrivilegeBas
 	}
 
 	@Test
-	public void getCondition_shouldNotReturnEncounterTypesThatRequireAPrivilege() {
+	public void getEncounterType_shouldNotReturnEncounterTypesThatRequireAPrivilege() {
 		reloginAs("dyorke", "test");
 		assertFalse(Context.getAuthenticatedUser().hasPrivilege(PRIV_MANAGE_CHEMO_PATIENTS));
 		List encounterTypes = sessionFactory.getCurrentSession().createCriteria(EncounterType.class).list();
 		assertEquals(3, encounterTypes.size());
 	}
-	
+
 	@Test
-	public void getCondition_shouldReturnAllEncounterTypesIfTheAuthenticatedUserIsASuperUser() {
+	public void getEncounterType_shouldReturnAllEncounterTypesIfTheAuthenticatedUserIsASuperUser() {
 		assertTrue(Context.getAuthenticatedUser().isSuperUser());
 		List encounterTypes = sessionFactory.getCurrentSession().createCriteria(EncounterType.class).list();
 		assertEquals(4, encounterTypes.size());
 	}
 	
 	@Test
-	public void getCondition_shouldReturnAllEncounterTypesIfEncTypeViewPrivFilteringIsDisabled() {
+	public void getEncounterType_shouldReturnAllEncounterTypesIfEncTypeViewPrivFilteringIsDisabled() {
 		DataFilterTestUtils.disableEncTypeViewPrivilegeFiltering();
 		List encounterTypes = sessionFactory.getCurrentSession().createCriteria(EncounterType.class).list();
 		assertEquals(4, encounterTypes.size());

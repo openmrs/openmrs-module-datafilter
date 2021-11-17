@@ -59,6 +59,8 @@ public class AccessInterceptor extends EmptyInterceptor {
 		encTypeBasedClassAndFiltersMap = new HashMap();
 		encTypeBasedClassAndFiltersMap.put(Encounter.class, ImplConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER);
 		encTypeBasedClassAndFiltersMap.put(Obs.class, ImplConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS);
+		encTypeBasedClassAndFiltersMap.put(EncounterType.class,
+		    ImplConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER_TYPE);
 	}
 	
 	/**
@@ -140,6 +142,8 @@ public class AccessInterceptor extends EmptyInterceptor {
 			if (entity instanceof Encounter) {
 				int encounterTypeIndex = ArrayUtils.indexOf(propertyNames, "encounterType");
 				encounterTypeId = ((EncounterType) state[encounterTypeIndex]).getEncounterTypeId();
+			} else if (entity instanceof EncounterType) {
+				encounterTypeId = ((EncounterType) entity).getEncounterTypeId();
 			} else {
 				//This is an Obs
 				int encounterIndex = ArrayUtils.indexOf(propertyNames, "encounter");

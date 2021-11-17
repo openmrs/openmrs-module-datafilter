@@ -64,7 +64,10 @@ public final class ImplConstants {
 	
 	public static final String ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER = ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX
 	        + "EncounterFilter";
-	
+
+	public static final String ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER_TYPE = ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX
+			+ "EncounterTypeFilter";
+
 	public static final String ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS = ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX + "ObsFilter";
 	
 	public static final String ENC_TYPE_PRIV_BASED_FILTER_NAME_DIAGNOSIS = ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX
@@ -84,7 +87,8 @@ public final class ImplConstants {
 	
 	public static final Set<String> ENC_TYPE_VIEW_PRIV_FILTER_NAMES = Stream
 	        .of(ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER, ENC_TYPE_PRIV_BASED_FILTER_NAME_OBS,
-	            ENC_TYPE_PRIV_BASED_FILTER_NAME_DIAGNOSIS, ENC_TYPE_PRIV_BASED_FILTER_NAME_CONDITION)
+	            ENC_TYPE_PRIV_BASED_FILTER_NAME_DIAGNOSIS, ENC_TYPE_PRIV_BASED_FILTER_NAME_CONDITION,
+					ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER_TYPE)
 	        .collect(Collectors.toSet());
 	
 	public static final Set<String> FILTER_NAMES;
@@ -140,7 +144,10 @@ public final class ImplConstants {
 	
 	public static final String GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_CONDITION = ENC_TYPE_PRIV_BASED_FILTER_NAME_CONDITION
 	        + DISABLED;
-	
+
+	public static final String GP_ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER_TYPE = ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER_TYPE
+			+ DISABLED;
+
 	public static final String GP_RUN_IN_STRICT_MODE = MODULE_ID + ".runInStrictMode";
 	
 	public static final String GP_PAT_LOC_INTERCEPTOR_ENABLED = MODULE_ID + ".patientLocationLinkingInterceptor" + ENABLED;

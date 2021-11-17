@@ -24,6 +24,7 @@ import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.User;
 import org.openmrs.Visit;
+import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.api.context.Daemon;
@@ -49,6 +50,8 @@ public class AccessInterceptor extends EmptyInterceptor {
 	
 	protected static final Map<Class<?>, String> encTypeBasedClassAndFiltersMap;
 	
+	protected static final String SEARCH_LOADER_THREAD_NAME_PREFIX = "Hibernate Search: entityloader";
+	
 	static {
 		locationBasedClassAndFiltersMap = new HashMap();
 		locationBasedClassAndFiltersMap.put(Visit.class, ImplConstants.LOCATION_BASED_FILTER_NAME_VISIT);
@@ -71,8 +74,31 @@ public class AccessInterceptor extends EmptyInterceptor {
 				log.trace("Skipping AccessInterceptor for daemon thread");
 			}
 		} else {
-			User user = Context.getAuthenticatedUser();
-			if (user != null && user.isSuperUser()) {
+			boolean isAuthenticated = false;
+			
+			try {
+				if (Context.isAuthenticated()) {
+					isAuthenticated = true;
+				}
+			}
+			catch (APIException e) {
+				//Ignore
+			}
+			
+			boolean isSearchIndexLoaderThread = false;
+			if (!isAuthenticated) {
+				if (Thread.currentThread().getName().startsWith(SEARCH_LOADER_THREAD_NAME_PREFIX)) {
+					//Allow an entity being loaded from a thread created by the hibernate indexer since there will ne no
+					//UserContext object on the current thread otherwise an exception would be thrown.
+					isSearchIndexLoaderThread = true;
+				}
+			}
+			
+			if (isSearchIndexLoaderThread) {
+				if (log.isTraceEnabled()) {
+					log.trace("Skipping AccessInterceptor for hibernate search entity loader");
+				}
+			} else if (Context.getAuthenticatedUser() != null && Context.getAuthenticatedUser().isSuperUser()) {
 				if (log.isTraceEnabled()) {
 					log.trace("Skipping AccessInterceptor for super user");
 				}
@@ -91,6 +117,7 @@ public class AccessInterceptor extends EmptyInterceptor {
 					//the GP value below and we end up in this method again, therefore we need to disable auto flush
 					String strictModeStr = InterceptorUtil.getGpValueNoFlush(ImplConstants.GP_RUN_IN_STRICT_MODE);
 					if ("true".equalsIgnoreCase(strictModeStr)) {
+						User user = Context.getAuthenticatedUser();
 						if (filteredByLoc) {
 							String filterName = locationBasedClassAndFiltersMap.get(entity.getClass());
 							checkIfHasLocationBasedAccess(entity, id, state, propertyNames, user, filterName);

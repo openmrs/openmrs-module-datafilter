@@ -32,6 +32,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.type.ManyToOneType;
 import org.hibernate.type.Type;
 import org.hibernate.type.TypeFactory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -39,6 +40,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
@@ -55,11 +59,16 @@ import org.openmrs.module.datafilter.DataFilterConstants;
 import org.openmrs.module.datafilter.Util;
 import org.openmrs.module.datafilter.impl.AccessUtil;
 import org.openmrs.module.datafilter.impl.ImplConstants;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
+import org.slf4j.Logger;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ AccessUtil.class, Util.class, Context.class, Daemon.class })
+@PowerMockIgnore("javax.management.*")
 public class AccessInterceptorTest {
 	
 	private AccessInterceptor interceptor = new AccessInterceptor();
@@ -69,8 +78,11 @@ public class AccessInterceptorTest {
 	
 	private AdministrationService adminService = null;
 	
+	private String threadName;
+	
 	@Before
 	public void beforeEachMethod() {
+		threadName = Thread.currentThread().getName();
 		mockStatic(Context.class);
 		mockStatic(AccessUtil.class);
 		mockStatic(Util.class);
@@ -82,6 +94,14 @@ public class AccessInterceptorTest {
 		when(Util.skipFilter(anyString())).thenCallRealMethod();
 		when(Util.isFilterDisabled(anyString())).thenReturn(false);
 		when(adminService.getGlobalProperty(eq(ImplConstants.GP_RUN_IN_STRICT_MODE))).thenReturn("true");
+	}
+	
+	@After
+	public void after() {
+		//Reset
+		if (threadName != null) {
+			Thread.currentThread().setName(threadName);
+		}
 	}
 	
 	@Test
@@ -282,6 +302,12 @@ public class AccessInterceptorTest {
 		when(Context.isAuthenticated()).thenReturn(true);
 		when(Context.hasPrivilege(LOCATION_BASED_FILTER_NAME_ENCOUNTER + BYPASS_PRIV_SUFFIX)).thenReturn(true);
 		when(Context.hasPrivilege(ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER + BYPASS_PRIV_SUFFIX)).thenReturn(true);
+		interceptor.onLoad(new Encounter(), null, null, null, null);
+	}
+	
+	@Test
+	public void onLoad_shouldPassWhenLoadingAnEntityFromAHibernateSearchIndexLoaderThread() {
+		Thread.currentThread().setName(AccessInterceptor.SEARCH_LOADER_THREAD_NAME_PREFIX + "-test");
 		interceptor.onLoad(new Encounter(), null, null, null, null);
 	}
 	

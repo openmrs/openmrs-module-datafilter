@@ -58,5 +58,18 @@
         ],
         "property" : "encounters",
         "condition" : "encounter_id IN (SELECT DISTINCT e.encounter_id FROM encounter e INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id WHERE et.view_privilege IS NULL OR et.view_privilege IN (SELECT DISTINCT rp.privilege FROM role_privilege rp WHERE rp.role IN (:roles)))"
+    },
+    {
+        "name" : "datafilter_encTypePrivBasedEncounterTypeFilter",
+        "targetClasses" : [
+            "org.openmrs.EncounterType"
+        ],
+        "condition" : "encounter_type_id in (SELECT DISTINCT et.encounter_type_id FROM encounter_type et WHERE et.view_privilege IS NULL OR et.view_privilege IN (SELECT DISTINCT rp.privilege FROM role_privilege rp WHERE rp.role IN (:roles)))",
+        "parameters" : [
+            {
+                "name" : "roles",
+                "type" : "string"
+            }
+        ]
     }
 ]

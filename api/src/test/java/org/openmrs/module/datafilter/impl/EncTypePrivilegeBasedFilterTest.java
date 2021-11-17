@@ -45,7 +45,7 @@ public class EncTypePrivilegeBasedFilterTest extends BaseEncTypeViewPrivilegeBas
 		ecounterTypelist = sessionFactory.getCurrentSession().createCriteria(EncounterType.class).list();
 		assertEquals(expCount, ecounterTypelist.size());
 	}
-
+	
 	@Test
 	public void getEncounterType_shouldNotReturnEncounterTypesThatRequireAPrivilege() {
 		reloginAs("dyorke", "test");

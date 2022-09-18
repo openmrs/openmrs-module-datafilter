@@ -5,5 +5,5 @@ Provides a mechanism for filtering persistent data as a way to restrict access t
 
 | OpenMRS Core  | Data Filter |
 |---------------|-------------|
-| `[2.3.0, 2.4.0)` | `[1.0.0, )`    |
-| `[2.4.0, )`      | `[2.0.0, )`    |
+| `[2.3.1 - 2.3.5)` | `[1.x.x)`    |
+| `[2.4.0, )`      | `[2.x.x, )`    |

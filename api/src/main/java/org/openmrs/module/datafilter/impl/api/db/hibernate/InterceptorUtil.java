@@ -28,14 +28,14 @@ final class InterceptorUtil {
 		Session session = Context.getRegisteredComponents(SessionFactory.class).get(0).getCurrentSession();
 		//Hibernate will flush any changes in the current session before querying the DB when fetching
 		//the GP value below and we end up in this method again, therefore we need to disable auto flush
-		final FlushModeType flushMode = session.getFlushMode();
-		session.setFlushMode(FlushMode.MANUAL);
+		final FlushMode flushMode = session.getHibernateFlushMode();
+		session.setHibernateFlushMode(FlushMode.MANUAL);
 		try {
 			return Context.getAdministrationService().getGlobalProperty(gpName);
 		}
 		finally {
 			//reset
-			session.setFlushMode(flushMode);
+			session.setHibernateFlushMode(flushMode);
 		}
 	}
 	

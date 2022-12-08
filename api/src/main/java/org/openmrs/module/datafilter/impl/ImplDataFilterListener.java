@@ -89,20 +89,18 @@ public class ImplDataFilterListener implements DataFilterListener {
 			Collection<String> userProgramRoleNames = new HashSet();
 			//Add '#####' place holder for non authenticated user
 			userProgramRoleNames.add("#####");
+			
 			Collection<String> allProgramRoleNames = AccessUtil.getAllProgramRoles();
-			//Add '#####' place holder for non authenticated user
-			allProgramRoleNames.add("#####");
+			if (allProgramRoleNames.isEmpty()) {
+				//Avoid a 'select IN ()' which would be an invalid query, in theory we expect no role to match #####
+				allProgramRoleNames.add("#####");
+			}
 			
 			if (Context.isAuthenticated()) {
 				Collection<Role> userProgramRoles = Context.getAuthenticatedUser().getAllRoles().stream()
 				        .filter(r -> allProgramRoleNames.contains(r.getName())).collect(Collectors.toList());
 				
 				userProgramRoleNames = userProgramRoles.stream().map(r -> r.getName()).collect(Collectors.toSet());
-				
-				if (allProgramRoleNames.isEmpty()) {
-					//Avoid a 'select IN ()' which would be an invalid query, in theory we expect no role to match #####
-					allProgramRoleNames.add("#####");
-				}
 				
 				if (userProgramRoleNames.isEmpty()) {
 					//Avoid a 'select IN ()' which would be an invalid query, in theory we expect no role to match #####

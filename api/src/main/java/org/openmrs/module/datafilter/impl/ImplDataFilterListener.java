@@ -9,6 +9,7 @@
  */
 package org.openmrs.module.datafilter.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -86,9 +87,8 @@ public class ImplDataFilterListener implements DataFilterListener {
 			filterContext.setParameter(ImplConstants.PARAM_NAME_ROLES, roles);
 			
 		} else if (filterContext.getFilterName().startsWith(ImplConstants.PROGRAM_BASED_FILTER_NAME_PREFIX)) {
-			Collection<String> userProgramRoleNames = new HashSet();
-			//Add '#####' place holder for non authenticated user
-			userProgramRoleNames.add("#####");
+			// Avoid a 'select IN ()' which would be an invalid query, in theory we expect no role to match #####
+			Collection<String> userProgramRoleNames = new HashSet<>(Arrays.asList("#####"));
 			
 			Collection<String> allProgramRoleNames = AccessUtil.getAllProgramRoles();
 			if (allProgramRoleNames.isEmpty()) {

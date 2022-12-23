@@ -49,6 +49,7 @@
         <openmrsPlatformVersion>2.4.0</openmrsPlatformVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <freemarkerVersion>2.3.29</freemarkerVersion>
+        <mysqlTestContainerVersion>1.15.2</mysqlTestContainerVersion>
     </properties>
     
     <dependencyManagement>

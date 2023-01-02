@@ -12,7 +12,7 @@ package org.openmrs.module.datafilter.impl;
 import org.junit.Before;
 import org.openmrs.module.datafilter.FilterTestUtils;
 
-public abstract class BaseProgramBasedFilterTest extends BaseFilterTest {
+public abstract class BaseProgramBasedFilterTest extends BaseFilterMySQLBackedTest {
 	
 	protected final static String ROLE_COORDINATOR_PROG_1 = "Program 1 Coordinator";
 	

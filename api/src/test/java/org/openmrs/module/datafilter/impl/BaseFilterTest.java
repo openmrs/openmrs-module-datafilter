@@ -9,10 +9,12 @@
  */
 package org.openmrs.module.datafilter.impl;
 
+import java.io.IOException;
 import java.util.Properties;
 
 import org.hibernate.cfg.Environment;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
@@ -29,6 +31,11 @@ public abstract class BaseFilterTest extends BaseModuleContextSensitiveTest {
 		//Fixes the error reported by the h2 driver in tests
 		props.setProperty(Environment.URL, props.getProperty(Environment.URL) + ";DB_CLOSE_ON_EXIT=FALSE");
 		return props;
+	}
+	
+	@BeforeClass
+	public static void setupDb() throws IOException {
+		System.setProperty("useInMemoryDatabase", "true");
 	}
 	
 	@Before

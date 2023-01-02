@@ -26,6 +26,7 @@ import org.openmrs.module.datafilter.FilterTestUtils;
 import org.openmrs.module.datafilter.TestConstants;
 import org.openmrs.module.datafilter.impl.api.DataFilterService;
 import org.openmrs.test.TestUtil;
+import org.openmrs.util.DatabaseUtil;
 import org.openmrs.util.PrivilegeConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -114,6 +115,27 @@ public class UserProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 		FilterTestUtils.disableFilter(ImplConstants.PROGRAM_BASED_FILTER_NAME_USER);
 		reloginAs("dyorke", "test");
 		assertEquals(7, getUsers().size());
+	}
+	
+	@Test
+	public void getProvidersByPerson_shouldFailWithSQLSyntaxErrorException() throws Exception {
+		// Setup
+		String exception = "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')\n"
+		        + "                            OR datafilter_ur.role NOT IN ()\n" + "                  ' at line 6";
+		String sql = "DELETE FROM datafilter_entity_basis_map";
+		FilterTestUtils.enableFilter(ImplConstants.PROGRAM_BASED_FILTER_NAME_USER);
+		DatabaseUtil.executeSQL(getConnection(), sql, false);
+		Context.logout();
+
+		// Replay
+		Context.addProxyPrivilege(PrivilegeConstants.GET_PERSONS);
+		Context.addProxyPrivilege(PrivilegeConstants.GET_PROVIDERS);
+		try {
+			Context.getProviderService().getProvidersByPerson(Context.getPersonService().getPerson(1001));
+		}
+		catch (Exception e) {
+			assertEquals(exception, e.getCause().getMessage());
+		}
 	}
 	
 }

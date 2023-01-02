@@ -27,7 +27,7 @@ public abstract class BaseFilterTest extends BaseModuleContextSensitiveTest {
 	public Properties getRuntimeProperties() {
 		Properties props = super.getRuntimeProperties();
 		//Fixes the error reported by the h2 driver in tests
-		props.setProperty(Environment.URL, props.getProperty(Environment.URL) + ";DB_CLOSE_ON_EXIT=FALSE");
+		props.setProperty(Environment.URL, props.getProperty(Environment.URL) + ";DB_CLOSE_ON_EXIT=FALSE" + ";MODE=MYSQL");
 		return props;
 	}
 	

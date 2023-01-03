@@ -13,10 +13,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
+import org.hibernate.cfg.Environment;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Test.None;
 import org.openmrs.Program;
 import org.openmrs.Role;
 import org.openmrs.User;
@@ -26,6 +29,7 @@ import org.openmrs.module.datafilter.FilterTestUtils;
 import org.openmrs.module.datafilter.TestConstants;
 import org.openmrs.module.datafilter.impl.api.DataFilterService;
 import org.openmrs.test.TestUtil;
+import org.openmrs.util.DatabaseUtil;
 import org.openmrs.util.PrivilegeConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -36,6 +40,14 @@ public class UserProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 	
 	@Autowired
 	private DataFilterService service;
+	
+	@Override
+	public Properties getRuntimeProperties() {
+		Properties props = super.getRuntimeProperties();
+		//Fixes the error reported by the h2 driver in tests
+		props.setProperty(Environment.URL, props.getProperty(Environment.URL) + ";DB_CLOSE_ON_EXIT=FALSE" + ";MODE=MYSQL");
+		return props;
+	}
 	
 	@Before
 	public void before() {
@@ -114,6 +126,20 @@ public class UserProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 		FilterTestUtils.disableFilter(ImplConstants.PROGRAM_BASED_FILTER_NAME_USER);
 		reloginAs("dyorke", "test");
 		assertEquals(7, getUsers().size());
+	}
+	
+	@Test(expected = None.class)
+	public void getProvidersByPerson_shouldNotFailWithSQLSyntaxErrorException() throws Exception {
+		// Setup
+		String sql = "DELETE FROM datafilter_entity_basis_map";
+		FilterTestUtils.enableFilter(ImplConstants.PROGRAM_BASED_FILTER_NAME_USER);
+		DatabaseUtil.executeSQL(getConnection(), sql, false);
+		Context.logout();
+		
+		// Replay
+		Context.addProxyPrivilege(PrivilegeConstants.GET_PERSONS);
+		Context.addProxyPrivilege(PrivilegeConstants.GET_PROVIDERS);
+		Context.getProviderService().getProvidersByPerson(Context.getPersonService().getPerson(1001));
 	}
 	
 }

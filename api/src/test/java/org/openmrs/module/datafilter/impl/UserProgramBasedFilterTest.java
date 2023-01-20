@@ -45,7 +45,7 @@ public class UserProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 	public Properties getRuntimeProperties() {
 		Properties props = super.getRuntimeProperties();
 		//Fixes the error reported by the h2 driver in tests
-		props.setProperty(Environment.URL, props.getProperty(Environment.URL) + ";DB_CLOSE_ON_EXIT=FALSE" + ";MODE=MYSQL");
+		props.setProperty(Environment.URL, props.getProperty(Environment.URL) + ";MODE=MYSQL");
 		return props;
 	}
 	

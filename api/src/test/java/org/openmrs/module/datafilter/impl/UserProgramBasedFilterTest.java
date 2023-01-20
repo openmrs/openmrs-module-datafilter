@@ -128,7 +128,7 @@ public class UserProgramBasedFilterTest extends BaseProgramBasedFilterTest {
 		assertEquals(7, getUsers().size());
 	}
 	
-	@Test(expected = None.class)
+	@Test
 	public void getProvidersByPerson_shouldNotFailWithSQLSyntaxErrorException() throws Exception {
 		// Setup
 		String sql = "DELETE FROM datafilter_entity_basis_map";

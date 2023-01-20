@@ -88,7 +88,6 @@ public class ImplDataFilterListener implements DataFilterListener {
 			
 		} else if (filterContext.getFilterName().startsWith(ImplConstants.PROGRAM_BASED_FILTER_NAME_PREFIX)) {
 			Collection<String> userProgramRoleNames = new HashSet();
-			
 			Collection<String> allProgramRoleNames = AccessUtil.getAllProgramRoles();
 			
 			if (Context.isAuthenticated()) {

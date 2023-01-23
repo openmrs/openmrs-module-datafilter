@@ -9,6 +9,7 @@
  */
 package org.openmrs.module.datafilter.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -88,21 +89,21 @@ public class ImplDataFilterListener implements DataFilterListener {
 		} else if (filterContext.getFilterName().startsWith(ImplConstants.PROGRAM_BASED_FILTER_NAME_PREFIX)) {
 			Collection<String> userProgramRoleNames = new HashSet();
 			Collection<String> allProgramRoleNames = AccessUtil.getAllProgramRoles();
+			
 			if (Context.isAuthenticated()) {
 				Collection<Role> userProgramRoles = Context.getAuthenticatedUser().getAllRoles().stream()
 				        .filter(r -> allProgramRoleNames.contains(r.getName())).collect(Collectors.toList());
 				
 				userProgramRoleNames = userProgramRoles.stream().map(r -> r.getName()).collect(Collectors.toSet());
-				
-				if (allProgramRoleNames.isEmpty()) {
-					//Avoid a 'select IN ()' which would be an invalid query, in theory we expect no role to match #####
-					allProgramRoleNames.add("#####");
-				}
-				
-				if (userProgramRoleNames.isEmpty()) {
-					//Avoid a 'select IN ()' which would be an invalid query, in theory we expect no role to match #####
-					userProgramRoleNames.add("#####");
-				}
+			}
+			
+			if (userProgramRoleNames.isEmpty()) {
+				//Avoid a 'select IN ()' which would be an invalid query, in theory we expect no role to match #####
+				userProgramRoleNames.add("#####");
+			}
+			if (allProgramRoleNames.isEmpty()) {
+				//Avoid a 'select IN ()' which would be an invalid query, in theory we expect no role to match #####
+				allProgramRoleNames.add("#####");
 			}
 			
 			filterContext.setParameter(ImplConstants.PARAM_NAME_USER_PROG_ROLES, userProgramRoleNames);

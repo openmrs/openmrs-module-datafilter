@@ -72,7 +72,7 @@
     </changeSet>
 
     <changeSet id="${project.parent.artifactId}-20230323-1212" author="fdeniger">
-        <createIndex tableName="datafilter_entity_basis_map" indexName="${project.parent.artifactId}_entity_basis_index">
+        <createIndex tableName="${project.parent.artifactId}_entity_basis_map" indexName="${project.parent.artifactId}_entity_basis_index">
             <column name="entity_type"/>
             <column name="basis_type"/>
             <column name="basis_identifier"/>

@@ -14,7 +14,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.openmrs.api.context.Context;
 
-
 final class InterceptorUtil {
 	
 	/**

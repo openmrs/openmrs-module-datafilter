@@ -36,9 +36,7 @@ public class DataFilterWebFilter implements Filter {
 	 */
 	@Override
 	public void init(FilterConfig filterConfig) {
-		if (log.isDebugEnabled()) {
-			log.debug("Initializing datafilter web filter....");
-		}
+		log.debug("Initializing datafilter web filter....");
 	}
 	
 	/**
@@ -47,18 +45,13 @@ public class DataFilterWebFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 	        throws IOException, ServletException {
-		
-		if (log.isTraceEnabled()) {
-			log.trace("In datafilter web filter....");
-		}
+		log.trace("In datafilter web filter....");
 		
 		try {
 			chain.doFilter(request, response);
 		}
 		finally {
-			if (log.isTraceEnabled()) {
-				log.trace("Http request processing ended....");
-			}
+			log.trace("Http request processing ended....");
 			
 			DataFilterSessionContext.reset();
 		}
@@ -69,9 +62,7 @@ public class DataFilterWebFilter implements Filter {
 	 */
 	@Override
 	public void destroy() {
-		if (log.isDebugEnabled()) {
-			log.debug("Destroying datafilter web filter....");
-		}
+		log.debug("Destroying datafilter web filter....");
 	}
 	
 }

@@ -37,15 +37,12 @@ public class ImplDataFilterListener implements DataFilterListener {
 	@Override
 	public boolean onEnableFilter(DataFilterContext filterContext) {
 		if (Context.isAuthenticated() && Context.getAuthenticatedUser().isSuperUser()) {
-			if (log.isTraceEnabled()) {
-				log.trace("Skipping enabling of filters for super user");
-			}
+			log.trace("Skipping enabling of filters for super user");
 			
 			return false;
 		}
 		
-		if (Context.getAuthenticatedUser() == null && filterContext.getFilterName().endsWith("UserFilter")) {
-			
+		if (!Context.isAuthenticated() && filterContext.getFilterName().endsWith("UserFilter")) {
 			//We have to allow this so that user look during authentication never fails
 			//TODO Apply some smart logic to ensure that this is ONLY permitted once
 			return false;
@@ -54,7 +51,8 @@ public class ImplDataFilterListener implements DataFilterListener {
 		if (filterContext.getFilterName().startsWith(ImplConstants.LOCATION_BASED_FILTER_NAME_PREFIX)
 		        || filterContext.getFilterName().equals(ImplConstants.LOCATION_FILTER_NAME)) {
 			
-			Collection<String> basisIds = new HashSet();
+			Collection<String> basisIds = new HashSet<>();
+			
 			if (Context.isAuthenticated()) {
 				basisIds.addAll(AccessUtil.getAssignedBasisIds(Location.class));
 			}
@@ -77,9 +75,9 @@ public class ImplDataFilterListener implements DataFilterListener {
 			filterContext.setParameter(ImplConstants.PARAM_NAME_BASIS_IDS, basisIds);
 			
 		} else if (filterContext.getFilterName().startsWith(ImplConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_PREFIX)) {
-			Collection<String> roles = new HashSet();
+			Collection<String> roles = new HashSet<>();
 			if (Context.isAuthenticated()) {
-				Collection<String> allRoles = Context.getAuthenticatedUser().getAllRoles().stream().map(r -> r.getName())
+				Collection<String> allRoles = Context.getAuthenticatedUser().getAllRoles().stream().map(Role::getName)
 				        .collect(Collectors.toSet());
 				roles.addAll(allRoles);
 			}
@@ -87,14 +85,14 @@ public class ImplDataFilterListener implements DataFilterListener {
 			filterContext.setParameter(ImplConstants.PARAM_NAME_ROLES, roles);
 			
 		} else if (filterContext.getFilterName().startsWith(ImplConstants.PROGRAM_BASED_FILTER_NAME_PREFIX)) {
-			Collection<String> userProgramRoleNames = new HashSet();
+			Collection<String> userProgramRoleNames = new HashSet<>();
 			Collection<String> allProgramRoleNames = AccessUtil.getAllProgramRoles();
 			
 			if (Context.isAuthenticated()) {
 				Collection<Role> userProgramRoles = Context.getAuthenticatedUser().getAllRoles().stream()
 				        .filter(r -> allProgramRoleNames.contains(r.getName())).collect(Collectors.toList());
 				
-				userProgramRoleNames = userProgramRoles.stream().map(r -> r.getName()).collect(Collectors.toSet());
+				userProgramRoleNames = userProgramRoles.stream().map(Role::getName).collect(Collectors.toSet());
 			}
 			
 			if (userProgramRoleNames.isEmpty()) {

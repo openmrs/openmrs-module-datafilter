@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.openmrs.BaseOpenmrsObject;
 import org.openmrs.Location;
@@ -62,7 +63,7 @@ public class AccessUtil {
 	 * @return a set of patient ids
 	 */
 	public static Collection<String> getAccessiblePersonIds(Class<? extends BaseOpenmrsObject> basisType) {
-		if (log.isDebugEnabled()) {
+		if (log.isDebugEnabled() && Context.isAuthenticated()) {
 			log.debug("Looking up accessible persons for user with Id: " + Context.getAuthenticatedUser().getId());
 		}
 		
@@ -76,13 +77,11 @@ public class AccessUtil {
 			String personQuery = ImplConstants.PERSON_ID_QUERY.replace(ImplConstants.BASIS_IDS_PLACEHOLDER,
 			    String.join(",", accessibleBasisIds));
 			List<List<Object>> personRows = executeQuery(personQuery);
-			Set<String> personIds = new HashSet();
-			personRows.forEach((List<Object> personRow) -> personIds.add(personRow.get(0).toString()));
 			
-			return personIds;
+			return personRows.stream().map(row -> row.get(0).toString()).collect(Collectors.toSet());
 		}
 		
-		return Collections.EMPTY_SET;
+		return Collections.emptySet();
 	}
 	
 	/**
@@ -103,12 +102,11 @@ public class AccessUtil {
 		query = query.replace(BASIS_TYPE_PLACEHOLDER, basisType.getName());
 		
 		List<List<Object>> rows = executeQuery(query);
-		Set<String> basisIds = new HashSet();
-		rows.forEach((List<Object> row) -> basisIds.add(row.get(0).toString()));
+		Set<String> basisIds = rows.stream().map(row -> row.get(0).toString()).collect(Collectors.toSet());
 		
 		//Include child locations in case of locations
 		if (Location.class.isAssignableFrom(basisType)) {
-			Set<String> descendantIds = new HashSet();
+			Set<String> descendantIds = new HashSet<>();
 			for (String id : basisIds) {
 				descendantIds.addAll(getAllDescendantLocationIds(id));
 			}
@@ -137,7 +135,7 @@ public class AccessUtil {
 	 * @return a collection of location ids
 	 */
 	private static Set<String> getAllDescendantLocationIds(String locationId) {
-		Set<String> ids = new HashSet();
+		Set<String> ids = new HashSet<>();
 		LocationDAO dao = Context.getRegisteredComponent("locationDAO", LocationDAO.class);
 		Location location = dao.getLocation(Integer.valueOf(locationId));
 		for (Location l : location.getDescendantLocations(true)) {

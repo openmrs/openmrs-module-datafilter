@@ -90,7 +90,7 @@ public class DataFilterSessionFactoryBeanTest {
 		final Set<String> mappingResources = Stream
 		        .of(module1EntityHbmFile, module1UnFilteredEntityHbmFile, module2EntityHbmFile).collect(Collectors.toSet());
 		Whitebox.setInternalState(sessionFactoryBean, "mappingResources", mappingResources);
-		Map<Class, List<HibernateFilterRegistration>> classFiltersMap = new HashMap();
+		Map<Class<?>, List<HibernateFilterRegistration>> classFiltersMap = new HashMap<>();
 		List<HibernateFilterRegistration> module1EntityFilters = Collections
 		        .singletonList(mock(HibernateFilterRegistration.class));
 		List<HibernateFilterRegistration> module2EntityFilters = Collections

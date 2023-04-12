@@ -45,7 +45,7 @@
     </modules>
     
     <properties>
-        <javaCompilerVersion>1.8</javaCompilerVersion>
+        <javaCompilerVersion>8</javaCompilerVersion>
         <openmrsPlatformVersion>2.4.0</openmrsPlatformVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <freemarkerVersion>2.3.29</freemarkerVersion>
@@ -154,6 +154,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.1</version>
                     <configuration>
                         <target>${javaCompilerVersion}</target>
                         <source>${javaCompilerVersion}</source>
@@ -187,15 +188,6 @@
                     <configuration>
                         <tagNameFormat>@{project.version}</tagNameFormat>
                         <arguments>-Dmaven.javadoc.skip=true</arguments>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
-                    <configuration>
-                        <source>1.8</source>
-                        <target>1.8</target>
                     </configuration>
                 </plugin>
             </plugins>

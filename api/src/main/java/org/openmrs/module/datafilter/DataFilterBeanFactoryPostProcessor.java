@@ -75,7 +75,7 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 			throw new BeanCreationException("Failed to initialize filters", e);
 		}
 		
-		Map<Class, List<HibernateFilterRegistration>> classFiltersMap = Util.getClassFiltersMap();
+		Map<Class<?>, List<HibernateFilterRegistration>> classFiltersMap = Util.getClassFiltersMap();
 		if (classFiltersMap.isEmpty()) {
 			return;
 		}
@@ -91,31 +91,27 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 		ManagedList<TypedStringValue> configLocationsList = (ManagedList) beanDefinition.getPropertyValues()
 		        .get(CFG_LOC_PROP_NAME);
 		
-		List<String> hbmConfigFiles = new ArrayList(configLocationsList.size());
-		configLocationsList.stream().forEach(loc -> hbmConfigFiles.add(loc.getValue().substring(10)));
+		List<String> hbmConfigFiles = new ArrayList<>(configLocationsList.size());
+		configLocationsList.forEach(loc -> hbmConfigFiles.add(loc.getValue().substring(10)));
 		
 		log.info("Hibernate Config locations: " + hbmConfigFiles);
 		
-		final String timestamp = new Long(System.currentTimeMillis()).toString();
+		final String timestamp = Long.toString(System.currentTimeMillis());
 		
-		Map<String, Map<String, String>> cfgAndOldAndTransformedMappingFiles = new HashMap();
-		for (Map.Entry<Class, List<HibernateFilterRegistration>> entry : classFiltersMap.entrySet()) {
+		Map<String, Map<String, String>> cfgAndOldAndTransformedMappingFiles = new HashMap<>();
+		for (Map.Entry<Class<?>, List<HibernateFilterRegistration>> entry : classFiltersMap.entrySet()) {
 			//TODO parse the hibernate cfg file once outside of this method and reuse it everywhere,
 			//Same for the individual hbm files, Util.getMappingResource should return name and resource map
 			//So that we don't have to parse each file again when adding filters.
 			String className = entry.getKey().getName();
-			if (log.isDebugEnabled()) {
-				log.debug("Looking up mapping resource for: " + className);
-			}
+			log.debug("Looking up mapping resource for {}", className);
 			
 			String hbmResourceName = null;
 			String hbmConfigFile = null;
 			for (String candidate : hbmConfigFiles) {
 				hbmResourceName = Util.getMappingResource(candidate, className);
 				if (hbmResourceName != null) {
-					if (log.isDebugEnabled()) {
-						log.debug("Found mapping resource for " + className + " in config file: " + candidate);
-					}
+					log.debug("Found mapping resource for {} in config file {}", className, candidate);
 					
 					hbmConfigFile = candidate;
 					break;
@@ -129,11 +125,8 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 			}
 			
 			String newMappingFile = createTransformedMappingFiles(hbmResourceName, timestamp, entry.getValue());
-			if (cfgAndOldAndTransformedMappingFiles.get(hbmConfigFile) == null) {
-				cfgAndOldAndTransformedMappingFiles.put(hbmConfigFile, new HashMap());
-			}
-			
-			cfgAndOldAndTransformedMappingFiles.get(hbmConfigFile).put(hbmResourceName, newMappingFile);
+			cfgAndOldAndTransformedMappingFiles.computeIfAbsent(hbmConfigFile, k -> new HashMap<>()).put(hbmResourceName,
+			    newMappingFile);
 		}
 		
 		log.info("Hibernate cfg files and their old And transformed mapping files: " + cfgAndOldAndTransformedMappingFiles);
@@ -174,8 +167,8 @@ public class DataFilterBeanFactoryPostProcessor implements BeanFactoryPostProces
 		
 		beanDefinition.setBeanClassName(DataFilterSessionFactoryBean.class.getName());
 		
-		log.info("Successfully reconfigured the sessionFactory bean's configLocations to: " + configLocationsList.stream()
-		        .map(typedStringValue -> typedStringValue.getValue()).collect(Collectors.toList()));
+		log.info("Successfully reconfigured the sessionFactory bean's configLocations to: "
+		        + configLocationsList.stream().map(TypedStringValue::getValue).collect(Collectors.toList()));
 	}
 	
 	/**

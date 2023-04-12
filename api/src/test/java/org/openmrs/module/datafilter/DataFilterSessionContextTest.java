@@ -59,7 +59,7 @@ public class DataFilterSessionContextTest {
 		
 		verify(mockLogger, times(1)).isTraceEnabled();
 		verify(mockLogger, times(1))
-		        .trace(Matchers.startsWith("Skipping filter logic because filters are already set on the current thread"));
+		        .trace(Matchers.startsWith("Skipping filter logic because filters are already set on the current session"));
 	}
 	
 	@Test

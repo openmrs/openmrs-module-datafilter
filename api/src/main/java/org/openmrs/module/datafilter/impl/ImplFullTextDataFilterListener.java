@@ -33,7 +33,7 @@ public class ImplFullTextDataFilterListener implements DataFilterListener {
 	private static final HashMap<Class<?>, String> CLASS_FIELD_MAP;
 	
 	static {
-		CLASS_FIELD_MAP = new HashMap(3);
+		CLASS_FIELD_MAP = new HashMap<>(3);
 		CLASS_FIELD_MAP.put(PersonName.class, "person.personId");
 		CLASS_FIELD_MAP.put(PersonAttribute.class, "person.personId");
 		CLASS_FIELD_MAP.put(PatientIdentifier.class, "patient.personId");
@@ -47,9 +47,7 @@ public class ImplFullTextDataFilterListener implements DataFilterListener {
 	@Override
 	public boolean onEnableFilter(DataFilterContext filterContext) {
 		if (Context.isAuthenticated() && Context.getAuthenticatedUser().isSuperUser()) {
-			if (log.isTraceEnabled()) {
-				log.trace("Skipping enabling of filters for super user");
-			}
+			log.trace("Skipping enabling of filters for super user");
 			
 			return false;
 		}

@@ -1,6 +1,8 @@
 # Data Filter
 Provides a mechanism for filtering persistent data as a way to restrict access to data based on business rules.
 
+Documentation for this module can be found [on the Wiki](https://wiki.openmrs.org/display/docs/Data+Filter).
+
 ## Core Compatibility
 
 | OpenMRS Core  | Data Filter |

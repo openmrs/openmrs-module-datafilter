@@ -43,7 +43,7 @@ public class DataFilterSessionFactoryBean extends HibernateSessionFactoryBean {
 	 */
 	@Override
 	public void setMappingResources(String... mappingResources) {
-		Map<Class, List<HibernateFilterRegistration>> classFiltersMap = Util.getClassFiltersMap();
+		Map<Class<?>, List<HibernateFilterRegistration>> classFiltersMap = Util.getClassFiltersMap();
 		if (classFiltersMap.isEmpty()) {
 			if (log.isDebugEnabled()) {
 				log.debug("No registered filters found for hbm files");
@@ -53,12 +53,11 @@ public class DataFilterSessionFactoryBean extends HibernateSessionFactoryBean {
 			return;
 		}
 		
-		List<String> nonFilteredModuleResources = new ArrayList();
-		List<String> filteredModuleHbmFiles = new ArrayList();
+		List<String> nonFilteredModuleResources = new ArrayList<>();
+		List<String> filteredModuleHbmFiles = new ArrayList<>();
 		File outputDir = new File(filteredResourcesLocation);
 		
-		for (int i = 0; i < mappingResources.length; i++) {
-			String resource = mappingResources[i];
+		for (String resource : mappingResources) {
 			String classname = Util.getMappedClassName(resource);
 			if (classname == null) {
 				//Some module hbm files are actually empty
@@ -67,7 +66,7 @@ public class DataFilterSessionFactoryBean extends HibernateSessionFactoryBean {
 			}
 			
 			try {
-				Class clazz = OpenmrsClassLoader.getInstance().loadClass(classname);
+				Class<?> clazz = OpenmrsClassLoader.getInstance().loadClass(classname);
 				if (classFiltersMap.get(clazz) == null) {
 					nonFilteredModuleResources.add(resource);
 					continue;
@@ -75,7 +74,7 @@ public class DataFilterSessionFactoryBean extends HibernateSessionFactoryBean {
 				
 				File newMappingFile = Util.createNewMappingFile(resource, classFiltersMap.get(clazz), outputDir);
 				if (log.isDebugEnabled()) {
-					log.debug("Mapping file in use for " + clazz + ": " + newMappingFile.getAbsolutePath());
+					log.debug("Mapping file in use for {}: {}", clazz, newMappingFile.getAbsolutePath());
 				}
 				
 				filteredModuleHbmFiles.add(newMappingFile.getAbsolutePath());
@@ -89,7 +88,7 @@ public class DataFilterSessionFactoryBean extends HibernateSessionFactoryBean {
 		this.mappingResources.clear();
 		super.setMappingResources(nonFilteredModuleResources.toArray(new String[] {}));
 		
-		List<Resource> resourcesLocations = new ArrayList();
+		List<Resource> resourcesLocations = new ArrayList<>();
 		for (String hbmfilePath : filteredModuleHbmFiles) {
 			resourcesLocations.add(new FileSystemResource(hbmfilePath));
 		}

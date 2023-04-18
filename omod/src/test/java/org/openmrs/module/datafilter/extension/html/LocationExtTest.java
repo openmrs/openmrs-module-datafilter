@@ -9,6 +9,12 @@
  */
 package org.openmrs.module.datafilter.extension.html;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,17 +27,17 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.datafilter.impl.EntityBasisMap;
 import org.openmrs.module.datafilter.impl.api.DataFilterService;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.*;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 @PrepareForTest(Context.class)
 @RunWith(PowerMockRunner.class)
+@PowerMockIgnore({ "javax.management.*" })
 public class LocationExtTest {
 	
 	private LocationExt locationExt;
@@ -61,7 +67,7 @@ public class LocationExtTest {
 	
 	@Test
 	public void shouldGenerateContentWithNoSelectedLocationsWhenUserHasNoLocationsMapped() {
-		locationExt.setParameterMap(new HashMap<String, String>());
+		locationExt.setParameterMap(new HashMap<>());
 		String content = locationExt.getOverrideContent("");
 		assertTrue(content.contains("<input type='checkbox' name='locationStrings' id='locationStrings.l1' value='l1'>"));
 		assertTrue(content.contains("<input type='checkbox' name='locationStrings' id='locationStrings.l2' value='l2'>"));
@@ -69,7 +75,7 @@ public class LocationExtTest {
 	
 	@Test
 	public void shouldGenerateContentWithCheckedUserLocations() {
-		Map<String, String> parameterMap = new HashMap<String, String>();
+		Map<String, String> parameterMap = new HashMap<>();
 		parameterMap.put("userId", "1");
 		locationExt.setParameterMap(parameterMap);
 		User user = new User(1);
@@ -79,7 +85,8 @@ public class LocationExtTest {
 		entityBasisMap.setEntityIdentifier("1");
 		entityBasisMap.setBasisIdentifier("2");
 		
-		when(dataFilterService.getEntityBasisMaps(user, Location.class.getName())).thenReturn(Arrays.asList(entityBasisMap));
+		when(dataFilterService.getEntityBasisMaps(user, Location.class.getName()))
+		        .thenReturn(Collections.singletonList(entityBasisMap));
 		when(locationService.getLocation(2)).thenReturn(getLocationMock("l2"));
 		
 		String content = locationExt.getOverrideContent("");

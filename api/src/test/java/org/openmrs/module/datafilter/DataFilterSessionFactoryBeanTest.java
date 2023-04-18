@@ -13,7 +13,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -31,6 +30,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.hamcrest.Matchers;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,6 +38,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openmrs.module.datafilter.registration.HibernateFilterRegistration;
 import org.openmrs.util.OpenmrsClassLoader;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
@@ -46,6 +47,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 @RunWith(PowerMockRunner.class)
+@PowerMockIgnore({ "javax.management.*" })
 @PrepareForTest({ Util.class, OpenmrsClassLoader.class })
 public class DataFilterSessionFactoryBeanTest {
 	
@@ -55,20 +57,31 @@ public class DataFilterSessionFactoryBeanTest {
 	@Mock
 	private OpenmrsClassLoader mockClassLoader;
 	
-	private DataFilterSessionFactoryBean sessionFactoryBean = new DataFilterSessionFactoryBean();
+	private DataFilterSessionFactoryBean sessionFactoryBean;
 	
-	private class Module1Entity {}
+	private static class Module1Entity {}
 	
-	private class UnfilteredModule1Entity {}
+	private static class UnfilteredModule1Entity {}
 	
-	private class Module2Entity {}
+	private static class Module2Entity {}
+	
+	private AutoCloseable mocksClosable = null;
 	
 	@Before
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		sessionFactoryBean = new DataFilterSessionFactoryBean();
+		
+		mocksClosable = MockitoAnnotations.openMocks(this);
 		mockStatic(Util.class);
 		mockStatic(OpenmrsClassLoader.class);
 		Whitebox.setInternalState(DataFilterSessionFactoryBean.class, Logger.class, mockLogger);
+	}
+	
+	@After
+	public void tearDown() throws Exception {
+		if (mocksClosable != null) {
+			mocksClosable.close();
+		}
 	}
 	
 	@Test
@@ -90,7 +103,7 @@ public class DataFilterSessionFactoryBeanTest {
 		final Set<String> mappingResources = Stream
 		        .of(module1EntityHbmFile, module1UnFilteredEntityHbmFile, module2EntityHbmFile).collect(Collectors.toSet());
 		Whitebox.setInternalState(sessionFactoryBean, "mappingResources", mappingResources);
-		Map<Class, List<HibernateFilterRegistration>> classFiltersMap = new HashMap();
+		Map<Class<?>, List<HibernateFilterRegistration>> classFiltersMap = new HashMap<>();
 		List<HibernateFilterRegistration> module1EntityFilters = Collections
 		        .singletonList(mock(HibernateFilterRegistration.class));
 		List<HibernateFilterRegistration> module2EntityFilters = Collections

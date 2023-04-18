@@ -10,9 +10,9 @@
 package org.openmrs.module.datafilter.impl.api.db.hibernate;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.startsWith;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.mock;
 import static org.openmrs.module.datafilter.DataFilterConstants.BYPASS_PRIV_SUFFIX;
 import static org.openmrs.module.datafilter.impl.ImplConstants.ENC_TYPE_PRIV_BASED_FILTER_NAME_ENCOUNTER;
@@ -40,9 +40,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
@@ -61,14 +58,11 @@ import org.openmrs.module.datafilter.impl.AccessUtil;
 import org.openmrs.module.datafilter.impl.ImplConstants;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
-import org.slf4j.Logger;
 
 @RunWith(PowerMockRunner.class)
+@PowerMockIgnore({ "javax.management.*" })
 @PrepareForTest({ AccessUtil.class, Util.class, Context.class, Daemon.class })
-@PowerMockIgnore("javax.management.*")
 public class AccessInterceptorTest {
 	
 	private AccessInterceptor interceptor = new AccessInterceptor();

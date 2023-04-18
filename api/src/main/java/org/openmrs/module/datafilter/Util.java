@@ -108,8 +108,6 @@ public class Util {
 	
 	private static DocumentBuilder documentBuilder;
 	
-	private static List<String> mappingResources;
-	
 	private static Template addEntityFilterXsltTemplate;
 	
 	private static Template updateMappingLocXsltTemplate;
@@ -387,12 +385,12 @@ public class Util {
 			if (hibernateFilterRegistrations != null) {
 				return;
 			}
-			hibernateFilterRegistrations = new ArrayList();
+			hibernateFilterRegistrations = new ArrayList<>();
 		} else {
 			if (fullTextFilterRegistrations != null) {
 				return;
 			}
-			fullTextFilterRegistrations = new ArrayList();
+			fullTextFilterRegistrations = new ArrayList<>();
 		}
 		
 		//During openmrs Installation or upgrade, the thread context classloader is that of the webapp assigned
@@ -413,7 +411,7 @@ public class Util {
 		try {
 			Resource[] resources = resourceResolver.getResources(pathPattern);
 			for (Resource resource : resources) {
-				Class clazz = isHibernate ? HibernateFilterRegistration.class : FullTextFilterRegistration.class;
+				Class<?> clazz = isHibernate ? HibernateFilterRegistration.class : FullTextFilterRegistration.class;
 				JavaType classListType = typeFactory.constructCollectionType(List.class, clazz);
 				if (isHibernate) {
 					hibernateFilterRegistrations.addAll(mapper.readValue(resource.getInputStream(), classListType));
@@ -442,10 +440,7 @@ public class Util {
 		try {
 			return documentBuilder.parse(OpenmrsClassLoader.getInstance().getResourceAsStream(xmlFilename));
 		}
-		catch (SAXException e) {
-			throw new RuntimeException(e);
-		}
-		catch (IOException e) {
+		catch (SAXException | IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -546,7 +541,7 @@ public class Util {
 		
 		String xpathExpression = "/hibernate-configuration/session-factory/mapping/@resource";
 		NodeList resourceAttributes = readFromXmlFile(xpathExpression, cfgFilename, XPathConstants.NODESET);
-		mappingResources = new ArrayList();
+		List<String> mappingResources = new ArrayList();
 		for (int i = 0; i < resourceAttributes.getLength(); i++) {
 			mappingResources.add(resourceAttributes.item(i).getNodeValue());
 		}
@@ -559,7 +554,7 @@ public class Util {
 	}
 	
 	/**
-	 * Processes the the specified freemarker xslt template and applies the resulting xslt to an xml
+	 * Processes the specified freemarker xslt template and applies the resulting xslt to a xml
 	 * {@link InputStream} and adds the transformed bytes to the specified {@link OutputStream}.
 	 * 
 	 * @param in the {@link InputStream} for the xml payload
@@ -597,7 +592,7 @@ public class Util {
 	}
 	
 	/**
-	 * Adds a filter to an an hbm mapping file.
+	 * Adds a filter to a hbm mapping file.
 	 * 
 	 * @param in the {@link InputStream} of the hbm mapping resource to add the filter
 	 * @param out the {@link OutputStream} to which to write the transformed mapping resource bytes
@@ -605,7 +600,7 @@ public class Util {
 	 * @param filterReg the {@link org.openmrs.module.datafilter.registration.FilterRegistration} object
 	 */
 	public static void addFilterToMappingResource(InputStream in, OutputStream out, HibernateFilterRegistration filterReg) {
-		Map model = new HashMap();
+		Map<String, Object> model = new HashMap<>();
 		model.put("filterName", filterReg.getName());
 		model.put("defaultCondition", StringEscapeUtils.escapeXml(filterReg.getDefaultCondition()));
 		model.put("condition", StringEscapeUtils.escapeXml(filterReg.getCondition()));
@@ -628,7 +623,7 @@ public class Util {
 	public static void updateResourceLocation(InputStream in, String resourceName, String resourceFilename,
 	        OutputStream out) {
 		
-		Map model = new HashMap();
+		Map<String, String> model = new HashMap<>();
 		model.put("resourceName", resourceName);
 		model.put("resourceFilename", resourceFilename);
 		
@@ -678,8 +673,8 @@ public class Util {
 	 *
 	 * @return a map of classes and their filter registrations
 	 */
-	protected static Map<Class, List<HibernateFilterRegistration>> getClassFiltersMap() {
-		Map<Class, List<HibernateFilterRegistration>> classFiltersMap = new HashMap();
+	protected static Map<Class<?>, List<HibernateFilterRegistration>> getClassFiltersMap() {
+		Map<Class<?>, List<HibernateFilterRegistration>> classFiltersMap = new HashMap();
 		
 		List<HibernateFilterRegistration> filterRegistrations = Util.getHibernateFilterRegistrations();
 		if (filterRegistrations.isEmpty()) {
@@ -687,12 +682,9 @@ public class Util {
 		}
 		
 		for (HibernateFilterRegistration filterReg : filterRegistrations) {
-			for (Class clazz : filterReg.getTargetClasses()) {
+			for (Class<?> clazz : filterReg.getTargetClasses()) {
 				if (!clazz.isAnnotationPresent(Entity.class)) {
-					if (classFiltersMap.get(clazz) == null) {
-						classFiltersMap.put(clazz, new ArrayList());
-					}
-					classFiltersMap.get(clazz).add(filterReg);
+					classFiltersMap.computeIfAbsent(clazz, k -> new ArrayList<>()).add(filterReg);
 				}
 			}
 		}

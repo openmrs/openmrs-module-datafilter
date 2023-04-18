@@ -32,10 +32,12 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.db.FullTextQueryAndEntityClass;
 import org.openmrs.api.db.FullTextQueryCreatedEvent;
 import org.openmrs.module.datafilter.registration.FullTextFilterRegistration;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
+@PowerMockIgnore({ "javax.management.*" })
 @PrepareForTest({ Util.class, Context.class })
 public class FullTextQueryCreatedEventListenerTest {
 	

@@ -12,11 +12,13 @@ package org.openmrs.module.datafilter.impl;
 import java.util.Properties;
 
 import org.hibernate.cfg.Environment;
+import org.junit.After;
 import org.junit.Before;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UsernamePasswordCredentials;
+import org.openmrs.module.datafilter.DataFilterSessionContext;
 import org.openmrs.module.datafilter.TestConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.util.PrivilegeConstants;

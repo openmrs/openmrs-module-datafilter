@@ -9,21 +9,25 @@
  */
 package org.openmrs.module.datafilter.web;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.powermock.api.mockito.PowerMockito.doAnswer;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import javax.servlet.FilterChain;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openmrs.module.datafilter.DataFilterSessionContext;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 @RunWith(PowerMockRunner.class)
+@PowerMockIgnore({ "javax.management.*" })
 @PrepareForTest(DataFilterSessionContext.class)
 public class DataFilterWebFilterTest {
 	
@@ -32,16 +36,18 @@ public class DataFilterWebFilterTest {
 	
 	@Test
 	public void doFilter_shouldAlwaysResetTheFiltersOnTheCurrentThread() throws Exception {
-		MockitoAnnotations.initMocks(this);
-		ThreadLocal areFiltersSet = new ThreadLocal();
-		areFiltersSet.set(true);
-		Whitebox.setInternalState(DataFilterSessionContext.class, "areFiltersSet", areFiltersSet);
-		
-		assertNotNull(((ThreadLocal) Whitebox.getInternalState(DataFilterSessionContext.class, "areFiltersSet")).get());
-		
-		new DataFilterWebFilter().doFilter(null, null, filterChain);
-		
-		assertNull(((ThreadLocal) Whitebox.getInternalState(DataFilterSessionContext.class, "areFiltersSet")).get());
+		mockStatic(DataFilterSessionContext.class);
+		try (AutoCloseable ignored = MockitoAnnotations.openMocks(this)) {
+			AtomicBoolean wasCalled = new AtomicBoolean(false);
+			doAnswer((invocation) -> {
+				wasCalled.set(true);
+				return null;
+			}).when(DataFilterSessionContext.class, "reset");
+			
+			new DataFilterWebFilter().doFilter(null, null, filterChain);
+			
+			assertTrue(wasCalled.get());
+		}
 	}
 	
 }

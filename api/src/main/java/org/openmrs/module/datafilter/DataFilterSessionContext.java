@@ -161,7 +161,7 @@ public class DataFilterSessionContext extends SpringSessionContext {
 	 *
 	 * @return the current {@link Session} without applying any new filters
 	 */
-	private Session currentSessionInternal() {
+	Session currentSessionInternal() {
 		return super.currentSession();
 	}
 	

@@ -18,7 +18,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.openmrs.Location;
-import org.openmrs.OpenmrsObject;
 import org.openmrs.User;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.UserService;
@@ -26,6 +25,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.datafilter.impl.EntityBasisMap;
 import org.openmrs.module.datafilter.impl.api.DataFilterService;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -35,15 +35,25 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyCollectionOf;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyCollection;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @PrepareForTest(Context.class)
 @RunWith(PowerMockRunner.class)
+@PowerMockIgnore({ "javax.management.*" })
 public class UserFormSubmissionHandlerTest {
 	
 	@Mock
@@ -65,7 +75,8 @@ public class UserFormSubmissionHandlerTest {
 		initMocks(this);
 		
 		PowerMockito.mockStatic(Context.class);
-		when(Context.getRegisteredComponents(DataFilterService.class)).thenReturn(Arrays.asList(dataFilterService));
+		when(Context.getRegisteredComponents(DataFilterService.class))
+		        .thenReturn(Collections.singletonList(dataFilterService));
 		when(Context.getLocationService()).thenReturn(locationService);
 		when(Context.getUserService()).thenReturn(userService);
 		
@@ -82,7 +93,7 @@ public class UserFormSubmissionHandlerTest {
 		
 		verify(userService, never()).getUserByUsername(any(String.class));
 		verify(locationService, never()).getLocation(any(String.class));
-		verify(dataFilterService, never()).grantAccess(any(User.class), anyCollectionOf(OpenmrsObject.class));
+		verify(dataFilterService, never()).grantAccess(any(User.class), anyCollection());
 	}
 	
 	@Test
@@ -96,7 +107,7 @@ public class UserFormSubmissionHandlerTest {
 		
 		verify(userService, never()).getUserByUsername(any(String.class));
 		verify(locationService, never()).getLocation(any(String.class));
-		verify(dataFilterService, never()).grantAccess(any(User.class), anyCollectionOf(OpenmrsObject.class));
+		verify(dataFilterService, never()).grantAccess(any(User.class), anyCollection());
 	}
 	
 	@Test
@@ -109,7 +120,7 @@ public class UserFormSubmissionHandlerTest {
 		
 		verify(userService, never()).getUserByUsername(any(String.class));
 		verify(locationService, never()).getLocation(any(String.class));
-		verify(dataFilterService, never()).grantAccess(any(User.class), anyCollectionOf(OpenmrsObject.class));
+		verify(dataFilterService, never()).grantAccess(any(User.class), anyCollection());
 	}
 	
 	@Test
@@ -123,7 +134,7 @@ public class UserFormSubmissionHandlerTest {
 		
 		verify(userService).getUserByUsername(any(String.class));
 		verify(locationService, never()).getLocation(any(String.class));
-		verify(dataFilterService, never()).grantAccess(any(User.class), anyCollectionOf(OpenmrsObject.class));
+		verify(dataFilterService, never()).grantAccess(any(User.class), anyCollection());
 	}
 	
 	@Test
@@ -139,7 +150,7 @@ public class UserFormSubmissionHandlerTest {
 		
 		verify(userService).getUserByUsername(any(String.class));
 		verify(locationService, never()).getLocation(any(String.class));
-		verify(dataFilterService, never()).grantAccess(any(User.class), anyCollectionOf(OpenmrsObject.class));
+		verify(dataFilterService, never()).grantAccess(any(User.class), anyCollection());
 	}
 	
 	@Test
@@ -155,7 +166,7 @@ public class UserFormSubmissionHandlerTest {
 		
 		handler.handle(request, response, filterChain);
 		
-		verify(dataFilterService, never()).grantAccess(any(User.class), anyCollectionOf(OpenmrsObject.class));
+		verify(dataFilterService, never()).grantAccess(any(User.class), anyCollection());
 	}
 	
 	@Test
@@ -169,15 +180,14 @@ public class UserFormSubmissionHandlerTest {
 		when(locationService.getAllLocations()).thenReturn(getLocations(Arrays.asList("l1", "l2", "l3")));
 		when(locationService.getLocation("l1")).thenReturn(getLocationMock("l1"));
 		when(locationService.getLocation("l2")).thenReturn(getLocationMock("l2"));
-		when(dataFilterService.getEntityBasisMaps(any(User.class), any(String.class)))
-		        .thenReturn(new ArrayList<EntityBasisMap>());
+		when(dataFilterService.getEntityBasisMaps(any(User.class), any(String.class))).thenReturn(new ArrayList<>());
 		when(userService.getUserByUsername(any(String.class))).thenReturn(user);
 		
 		handler.handle(request, response, filterChain);
 		
 		verify(locationService, times(2)).getLocation(any(String.class));
-		verify(dataFilterService).grantAccess(any(User.class), anyCollectionOf(OpenmrsObject.class));
-		verify(dataFilterService, never()).revokeAccess(any(User.class), anyCollectionOf(OpenmrsObject.class));
+		verify(dataFilterService).grantAccess(any(User.class), anyCollection());
+		verify(dataFilterService, never()).revokeAccess(any(User.class), anyCollection());
 	}
 	
 	@Test
@@ -202,9 +212,9 @@ public class UserFormSubmissionHandlerTest {
 		
 		handler.handle(request, response, filterChain);
 		
-		ArgumentCaptor<List> liestCaptor = ArgumentCaptor.forClass(List.class);
-		verify(dataFilterService).revokeAccess(any(User.class), liestCaptor.capture());
-		Assert.assertEquals(2, liestCaptor.getValue().size());
+		ArgumentCaptor<List> listCaptor = ArgumentCaptor.forClass(List.class);
+		verify(dataFilterService).revokeAccess(any(User.class), listCaptor.capture());
+		Assert.assertEquals(2, listCaptor.getValue().size());
 		
 		ArgumentCaptor<Set> setCaptor = ArgumentCaptor.forClass(Set.class);
 		verify(dataFilterService).grantAccess(any(User.class), setCaptor.capture());
@@ -225,7 +235,7 @@ public class UserFormSubmissionHandlerTest {
 		verify(userService, never()).getUserByUsername(any(String.class));
 		verify(userService, times(1)).getUserByUuid(invalid_uuid);
 		verify(locationService, never()).getLocation(any(String.class));
-		verify(dataFilterService, never()).grantAccess(any(User.class), anyCollectionOf(OpenmrsObject.class));
+		verify(dataFilterService, never()).grantAccess(any(User.class), anyCollection());
 	}
 	
 	@Test
@@ -248,8 +258,8 @@ public class UserFormSubmissionHandlerTest {
 		
 		verify(userService, times(1)).getUserByUuid(uuid);
 		verify(locationService, times(2)).getLocation(any(String.class));
-		verify(dataFilterService).grantAccess(any(User.class), anyCollectionOf(OpenmrsObject.class));
-		verify(dataFilterService, never()).revokeAccess(any(User.class), anyCollectionOf(OpenmrsObject.class));
+		verify(dataFilterService).grantAccess(any(User.class), anyCollection());
+		verify(dataFilterService, never()).revokeAccess(any(User.class), anyCollection());
 	}
 	
 	@Test(expected = Exception.class)
@@ -291,7 +301,7 @@ public class UserFormSubmissionHandlerTest {
 	
 	private List<Location> getLocations(List<String> locationNames) {
 		List<Location> allLocationsForLoggedInUser = new ArrayList<>();
-		locationNames.stream().forEach((locationName) -> allLocationsForLoggedInUser.add(getLocationMock(locationName)));
+		locationNames.forEach((locationName) -> allLocationsForLoggedInUser.add(getLocationMock(locationName)));
 		return allLocationsForLoggedInUser;
 	}
 	

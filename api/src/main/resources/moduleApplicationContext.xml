@@ -27,26 +27,18 @@
     </bean>
 
     <bean name="dataFilterService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-        <property name="transactionManager">
-            <ref bean="transactionManager" />
-        </property>
+        <property name="transactionManager" ref="transactionManager"/>
         <property name="target">
             <bean class="${project.parent.groupId}.${project.parent.artifactId}.impl.api.impl.DataFilterServiceImpl">
                 <property name="dao" ref="dataFilterDAO" />
             </bean>
         </property>
-        <property name="preInterceptors">
-            <ref bean="serviceInterceptors" />
-        </property>
-        <property name="transactionAttributeSource">
-            <ref bean="transactionAttributeSource" />
-        </property>
+        <property name="preInterceptors" ref="serviceInterceptors"/>
+        <property name="transactionAttributeSource" ref="transactionAttributeSource"/>
     </bean>
 
     <bean name="dataFilterDAO" class="${project.parent.groupId}.${project.parent.artifactId}.impl.api.db.hibernate.HibernateDataFilterDAO">
-        <property name="sessionFactory">
-            <ref bean="sessionFactory" />
-        </property>
+        <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
 </beans>

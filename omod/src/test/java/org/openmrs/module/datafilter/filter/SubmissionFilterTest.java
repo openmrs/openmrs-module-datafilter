@@ -18,6 +18,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.datafilter.web.UserFormSubmissionHandler;
 import org.openmrs.web.WebConstants;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -33,6 +34,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 @PrepareForTest(Context.class)
 @RunWith(PowerMockRunner.class)
+@PowerMockIgnore({ "javax.management.*" })
 public class SubmissionFilterTest {
 	
 	@Mock

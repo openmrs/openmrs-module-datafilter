@@ -64,8 +64,26 @@ public interface DataFilterService extends OpenmrsService {
 	 * 
 	 * @param entity the instance to match
 	 * @param basisClassName fully qualified java class name of the basis type
-	 * @return a collection of EntityBasisMap instances
+	 * @return a collection of {@link EntityBasisMap} instances
 	 */
 	Collection<EntityBasisMap> getEntityBasisMaps(OpenmrsObject entity, String basisClassName);
+	
+	/**
+	 * Gets a collection of mappings from a specific basis to allowed entities of the specified type
+	 *
+	 * @param entityClass the class of the entity to match
+	 * @param basis the specific basis entity to match
+	 * @return a collection of {@link EntityBasisMap} instances
+	 */
+	Collection<EntityBasisMap> getEntityBasisMapsByBasis(Class<? extends OpenmrsObject> entityClass, OpenmrsObject basis);
+	
+	/**
+	 * Gets a collection of mappings from a specific basis to allowed entities of the specified type
+	 *
+	 * @param entityClassName the class name of the entity to match
+	 * @param basis the specific basis entity to match
+	 * @return a collection of {@link EntityBasisMap} instances
+	 */
+	Collection<EntityBasisMap> getEntityBasisMapsByBasis(String entityClassName, OpenmrsObject basis);
 	
 }

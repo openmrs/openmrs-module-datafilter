@@ -9,11 +9,17 @@
  */
 package org.openmrs.module.datafilter.impl.api.db.hibernate;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.Collection;
+import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openmrs.module.datafilter.impl.EntityBasisMap;
 import org.openmrs.module.datafilter.impl.api.db.DataFilterDAO;
 
@@ -35,7 +41,7 @@ public class HibernateDataFilterDAO implements DataFilterDAO {
 	 */
 	@Override
 	public EntityBasisMap getEntityBasisMap(String entityIdentifier, String entityType, String basisIdentifier,
-	        String basisType) {
+			String basisType) {
 		
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(EntityBasisMap.class);
 		criteria.add(Restrictions.eq("entityIdentifier", entityIdentifier).ignoreCase());
@@ -74,5 +80,27 @@ public class HibernateDataFilterDAO implements DataFilterDAO {
 		criteria.add(Restrictions.eq("basisType", basisType).ignoreCase());
 		
 		return (Collection<EntityBasisMap>) criteria.list();
+	}
+	
+	@Override
+	public List<EntityBasisMap> getEntityBasisMapsByBasis(String entityType, String basisType,
+			String basisIdentifier) {
+		
+		Session session = sessionFactory.getCurrentSession();
+		
+		CriteriaBuilder cb = session.getCriteriaBuilder();
+		CriteriaQuery<EntityBasisMap> cq = cb.createQuery(EntityBasisMap.class);
+		
+		Root<EntityBasisMap> root = cq.from(EntityBasisMap.class);
+		cq.select(root).where(
+				cb.and(
+						cb.equal(root.get("entityType"), entityType),
+						cb.equal(root.get("basisType"), basisType),
+						cb.equal(root.get("basisIdentifier"), basisIdentifier)
+				)
+		);
+		
+		Query<EntityBasisMap> query = session.createQuery(cq);
+		return query.getResultList();
 	}
 }

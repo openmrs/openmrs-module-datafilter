@@ -137,4 +137,15 @@ public class DataFilterServiceImpl extends BaseOpenmrsService implements DataFil
 	public Collection<EntityBasisMap> getEntityBasisMaps(OpenmrsObject entity, String basisClassName) {
 		return dao.getEntityBasisMaps(entity.getId().toString(), Hibernate.getClass(entity).getName(), basisClassName);
 	}
+	
+	@Override
+	public Collection<EntityBasisMap> getEntityBasisMapsByBasis(Class<? extends OpenmrsObject> entityClass,
+			OpenmrsObject basis) {
+		return getEntityBasisMapsByBasis(entityClass.getName(), basis);
+	}
+	
+	@Override
+	public Collection<EntityBasisMap> getEntityBasisMapsByBasis(String entityClassName, OpenmrsObject basis) {
+		return dao.getEntityBasisMapsByBasis(entityClassName, Hibernate.getClass(basis).getName(), basis.getId().toString());
+	}
 }

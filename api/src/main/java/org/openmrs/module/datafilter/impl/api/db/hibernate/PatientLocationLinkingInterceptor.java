@@ -10,10 +10,9 @@
 package org.openmrs.module.datafilter.impl.api.db.hibernate;
 
 import java.io.Serializable;
+import java.util.Iterator;
 
-import org.hibernate.EmptyInterceptor;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.*;
 import org.hibernate.action.spi.BeforeTransactionCompletionProcess;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.event.spi.EventSource;
@@ -40,7 +39,7 @@ import org.springframework.stereotype.Component;
  * <pre/>
  */
 @Component("patientLocationLinkingInterceptor")
-public class PatientLocationLinkingInterceptor extends EmptyInterceptor {
+public class PatientLocationLinkingInterceptor implements Interceptor {
 	
 	private static final Logger log = LoggerFactory.getLogger(PatientLocationLinkingInterceptor.class);
 	
@@ -58,7 +57,7 @@ public class PatientLocationLinkingInterceptor extends EmptyInterceptor {
 			setSessionDataAndLocationDetectorProcess(entity);
 		}
 		
-		return super.onSave(entity, id, state, propertyNames, types);
+		return false;
 	}
 	
 	/**
@@ -70,17 +69,17 @@ public class PatientLocationLinkingInterceptor extends EmptyInterceptor {
 	@Override
 	public int[] findDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
 	        String[] propertyNames, Type[] types) {
-		
+
 		if (entity instanceof Patient && previousState == null && isInterceptorEnabled()) {
 			//This is a patient getting created from an existing person record
 			if (log.isDebugEnabled()) {
 				log.debug("Detected a new patient getting created from an existing person with id: " + id);
 			}
-			
+
 			setSessionDataAndLocationDetectorProcess(entity);
 		}
-		
-		return super.findDirty(entity, id, currentState, previousState, propertyNames, types);
+
+		return null;
 	}
 	
 	/**
@@ -91,7 +90,6 @@ public class PatientLocationLinkingInterceptor extends EmptyInterceptor {
 		SessionData sessionData = sessionDataHolder.get();
 		if (sessionData == null) {
 			//No new patients created in this transaction
-			super.beforeTransactionCompletion(tx);
 			return;
 		}
 		
@@ -191,5 +189,74 @@ public class PatientLocationLinkingInterceptor extends EmptyInterceptor {
 		private Integer locationId;
 		
 	}
-	
+
+	@Override
+	public boolean onLoad(Object o, Serializable serializable, Object[] objects, String[] strings, Type[] types) throws CallbackException {
+		return false;
+	}
+
+	@Override
+	public boolean onFlushDirty(Object o, Serializable serializable, Object[] objects, Object[] objects1, String[] strings, Type[] types) throws CallbackException {
+		return false;
+	}
+
+	@Override
+	public void onDelete(Object o, Serializable serializable, Object[] objects, String[] strings, Type[] types) throws CallbackException {
+
+	}
+
+	@Override
+	public void onCollectionRecreate(Object o, Serializable serializable) throws CallbackException {
+
+	}
+
+	@Override
+	public void onCollectionRemove(Object o, Serializable serializable) throws CallbackException {
+
+	}
+
+	@Override
+	public void onCollectionUpdate(Object o, Serializable serializable) throws CallbackException {
+
+	}
+
+	@Override
+	public void preFlush(Iterator iterator) throws CallbackException {
+
+	}
+
+	@Override
+	public void postFlush(Iterator iterator) throws CallbackException {
+
+	}
+
+	@Override
+	public Boolean isTransient(Object o) {
+		return null;
+	}
+
+	@Override
+	public Object instantiate(String s, EntityMode entityMode, Serializable serializable) throws CallbackException {
+		return null;
+	}
+
+	@Override
+	public String getEntityName(Object o) throws CallbackException {
+		return "";
+	}
+
+	@Override
+	public Object getEntity(String s, Serializable serializable) throws CallbackException {
+		return null;
+	}
+
+	@Override
+	public void afterTransactionBegin(Transaction transaction) {
+
+	}
+
+	@Override
+	public String onPrepareStatement(String s) {
+		return "";
+	}
 }

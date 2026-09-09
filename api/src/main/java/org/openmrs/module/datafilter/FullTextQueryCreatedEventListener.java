@@ -9,8 +9,6 @@
  */
 package org.openmrs.module.datafilter;
 
-import static org.openmrs.module.datafilter.DataFilterConstants.MODULE_ID;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -30,9 +28,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Component;
 
-@Component(MODULE_ID + "FullTextQueryCreatedEventListener")
+/**
+ * Not a Spring @Component: FullTextQueryCreatedEvent, FullTextQuery and FullTextFilter below are
+ * all Hibernate Search 5.x/OpenMRS core APIs removed on core >= 2.8 (Hibernate Search 6 replaced
+ * them), so registering this as a bean would load and verify it while Spring scans the module's
+ * package, crashing module startup. See filters/fulltext/location.json, which stays empty for the
+ * same reason.
+ */
 public class FullTextQueryCreatedEventListener implements ApplicationListener<FullTextQueryCreatedEvent> {
 	
 	private static final Logger log = LoggerFactory.getLogger(FullTextQueryCreatedEventListener.class);

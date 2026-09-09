@@ -1,20 +1,9 @@
 [
-    {
-        "name" : "datafilter_locationBasedPatientFullTextFilter",
-        "targetClasses" : [
-            "org.openmrs.PatientIdentifier",
-            "org.openmrs.PersonName",
-            "org.openmrs.PersonAttribute"
-        ],
-        "implClass" : "org.openmrs.module.datafilter.impl.PatientIdFullTextFilter",
-        "cacheMode" : "NONE",
-        "parameters" : [
-            {
-                "name" : "field"
-            },
-            {
-                "name" : "patientIds"
-            }
-        ]
-    }
+    /*
+    Disabled: its implClass (PatientIdFullTextFilter) and the listener that would enable it
+    (FullTextQueryCreatedEventListener) both target Hibernate Search 5.x/Lucene 5.x APIs removed on
+    OpenMRS core >= 2.8 (Hibernate Search 6, Lucene 8). Reinstating this entry resolves implClass via
+    reflection at startup, which crashes with a NoClassDefFoundError before the module finishes
+    loading.
+    */
 ]

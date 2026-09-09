@@ -97,6 +97,7 @@ public class PatientLocationBasedFilterTest extends BaseFilterTest {
 		assertTrue(TestUtil.containsId(patients, 1503));
 	}
 	
+	@Ignore("Location scoped patient search relies on datafilter_locationBasedPatientFullTextFilter, disabled on OpenMRS core >= 2.8, see filters/fulltext/location.json")
 	@Test
 	public void getPatients_shouldReturnNoPatientsIfTheUserIsNotGrantedAccessToAnyBasis() {
 		Context.getAdministrationService().setGlobalProperty(
@@ -112,6 +113,7 @@ public class PatientLocationBasedFilterTest extends BaseFilterTest {
 		assertEquals(expCount, patientService.getPatients(TELEPHONE_AREA_CODE).size());
 	}
 	
+	@Ignore("Location scoped patient search relies on datafilter_locationBasedPatientFullTextFilter, disabled on OpenMRS core >= 2.8, see filters/fulltext/location.json")
 	@Test
 	public void getPatients_shouldReturnPatientsByNameAccessibleToTheUser() {
 		reloginAs("dyorke", "test");
@@ -132,6 +134,7 @@ public class PatientLocationBasedFilterTest extends BaseFilterTest {
 		assertTrue(TestUtil.containsId(patients, 1503));
 	}
 	
+	@Ignore("Location scoped patient search relies on datafilter_locationBasedPatientFullTextFilter, disabled on OpenMRS core >= 2.8, see filters/fulltext/location.json")
 	@Test
 	public void getPatients_shouldReturnPatientsByIdentifierAccessibleToTheUser() {
 		reloginAs("dyorke", "test");
@@ -165,6 +168,7 @@ public class PatientLocationBasedFilterTest extends BaseFilterTest {
 		assertTrue(TestUtil.containsId(patients, 1504));
 	}
 	
+	@Ignore("Location scoped patient search relies on datafilter_locationBasedPatientFullTextFilter, disabled on OpenMRS core >= 2.8, see filters/fulltext/location.json")
 	@Test
 	public void getPatients_shouldReturnPatientsByPersonAttributeAccessibleToTheUser() {
 		Context.getAdministrationService().setGlobalProperty(

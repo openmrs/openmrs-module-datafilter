@@ -49,10 +49,23 @@
         <openmrsPlatformVersion>2.4.0</openmrsPlatformVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <freemarkerVersion>2.3.29</freemarkerVersion>
+        <webServices.version>2.29.0</webServices.version>
     </properties>
     
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>webservices.rest-omod</artifactId>
+                <version>${webServices.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>webservices.rest-omod-common</artifactId>
+                <version>${webServices.version}</version>
+                <scope>provided</scope>
+            </dependency>
             <dependency>
                 <groupId>org.openmrs.api</groupId>
                 <artifactId>openmrs-api</artifactId>

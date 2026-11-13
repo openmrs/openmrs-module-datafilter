@@ -140,7 +140,7 @@ public class DataFilterServiceImpl extends BaseOpenmrsService implements DataFil
 	
 	@Override
 	public Collection<EntityBasisMap> getEntityBasisMapsByBasis(Class<? extends OpenmrsObject> entityClass,
-			OpenmrsObject basis) {
+	        OpenmrsObject basis) {
 		return getEntityBasisMapsByBasis(entityClass.getName(), basis);
 	}
 	

@@ -41,7 +41,7 @@ public class HibernateDataFilterDAO implements DataFilterDAO {
 	 */
 	@Override
 	public EntityBasisMap getEntityBasisMap(String entityIdentifier, String entityType, String basisIdentifier,
-			String basisType) {
+	        String basisType) {
 		
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(EntityBasisMap.class);
 		criteria.add(Restrictions.eq("entityIdentifier", entityIdentifier).ignoreCase());
@@ -83,8 +83,7 @@ public class HibernateDataFilterDAO implements DataFilterDAO {
 	}
 	
 	@Override
-	public List<EntityBasisMap> getEntityBasisMapsByBasis(String entityType, String basisType,
-			String basisIdentifier) {
+	public List<EntityBasisMap> getEntityBasisMapsByBasis(String entityType, String basisType, String basisIdentifier) {
 		
 		Session session = sessionFactory.getCurrentSession();
 		
@@ -92,13 +91,8 @@ public class HibernateDataFilterDAO implements DataFilterDAO {
 		CriteriaQuery<EntityBasisMap> cq = cb.createQuery(EntityBasisMap.class);
 		
 		Root<EntityBasisMap> root = cq.from(EntityBasisMap.class);
-		cq.select(root).where(
-				cb.and(
-						cb.equal(root.get("entityType"), entityType),
-						cb.equal(root.get("basisType"), basisType),
-						cb.equal(root.get("basisIdentifier"), basisIdentifier)
-				)
-		);
+		cq.select(root).where(cb.and(cb.equal(root.get("entityType"), entityType),
+		    cb.equal(root.get("basisType"), basisType), cb.equal(root.get("basisIdentifier"), basisIdentifier)));
 		
 		Query<EntityBasisMap> query = session.createQuery(cq);
 		return query.getResultList();

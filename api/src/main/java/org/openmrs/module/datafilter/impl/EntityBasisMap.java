@@ -200,4 +200,10 @@ public class EntityBasisMap extends BaseOpenmrsObject implements Creatable {
 		dateCreated = date;
 	}
 	
+	@Override
+	public String toString() {
+		return "EntityBasisMap{" + "entityBasisMapId=" + entityBasisMapId + ", entityType='" + entityType + '\''
+		        + ", entityIdentifier='" + entityIdentifier + '\'' + ", basisType='" + basisType + '\''
+		        + ", basisIdentifier='" + basisIdentifier + '\'' + '}';
+	}
 }
